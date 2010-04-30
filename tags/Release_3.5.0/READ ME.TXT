@@ -1,0 +1,62 @@
+PLEASE READ THIS BEFORE STARTING WORLD OF WARCRAFT! 
+World of Warcraft only checks for new files when you first start it.  If World of Warcraft is running, please quit it now.
+Find your World of Warcraft directory, usually C:\Program Files\World of Warcraft.  Go into the Interface folder, and create a new folder there called "Music".  Create two new folders inside that one called “Battles" and "Bosses". 
+Once you have created those, you need to go and grab the songs you want to use as battle themes, and boss themes, as well as one game over theme, and one victory theme.  Place the songs you want to use as battle themes in the "Battles" folder.  Place the songs you want to use as the boss themes in the "Bosses" folder.  Place your game over theme, and victory theme in the main folder. 
+
+
+Now you have to name the songs appropriately, here is a list of names...  Replace any # symbols with a sequential number, starting from 1(i.e. 1, 2, 3, 4, etc...).  Do not forget the highest number, because you will need that later. 
+* For battle themes: Battle#.mp3 
+* For Boss Themes: Boss#.mp3 
+* For the Game over theme: GameOver.mp3 
+* For the victory fanfare: Victory.mp3 
+
+When you are done, your directories should look like this: (Sorry for the shitty look in advance, it is hard to make a file tree in notepad look good.) 
+
+
+<WoWDIR>\Interface
+	AddOns
+		CombatMusic 
+		<Your Other Addons> 
+	Music 
+		Battles 
+			Battle1.mp3 
+			Battle2.mp3 
+			Battle3.mp3 
+			... 
+		Bosses 
+			Boss1.mp3 
+			Boss2.mp3 
+			Boss3.mp3 
+			... 
+		GameOver.mp3 
+		Victory.mp3 
+		
+Just so you know, you're not actually done yet.  You need to do one more setup step, and because I am lazy, and will not write a UI for this addon...  You will have to use code to change the settings.  Use the following slash commands to set up CombatMusic, so it knows how many songs you have, etc… each is explained below: (Do not forget, because you are writing in Lua, its CaSe SenSiTivE...  That means, combatmusic_saveddb is not the same as CombatMusic_SavedDB) 
+
+/run CombatMusic_SavedDB.numSongs.Battes = # 
+	Remember the number of Battle songs you put into the battles dir?  That is the number you put there.  In programmer speak; it is the highest index of the songs you put in that folder. 
+
+/run CombatMusic_SavedDB.numSongs.Bosses = # 
+	The same thing applies to this one.  Just replace # with the biggest number of song in the Bosses folder. 
+
+/cm on/off 
+	Use this to enable/disable combatMusic 
+
+/run CombatMusic_SavedDB.PlayWhen.
+	This one can be continued with any of the following: 
+		LevelUp = true/false - Turns on or off playing of the victory fanfare you chose when a character levels up.  "true" is on, "false" is off.
+		Combat = true/false   - Turns on or off playing of the victory fanfare after finishing a boss fight.  "true" is on, "false" is off.
+		GameOver = true/false - Turns on or off playing the game over music you chose when the PLAYER_DEAD event comes up in WoW...  Not always when your toon dies.  "true" is on, "false" is off.
+
+	
+/run CombatMusic_SavedDB.timeOuts.
+	This one can be completed with any of the following: 
+		Fanfare = # 
+		GameOver = # 
+	This can be used to set a "cool down" on playing the victory fanfare/game over themes you chose...  It is ideal to replace the # with the number of seconds the song is, plus a couple of seconds...  I have them both set to 45.
+
+/cm config
+	This slash command just spits out an error message, saying the feature is not implemented.  When it is, it will show the configuration GUI, so you do not have to go through all this bullshit to set up the addon.
+
+/cm help
+	This slash command just spits out an error message, saying the feature is not implemented.  When it is, it will show the help window, detailing the functions of the slash commands, and this readme.
