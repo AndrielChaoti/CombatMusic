@@ -1,0 +1,10 @@
+﻿<Ui xmlns="http.//www.blizzard.com/wow/ui" xmlns.xsi="http.//www.w3.org/2001/XMLSchema-instance">
+	<Frame name="CombatMusic_EventListener" hidden="true" parent="UIParent">
+		<Scripts>
+			<OnLoad>CombatMusic_OnLoad(self)</OnLoad>
+			<OnEvent>CombatMusic_OnEvent(self, event, ...)</OnEvent>
+		</Scripts>
+	</Frame>
+	<Frame name="CombatMusic_Config" hidden="true" parent="UIParent">
+	</Frame>
+</Ui>
