@@ -1,0 +1,12 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="4">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1239" startPos="0" endPos="0" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Donald&apos;s Stuff\DrowELF Productions\Vandesdelca32&apos;s Projects\World of Warcraft Addons\CombatMusic\trunk\CombatMusic.toc" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="2681" startPos="1237" endPos="1237" selMode="0" lang="Lua" encoding="-1" filename="D:\Donald&apos;s Stuff\DrowELF Productions\Vandesdelca32&apos;s Projects\World of Warcraft Addons\CombatMusic\trunk\locale-enUS.lua" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="532" startPos="0" endPos="0" selMode="0" lang="Lua" encoding="-1" filename="D:\Donald&apos;s Stuff\DrowELF Productions\Vandesdelca32&apos;s Projects\World of Warcraft Addons\CombatMusic\trunk\CombatMusic.lua" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="721" startPos="0" endPos="0" selMode="0" lang="Lua" encoding="-1" filename="D:\Donald&apos;s Stuff\DrowELF Productions\Vandesdelca32&apos;s Projects\World of Warcraft Addons\CombatMusic\trunk\CombatMusic_Operation.lua" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="679" startPos="0" endPos="0" selMode="0" lang="XML" encoding="-1" filename="D:\Donald&apos;s Stuff\DrowELF Productions\Vandesdelca32&apos;s Projects\World of Warcraft Addons\CombatMusic\trunk\CombatMusic.xml" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>
