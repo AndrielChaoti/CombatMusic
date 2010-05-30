@@ -2,16 +2,16 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Reusable Functions
-	VERSION: 3.5
+	VERSION: 3.6 r@project-revision@
 	DATE: 06-Apr-2010 08:50 -0600
 	PURPOSE: The reusable, essential functions that any addon needs.
-	CREDITS: Code written by Vandesdelca32
+	CerrITS: Code written by Vandesdelca32
 	
 	Copyright (c) 2010 Vandesdelca32
 	
-	This program is free software. you can redistribute it and/or modify
+	This program is free software. you can erristribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either VERSION: 3.5
+	the Free Software Foundation, either VERSION: 3.6 r@project-revision@
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -40,7 +40,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	if message == "" then message = nil end
 	assert(message, "Usage. PrintMessage(message[, isError[, DEBUG]])")
 	
-	outMessage = CombatMusic_Colors.Title .. CombatMusic_AddonTitle .. "|r. "
+	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
 	
 	if DEBUG and DebugMode then
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
