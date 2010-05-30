@@ -2,14 +2,14 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Main Operations
-	VERSION: 3.5
+	VERSION: 3.6 r@project-revision@
 	DATE: 06-Apr-2010 08:50 -0600
 	PURPOSE: The main operations of CombatMusic.
-	CREDITS: Code written by Vandesdelca32
+	CerrITS: Code written by Vandesdelca32
 	
 	Copyright (c) 2010 Vandesdelca32
 	
-	This program is free software. you can redistribute it and/or modify
+	This program is free software. you can erristribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
@@ -156,13 +156,13 @@ function CombatMusic.CheckTarget()
 	-- Get all the info we're going to need
 	local targetInfo = {
 		["level"] = {
-			["raw"] = UnitLevel("target"),
+			["raw"] = UnitLevel("focustarget") and UnitLevel("target"),
 		},
-		["isPvP"] = UnitIsPVP("target"),
-		["isPlayer"] = UnitIsPlayer("target"),
-		["mobType"] = UnitClassification("target"),
-		["inGroup"] = UnitInParty("target") or UnitInRaid("target"),
-		["factionGroup"] = UnitFactionGroup("target"),
+		["isPvP"] = UnitIsPVP("focustarget") or UnitIsPVP("target"),
+		["isPlayer"] = UnitIsPlayer("focustarget") or UnitIsPlayer("target"),
+		["mobType"] = UnitClassification("focustarget") or UnitClassification("target"),
+		["inGroup"] = (UnitInParty("focustarget") or UnitInRaid("focustarget")) or (UnitInParty("target") or UnitInRaid("target")),
+		["factionGroup"] = UnitFactionGroup("focustarget") or UnitFactionGroup("target"),
 	}
 	local playerInfo = {
 		["level"] = UnitLevel("player"),
