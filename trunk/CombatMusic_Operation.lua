@@ -156,7 +156,13 @@ function CombatMusic.CheckTarget()
 	-- Get all the info we're going to need
 	local targetInfo = {
 		["level"] = {
-			["raw"] = UnitLevel("focustarget") and UnitLevel("target"),
+			["raw"] = function()
+				if UnitLevel("focustarget") ~= 0 then
+					return UnitLevel("focustarget")
+				else
+					return UnitLevel("target")
+				end
+			end,
 		},
 		["isPvP"] = UnitIsPVP("focustarget") or UnitIsPVP("target"),
 		["isPlayer"] = UnitIsPlayer("focustarget") or UnitIsPlayer("target"),
@@ -171,13 +177,13 @@ function CombatMusic.CheckTarget()
 	}
 	
 	-- Make those checks
-	targetInfo.level["adjusted"] = targetInfo.level.raw
+	targetInfo.level["adjusted"] = targetInfo.level.raw()
 	-- Checking the mob type, normal mobs aren't bosses...
 	if targetInfo.mobType ~= "normal" then
 	
 		-- Give it a 3 level bonus for being an elite, worldbosses have -1 for a level, and that's checked later.
 		if targetInfo.mobType == "elite" or targetInfo.mobType == "rareelite" then
-			targetInfo.level["adjusted"] = targetInfo.level.raw + 3
+			targetInfo.level["adjusted"] = targetInfo.level.raw() + 3
 		end
 		
 		isBoss = true
@@ -205,7 +211,7 @@ function CombatMusic.CheckTarget()
 	end
 	
 	-- ogod, it's got -1 for a level(worldBoss, ??) or it's 5 levels higher than me!
-	if targetInfo.level.raw == -1 or targetInfo.level.adjusted >= 5 + playerInfo.level then
+	if targetInfo.level.raw() == -1 or targetInfo.level.adjusted >= 5 + playerInfo.level then
 		isBoss = true
 	elseif targetInfo.level.adjusted <= 5 - playerInfo.level then
 		-- Heh, this is too easy... Not a boss anymore.
