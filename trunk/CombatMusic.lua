@@ -27,8 +27,9 @@
 CombatMusic = {}
 CombatMusic_SavedDB = {}
 
-
---local DebugMode = true
+--@debug@
+local DebugMode = true
+--@end-debug@
 
 
 -- Your standard print message function
@@ -109,8 +110,11 @@ function CombatMusic_OnEvent(self, event, ...)
 	elseif event == "PLAYER_DEAD" then
 		CombatMusic.GameOver()
 		return
+	elseif event == "PLAYER_TARGET_CHANGED" then
+		CombatMusic.TargetChanged("player")
+		return
 	elseif event == "UNIT_TARGET" then
-		if arg1 == "focus" or arg1 == "player" then
+		if arg1 == "focus" then
 			CombatMusic.TargetChanged(arg1)
 			return
 		end
@@ -153,6 +157,7 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_DEAD")
+	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UNIT_TARGET")
 	
 	-- Slash Command listings

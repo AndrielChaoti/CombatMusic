@@ -152,10 +152,11 @@ function CombatMusic.CheckTarget(unit)
 	if not unit then unit = 'target' end
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not UnitAffectingCombat(unit) then 
+		CombatMusic.PrintMessage("Unit not in combat", false, true)
 		return nil
 	end
 	
-	local isBoss
+	local isBoss = false
 	
 	-- Get all the info we're going to need
 	local targetInfo = {
@@ -183,7 +184,23 @@ function CombatMusic.CheckTarget(unit)
 		},
 		["isPvP"] = UnitIsPVP("focustarget") or UnitIsPVP("target"),
 		["isPlayer"] = UnitIsPlayer("focustarget") or UnitIsPlayer("target"),
-		["mobType"] = UnitClassification("focustarget") or UnitClassification("target"),
+		["mobType"] = function()
+			local ft, t = UnitClassification("focustarget"), UnitClassification("target")
+			local ct = {normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5 }
+			ft, t = ct[ft], ct[t]
+			if UnitExists('focustarget') then
+				if ft > t then
+					-- Focustarget is stronger than target
+					return ft
+				else
+					-- Target is stronger
+					return t
+				end
+			else
+				-- No focustarget
+				return t
+			end
+		end,
 		["inGroup"] = (UnitInParty("focustarget") or UnitInRaid("focustarget")) or (UnitInParty("target") or UnitInRaid("target")),
 		["factionGroup"] = UnitFactionGroup("focustarget") or UnitFactionGroup("target"),
 	}
@@ -192,14 +209,17 @@ function CombatMusic.CheckTarget(unit)
 		["factionGroup"] = UnitFactionGroup("player"),
 		["instanceType"] = select(2, GetInstanceInfo()),
 	}
-	
+	local reason = ""
 	-- Make those checks
 	targetInfo.level["adjusted"] = targetInfo.level.raw()
 	-- Checking the mob type, normal mobs aren't bosses...
-	if targetInfo.mobType ~= "normal" then
+	CombatMusic.PrintMessage("MobType:" .. targetInfo.mobType() or "nil", false, true)
+	CombatMusic.PrintMessage("Level:" .. targetInfo.level.raw() or "nil", false, true)
+	CombatMusic.PrintMessage("Flagged?" .. (targetInfo.isPvP or "nil") .. " " .. (targetInfo.isPlayer or "nil"), false, true)
+	if targetInfo.mobType() ~= 1 then
 	
 		-- Give it a 3 level bonus for being an elite, worldbosses have -1 for a level, and that's checked later.
-		if targetInfo.mobType == "elite" or targetInfo.mobType == "rareelite" then
+		if targetInfo.mobType() == 3 or targetInfo.mobType() == 4 then
 			targetInfo.level["adjusted"] = targetInfo.level.raw() + 3
 		end
 		
@@ -209,8 +229,9 @@ function CombatMusic.CheckTarget(unit)
 		if playerInfo.instanceType == "party" or playerInfo.instanceType == "raid" then
 		
 			-- it's a regular mob in an instance
-			if targetInfo.mobType == "elite" then 
+			if targetInfo.mobType() == 3 then 
 				isBoss = false
+				reason = reason .. "Elite in instance,"
 			else
 				-- Lo and behold, it's a boss!
 				isBoss = true
@@ -224,6 +245,7 @@ function CombatMusic.CheckTarget(unit)
 			isBoss = true
 		else
 			isBoss = false
+			reason = reason .. "Player Ingroup,"
 		end
 	end
 	
@@ -233,11 +255,14 @@ function CombatMusic.CheckTarget(unit)
 	elseif targetInfo.level.adjusted <= 5 - playerInfo.level then
 		-- Heh, this is too easy... Not a boss anymore.
 		isBoss = false
+		reason = reason .. "Level too low(" .. targetInfo.level.adjusted ..")"
 	end
-	
+	if reason == "" then
+		reason = "No critera met(" .. targetInfo.level.adjusted .. ")"
+	end
 	targetInfo = nil
 	playerInfo = nil
-	
+	CombatMusic.PrintMessage("IsBoss: " .. (tostring(isBoss) or "nil") .. ":" .. reason, false, true)
 	return isBoss
 	
 end
