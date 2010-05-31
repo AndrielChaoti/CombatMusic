@@ -57,14 +57,14 @@ function CombatMusic.enterCombat()
 end
 
 -- Player Changed Target
-function CombatMusic.TargetChanged()
+function CombatMusic.TargetChanged(unit)
 	if not CombatMusic_SavedDB.Enabled then return end
 	
 	-- Only changing target, so addtional checks, it's not going to change the music unless it's from reg to boss
 	if CombatMusic.Info.BossFight then return end
 	if not CombatMusic.Info.InCombat then return end
 	
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
+	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit .. "target")
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
@@ -147,9 +147,13 @@ function CombatMusic.LevelUp()
 end
 
 -- target Checking. Same logic as the original CombatMusic script I've written in the past.
-function CombatMusic.CheckTarget()
+function CombatMusic.CheckTarget(unit)
 	--Check that CombatMusic is turned on
+	if not unit then unit = 'target' end
 	if not CombatMusic_SavedDB.Enabled then return end
+	if not UnitAffectingCombat(unit) then 
+		return nil
+	end
 	
 	local isBoss
 	
@@ -157,10 +161,23 @@ function CombatMusic.CheckTarget()
 	local targetInfo = {
 		["level"] = {
 			["raw"] = function()
-				if UnitLevel("focustarget") ~= 0 then
-					return UnitLevel("focustarget")
+				local ft, t = UnitLevel("focustarget"), UnitLevel("target")
+				-- Either target is a worldboss, return -1
+				if ft == -1 or t == -1 then
+					return -1
+				end
+				-- Checking if focustarget exists
+				if UnitExists('focustarget') then
+					if ft > t then
+						-- Focustarget is stronger than target
+						return ft
+					else
+						-- Target is stronger
+						return t
+					end
 				else
-					return UnitLevel("target")
+					-- No focustarget
+					return t
 				end
 			end,
 		},
