@@ -45,6 +45,8 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	
 	if DEBUG and DebugMode then
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
+	elseif DEBUG and not DebugMode then
+		return
 	end
 	
 	if isError then
