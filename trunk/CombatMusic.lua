@@ -28,7 +28,7 @@ CombatMusic = {}
 CombatMusic_SavedDB = {}
 
 --@debug@
-local DebugMode = true
+CombatMusic_SavedDB["DebugMode"] = true
 --@end-debug@
 
 
@@ -43,7 +43,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	
 	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
 	
-	if DEBUG and DebugMode then
+	if DEBUG and CombatMusic_SavedDB.DebugMode then
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
 	elseif DEBUG and not DebugMode then
 		return
