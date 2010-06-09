@@ -133,7 +133,7 @@ end
 
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
-	local command, arg = strmatch(args, "(.+) (.+)")
+	local command, arg = args:match("^(%S*)%s*(.-)$");
 	if command == "" or command == CombatMusic_SlashArgs.Help then
 		-- Show /command help
 		CombatMusic.PrintHelp()
