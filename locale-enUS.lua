@@ -55,6 +55,7 @@ CombatMusic_Messages = {
 		["/cm off"] = "Disables CombatMusic.",
 		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm reset"] = "Resets CombatMusic to default settings. RELAODS YOUR UI!",
 	},
 	-- END DO NOT LOCALIZE --
 	-- Other Messages
@@ -129,5 +130,6 @@ CombatMusic_SlashArgs = {
 	--["Config"]  = "config",
 	["BattleCount"] = "battles",
 	["BossCount"] = "bosses",
+	["Reset"] = "reset",
 }
 	
