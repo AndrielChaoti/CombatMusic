@@ -47,7 +47,16 @@ CombatMusic_Messages = {
 	
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
 	["DebugMessages"] = {},
-	
+	-- DO NOT LOCALIZE KEYS IN THIS SECTION --
+	-- Slash command help list.
+	["SlashHelp"] = {
+		["/cm help"] = "Shows this text.",
+		["/cm on"] = "Enables CombatMusic.",
+		["/cm off"] = "Disables CombatMusic.",
+		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
+	},
+	-- END DO NOT LOCALIZE --
 	-- Other Messages
 	["OtherMessages"] = {
 		["AddonLoaded"] = "CombatMusic successfully loaded! " .. CombatMusic_Colors.var .. "/combatmusic" .. CombatMusic_Colors.close .. " shows command help.",
@@ -112,11 +121,12 @@ Either way, you'll never see this window again, unless you use |cffFFB300/combat
 	},
 }
 
+-- DO NOT LOCALIZE KEYS OR STRINGS!
 CombatMusic_SlashArgs = {
 	["Help"]    = "help",
 	["Enable"]  = "on",
 	["Disable"] = "off",
-	["Config"]  = "config",
+	--["Config"]  = "config",
 	["BattleCount"] = "battles",
 	["BossCount"] = "bosses",
 }

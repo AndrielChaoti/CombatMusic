@@ -124,6 +124,12 @@ function CombatMusic_OnEvent(self, event, ...)
 	end
 end
 
+-- PrintHelp()
+function CombatMusic.PrintHelp()
+	for k, v in pairs(CombatMusic_Messages.SlashHelp) do
+		CombatMusic.PrintMessage(format(CombatMusic_Colors.var .. "%s " .. CombatMusic.Colors.close .. "- %s", k, v))
+	end
+end
 
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
