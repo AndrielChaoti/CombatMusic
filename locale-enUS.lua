@@ -55,6 +55,10 @@ CombatMusic_Messages = {
 		["LoadDefaults"] = "No settings found, loading default settings...",
 		["Enabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ".",
 		["Disabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
+		["BattleCount"] = "Current number of battle songs: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["BossCount"] = "Current number of boss songs: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["NewBattles"] = "New battle count set to: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["NewBosses"] = "New boss count set to: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		-- This is the readme text found in ReadMe.txt file, but made nicer for the addon.
 		["README"] = {
 			["PG1"] = [[ |cff70DFAFCombatMusic - ReadMe." .. CombatMusic_Colors.close .. "
@@ -113,5 +117,7 @@ CombatMusic_SlashArgs = {
 	["Enable"]  = "on",
 	["Disable"] = "off",
 	["Config"]  = "config",
+	["BattleCount"] = "battles",
+	["BossCount"] = "bosses",
 }
 	

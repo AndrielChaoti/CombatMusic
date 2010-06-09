@@ -79,7 +79,8 @@ function CombatMusic.SetDefaults()
 		["timeOuts"] = {
 			["Fanfare"] = 30,
 			["GameOver"] = 30,
-		}
+		},
+		["DebugMode"] = false,
 	}
 end
 	
@@ -126,7 +127,39 @@ end
 
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
-
+	local command, arg = strmatch(args, "(.+) (.+)")
+	if command == "" or command == CombatMusic_SlashArgs.Help then
+		-- Show /command help
+		CombatMusic.PrintHelp()
+	elseif command == CombatMusic_SlashArgs.Enable then
+		-- Enable CombatMusic
+		CombatMusic_SavedDB.Enabled = true
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Enabled)
+	elseif command == CombatMusic_SlashArgs.Disable then
+		-- Disable CombatMusic
+		CombatMusic.leaveCombat(true)
+		CombatMusic_SavedDB.Enabled = false
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Disabled)
+	elseif command == CombatMusic_SlashArgs.Reset then
+		-- Reload defaults for CombatMusic
+		CombatMusic.SetDefaults()
+		ReloadUI()
+	elseif command == CombatMusic_SlashArgs.BattleCount then
+		if not tonumber(arg) then
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BattleCount, CombatMusic_SavedDB.numSongs.Battles))
+		else
+			CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
+		end
+	elseif command == CombatMusic_SlashArgs.BossCount then
+		if not tonumber(arg) then
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.numSongs.Bosses))
+		else
+			CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
+		end
+	end
+	--[[
 	if args == "" or args == CombatMusic_SlashArgs.Help then
 		-- Show /command help
 		--CombatMusic.DisplayHelp()
@@ -148,6 +181,7 @@ function CombatMusic.SlashCommandHandler(args)
 		-- Print that "oops, invalid arg" message.
 		CombatMusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
 	end
+	]]
 end
 
 function CombatMusic_OnLoad(self)
