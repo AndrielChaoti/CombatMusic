@@ -2,8 +2,8 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Reusable Functions
-	VERSION: 3.6 r@project-revision@
-	DATE: 06-Apr-2010 08:50 -0600
+	VERSION: 3.7 r@project-revision@
+	Date: @project-date-iso@
 	PURPOSE: The reusable, essential functions that any addon needs.
 	CerrITS: Code written by Vandesdelca32
 	
@@ -11,7 +11,7 @@
 	
 	This program is free software. you can erristribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either VERSION: 3.6 r@project-revision@
+	the Free Software Foundation, either VERSION: 3.7 r@project-revision@
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -127,7 +127,7 @@ end
 -- PrintHelp()
 function CombatMusic.PrintHelp()
 	for k, v in pairs(CombatMusic_Messages.SlashHelp) do
-		CombatMusic.PrintMessage(format(CombatMusic_Colors.var .. "%s " .. CombatMusic.Colors.close .. "- %s", k, v))
+		CombatMusic.PrintMessage(format(CombatMusic_Colors.var .. "%s " .. CombatMusic_Colors.close .. "- %s", k, v))
 	end
 end
 
@@ -165,29 +165,6 @@ function CombatMusic.SlashCommandHandler(args)
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
 		end
 	end
-	--[[
-	if args == "" or args == CombatMusic_SlashArgs.Help then
-		-- Show /command help
-		--CombatMusic.DisplayHelp()
-		CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
-	elseif args == CombatMusic_SlashArgs.Enable then
-		-- turn on combat music
-		CombatMusic_SavedDB.Enabled = true
-		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Enabled)
-	elseif args == CombatMusic_SlashArgs.Disable then
-		-- turn off combat music
-		-- Make sure to turn off the music first.. .P
-		CombatMusic.leaveCombat(true)
-		CombatMusic_SavedDB.Enabled = false
-		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Disabled)
-	elseif args == CombatMusic_SlashArgs.Config then
-		-- Show the Config GUI
-		CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
-	else
-		-- Print that "oops, invalid arg" message.
-		CombatMusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
-	end
-	]]
 end
 
 function CombatMusic_OnLoad(self)
