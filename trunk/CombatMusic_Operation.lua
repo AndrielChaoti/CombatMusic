@@ -44,7 +44,7 @@ function CombatMusic.enterCombat()
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
 	SetCVar("Sound_ZoneMusicNoDelay", "1")
-	SetCVar("Sound_MusicVolume", "1")
+	SetCVar("Sound_MusicVolume", "0.75")
 	
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
