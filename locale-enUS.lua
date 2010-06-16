@@ -45,6 +45,8 @@ CombatMusic_Messages = {
 	["ErrorMessages"] = {
 		["InvalidArg"] = CombatMusic_Colors.var .. "\"%s\"" .. CombatMusic_Colors.close .. " is an invalid argument.",
 		["NotImplemented"] = "The feature you are trying to use has not been implemented yet.",
+		["Volume"] = "Music volume can only be set between the values of " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. " and " .. CombatMusic_Colors.var .. "1" .. CombatMusic_Colors.close .. ".",
+		["BiggerThan0"] = "The value you entered must be bigger than " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. ".",
 	},
 	
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
@@ -54,6 +56,7 @@ CombatMusic_Messages = {
 		["/cm help"] = "Shows this text.",
 		["/cm on"] = "Enables CombatMusic.",
 		["/cm off"] = "Disables CombatMusic.",
+		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
 		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm reset"] = "Resets CombatMusic to default settings. RELAODS YOUR UI!",
@@ -65,10 +68,12 @@ CombatMusic_Messages = {
 		["LoadDefaults"] = "No settings found, loading default settings...",
 		["Enabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ".",
 		["Disabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
-		["BattleCount"] = "Current number of battle songs: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
-		["BossCount"] = "Current number of boss songs: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
-		["NewBattles"] = "New battle count set to: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
-		["NewBosses"] = "New boss count set to: " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["BattleCount"] = "Current number of battle songs is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["BossCount"] = "Current number of boss songs is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["NewBattles"] = "New battle count set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["NewBosses"] = "New boss count set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["CurMusicVol"] = "Current music volume is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["SetMusicVol"] = "In combat music volume set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 	},
 }
 
@@ -81,5 +86,6 @@ CombatMusic_SlashArgs = {
 	["BattleCount"] = "battles",
 	["BossCount"] = "bosses",
 	["Reset"] = "reset",
+	["MusicVol"] = "volume",
 }
 	

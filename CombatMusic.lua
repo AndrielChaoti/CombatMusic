@@ -75,6 +75,7 @@ function CombatMusic.SetDefaults()
 			["Battles"] = 0,
 			["Bosses"] = 0,
 		},
+		["MusicVolume"] = 0.85,
 		["SeenHelp"] = false,
 		["timeOuts"] = {
 			["Fanfare"] = 30,
@@ -151,18 +152,46 @@ function CombatMusic.SlashCommandHandler(args)
 		CombatMusic.SetDefaults()
 		ReloadUI()
 	elseif command == CombatMusic_SlashArgs.BattleCount then
+		--Command to set number of battle songs
 		if not tonumber(arg) then
+			--Show current setting if arg not provided.
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BattleCount, CombatMusic_SavedDB.numSongs.Battles))
 		else
-			CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
+			-- Set the number of battles, if arg > 0
+			if tonumber(arg) <= 0 then
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0)
+			else
+				CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
+				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
+			end
 		end
 	elseif command == CombatMusic_SlashArgs.BossCount then
+	-- Command to set the number of boss songs
 		if not tonumber(arg) then
+			--Show current setting if arg not provided.
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.numSongs.Bosses))
 		else
-			CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
+			-- Set the number of boss batles, if arg > 0
+			if tonumber(arg) <= 0 then
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0)
+			else
+				CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
+				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
+			end
+		end
+	elseif command == CombatMusic_SlashArgs.MusicVol then
+		--Command to change the in-combat music volume
+		if not tonumber(arg) then
+			--Show current setting if arg not provided.
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurMusicVol, CombatMusic_SavedDB.MusicVolume))
+		else
+			--Change the setting if arg is in the accepted range.
+			if tonumber(arg) < 0 or tonumber(arg) > 1 then
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.Volume)
+			else
+				CombatMusic_SavedDB.MusicVolume = tostring(arg)
+				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.SetMusicVol, arg))
+			end
 		end
 	end
 end
