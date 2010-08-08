@@ -110,10 +110,12 @@ function CombatMusic.GameOver()
 	if not CombatMusic_SavedDB.Enabled then return end
 		
 	StopMusic()
-	-- Left Combat, Restore states.
-	SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
-	SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
-	SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
+	if CombatMusic.Info.InCombat then
+		-- Left Combat, Restore states.
+		SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
+		SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
+		SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
+	end
 	
 
 	-- Too bad, play the gameover, if it's not on CD, and the user wants to hear it
