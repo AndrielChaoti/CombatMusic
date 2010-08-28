@@ -2,7 +2,6 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Reusable Functions
-	VERSION: 3.9.2 r@project-revision@
 	Date: @project-date-iso@
 	PURPOSE: The reusable, essential functions that any addon needs.
 	CerrITS: Code written by Vandesdelca32
@@ -129,6 +128,7 @@ end
 
 -- PrintHelp()
 function CombatMusic.PrintHelp()
+	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.CurrentVerHelp)
 	for k, v in pairs(CombatMusic_Messages.SlashHelp) do
 		CombatMusic.PrintMessage(format(CombatMusic_Colors.var .. "%s " .. CombatMusic_Colors.close .. "- %s", k, v))
 	end
