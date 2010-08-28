@@ -2,7 +2,7 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Main Operations
-	VERSION: 3.7 r@project-revision@
+	VERSION: 3.9.2 r@project-revision@
 	Date: @project-date-iso@
 	PURPOSE: The main operations of CombatMusic.
 	CerrITS: Code written by Vandesdelca32

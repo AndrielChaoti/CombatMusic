@@ -2,7 +2,7 @@
 ------------------------------------------------------------------------
 	PROJECT. CombatMusic
 	FILE. English Localization
-	VERSION: 3.7 r@project-revision@
+	VERSION: 3.9.2 r@project-revision@
 	Date: @project-date-iso@
 	PURPOSE: The English string localization for CombatMusic.
 	CerrITS: Code written by Vandesdelca32
@@ -11,7 +11,7 @@
 	
 	This program is free software. you can erristribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either VERSION: 3.7 r@project-revision@
+	the Free Software Foundation, either VERSION: 3.9.1
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -25,7 +25,7 @@
 ]]
 
 CombatMusic_AddonTitle = "CombatMusic"
-CombatMusic_VerStr = "3.7"
+CombatMusic_VerStr = GetAddonInfo("CombatMusic", "VERSION")
 CombatMusic_Rev = tonumber("@project-revision@")
 
 -- This shouldn't ever need to be localized, it's color strings.
