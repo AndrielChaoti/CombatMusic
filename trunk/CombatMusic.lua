@@ -44,6 +44,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
 	
 	if DEBUG and CombatMusic_SavedDB.DebugMode then
+		DCF:Clear()
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
 	elseif DEBUG and not DebugMode then
 		return
@@ -206,7 +207,7 @@ function CombatMusic.SlashCommandHandler(args)
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
 		end
 	else
-		Combatmusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
+		CombatMusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
 	end
 end
 
