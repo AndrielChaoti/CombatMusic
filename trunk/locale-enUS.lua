@@ -53,8 +53,8 @@ CombatMusic_Messages = {
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
 	["DebugMessages"] = {
 		["DebugLoaded"] = "Addon loaded in debug mode. Type ".. CombatMusic_Colors.var .. "/cm debug off" .. CombatMusic_Colors.close .." to disable.",
-		["DebugOn"] = "Debug mode has been " .. CombatMusic_Colors.var .. "enabled." .. CombatMusic_Colors.close .. " Type " .. CombatMusic_Colors.var .. "/cm debug off" .. CombatMusic_Colors.close .. " to disable.",
-		["DebugOff"] = "Debug mode has been " .. CombatMusic_Colors.var .. "disabled." .. CombatMusic_Colors.close .. ".",
+		["DebugOn"] = "Debug mode has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ". Type " .. CombatMusic_Colors.var .. "/cm debug off" .. CombatMusic_Colors.close .. " to disable.",
+		["DebugOff"] = "Debug mode has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
 		},
 	-- Slash command help list.
 	["SlashHelp"] = {
@@ -81,6 +81,7 @@ CombatMusic_Messages = {
 		["NewBosses"] = "New boss count set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["CurMusicVol"] = "Current music volume is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["SetMusicVol"] = "In combat music volume set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
+		["CurrentVerHelp"] = "Version: " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " - Help:"
 	},
 }
 
