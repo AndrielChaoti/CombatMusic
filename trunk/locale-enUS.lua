@@ -2,7 +2,6 @@
 ------------------------------------------------------------------------
 	PROJECT. CombatMusic
 	FILE. English Localization
-	VERSION: 3.9.2 r@project-revision@
 	Date: @project-date-iso@
 	PURPOSE: The English string localization for CombatMusic.
 	CerrITS: Code written by Vandesdelca32
