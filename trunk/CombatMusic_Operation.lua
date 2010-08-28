@@ -40,6 +40,10 @@ function CombatMusic.enterCombat()
 	
 	-- Check the player's target
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
+	-- Set the timer to check the target every 0.5 seconds:
+	if not CombatMusic.Info["BossFight"] then
+		CombatMusic.Info["TargetUpdateTimer"] = CobmatMusic.SetTimer(0.5, CombatMusic.CheckTarget, true)
+	end
 	
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
@@ -98,8 +102,11 @@ function CombatMusic.leaveCombat(isDisabling)
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 		end
 	end
+	
+	CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
+	CombatMusic.Info.TargetUpdateTimer = nil
 	
 end
 
@@ -127,8 +134,10 @@ function CombatMusic.GameOver()
 	end
 	
 	-- Clear those vars, we're not in combat anymore...
+	CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
+	CombatMusic.Info.TargetUpdateTimer = nil
 	
 end
 
@@ -284,3 +293,51 @@ function CombatMusic.ShowHelp()
 	CombatMusic_HelpFrame.Show()
 end
 
+
+-- Timer lib functions:
+
+-- The code below was brought to you in part by the author of Hack.
+
+
+if CombatMusic.SetTimer then return end
+local timers = {}
+
+function CombatMusic.SetTimer(interval, callback, recur, ...)
+   local timer = {
+      interval = interval,
+      callback = callback,
+      recur = recur,
+      update = 0,
+      ...
+   }
+  timers[timer] = timer
+   return timer
+end
+
+function CombatMusic.KillTimer(timer)
+   timers[timer] = nil
+end
+
+-- How often to check timers. Lower values are more CPU intensive.
+local granularity = 0.1
+
+local totalElapsed = 0
+local function OnUpdate(self, elapsed)
+   totalElapsed = totalElapsed + elapsed
+   if totalElapsed > granularity then
+      for k,t in pairs(timers) do
+         t.update = t.update + totalElapsed
+         if t.update > t.interval then
+            local success, rv = pcall(t.callback, unpack(t))
+            if not rv and t.recur then
+               t.update = 0
+            else
+               timers[t] = nil
+               if not success then CobmatMusic.PrintMessage("Timer Callback failed:" .. rv , true, true) end
+            end
+         end
+      end
+      totalElapsed = 0
+   end
+end
+CreateFrame('Frame'):SetScript('OnUpdate', OnUpdate)
