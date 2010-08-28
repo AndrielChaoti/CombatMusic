@@ -224,9 +224,6 @@ function CombatMusic.CheckTarget(unit)
 	-- Make those checks
 	targetInfo.level["adjusted"] = targetInfo.level.raw()
 	-- Checking the mob type, normal mobs aren't bosses...
-	CombatMusic.PrintMessage("MobType:" .. targetInfo.mobType() or "nil", false, true)
-	CombatMusic.PrintMessage("Level:" .. targetInfo.level.raw() or "nil", false, true)
-	CombatMusic.PrintMessage("Flagged?" .. (targetInfo.isPvP or "nil") .. " " .. (targetInfo.isPlayer or "nil"), false, true)
 	if targetInfo.mobType() ~= 1 then
 	
 		-- Give it a 3 level bonus for being an elite, worldbosses have -1 for a level, and that's checked later.
@@ -271,9 +268,15 @@ function CombatMusic.CheckTarget(unit)
 	if reason == "" then
 		reason = "No critera met(" .. targetInfo.level.adjusted .. ")"
 	end
+	--[[
+	MobType: <>
+	Level: <>
+	Flagged/Player: <> <>
+	IsBoss: <>:<>
+	]]
+	CombatMusic.PrintMessage("MobType: " .. (targetInfo.mobType() or "nil") .. "\n" .. "Level: " .. (targetInfo.level.raw() or "nil") .. "\n" .. "Flagged/Player: " .. (targetInfo.isPvP or "nil") .. " " .. (targetInfo.isPlayer or "nil") .. "\n" .. "IsBoss: " .. (tostring(isBoss) or "nil") .. ":" .. reason, false, true)
 	targetInfo = nil
 	playerInfo = nil
-	CombatMusic.PrintMessage("IsBoss: " .. (tostring(isBoss) or "nil") .. ":" .. reason, false, true)
 	return isBoss
 	
 end
