@@ -47,10 +47,15 @@ CombatMusic_Messages = {
 		["NotImplemented"] = "The feature you are trying to use has not been implemented yet.",
 		["Volume"] = "Music volume can only be set between the values of " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. " and " .. CombatMusic_Colors.var .. "1" .. CombatMusic_Colors.close .. ".",
 		["BiggerThan0"] = "The value you entered must be bigger than " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. ".",
+		["OnOrOff"] = "Please use " .. CombatMusic_Colors.var .. "on" .. CombatMusic_Colors.close .. " or " .. CombatMusic_Colors.var .. "off" .. CombatMusic_Colors.close .. ".",
 	},
 	
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
-	["DebugMessages"] = {},
+	["DebugMessages"] = {
+		["DebugLoaded"] = "Addon loaded in debug mode. Type ".. CombatMusic_Colors.var .. "/cm debug off" .. CombatMusic_Colors.close .." to disable.",
+		["DebugOn"] = "Debug mode has been " .. CombatMusic_Colors.var .. "enabled." .. CombatMusic_Colors.close .. " Type " .. CombatMusic_Colors.var .. "/cm debug off" .. CombatMusic_Colors.close .. " to disable.",
+		["DebugOff"] = "Debug mode has been " .. CombatMusic_Colors.var .. "disabled." .. CombatMusic_Colors.close .. ".",
+		},
 	-- Slash command help list.
 	["SlashHelp"] = {
 		["/cm help"] = "Shows this text.",
@@ -59,7 +64,9 @@ CombatMusic_Messages = {
 		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
 		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm debug [on|off]"] = "Sets Debug mode on or off, printing debug messages to your chat frames.",
 		["/cm reset"] = "Resets CombatMusic to default settings. RELAODS YOUR UI!",
+		
 	},
 	-- Other Messages
 	["OtherMessages"] = {
@@ -83,6 +90,7 @@ CombatMusic_SlashArgs = {
 	["Enable"]  = "on",
 	["Disable"] = "off",
 	--["Config"]  = "config",
+	["Debug"] = "debug",
 	["BattleCount"] = "battles",
 	["BossCount"] = "bosses",
 	["Reset"] = "reset",

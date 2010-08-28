@@ -95,6 +95,7 @@ function CombatMusic_OnEvent(self, event, ...)
 	if event == "ADDON_LOADED" and arg1 == "CombatMusic" then
 		-- The addon was loaded.
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
+		CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
 		-- Check to see if the vars were actually loaded, otherwise set defaults.
 		if not CombatMusic_SavedDB then
 			CombatMusic.SetDefaults()
@@ -193,6 +194,19 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.SetMusicVol, arg))
 			end
 		end
+	elseif command == CombatMusic_SlashArgs.Debug then
+		-- Debug mode slash command
+		if arg == "off" then
+			CombatMusic_SavedDB.DebugMode = false
+			CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugOff)
+		elseif arg == "on" then
+			CombatMusic_SavedDB.DebugMode = true
+			CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugOn)
+		else
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
+		end
+	else
+		Combatmusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
 	end
 end
 
