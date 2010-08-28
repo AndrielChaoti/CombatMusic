@@ -42,7 +42,7 @@ function CombatMusic.enterCombat()
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	-- Set the timer to check the target every 0.5 seconds:
 	if not CombatMusic.Info["BossFight"] then
-		CombatMusic.Info["TargetUpdateTimer"] = CombatMusic.SetTimer(0.5, CombatMusic.CheckTarget, true)
+		CombatMusic.Info["TargetUpdateTimer"] = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true)
 	end
 	
 	-- Change the CVars to what they need to be
@@ -74,6 +74,7 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		return true
 	end
 end
 
@@ -342,7 +343,6 @@ local function OnUpdate(self, elapsed)
                timers[t] = nil
                if not success then CobmatMusic.PrintMessage("Timer Callback failed:" .. rv , true, true) end
             end
-				return rv
          end
       end
       totalElapsed = 0
