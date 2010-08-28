@@ -103,7 +103,9 @@ function CombatMusic.leaveCombat(isDisabling)
 		end
 	end
 	
-	CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	if CombatMusic.Info.TargetUpdateTimer then
+		CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
 	CombatMusic.Info.TargetUpdateTimer = nil
@@ -134,7 +136,9 @@ function CombatMusic.GameOver()
 	end
 	
 	-- Clear those vars, we're not in combat anymore...
-	CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	if CombatMusic.Info.TargetUpdateTimer then
+		CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
 	CombatMusic.Info.TargetUpdateTimer = nil
@@ -338,6 +342,7 @@ local function OnUpdate(self, elapsed)
                timers[t] = nil
                if not success then CobmatMusic.PrintMessage("Timer Callback failed:" .. rv , true, true) end
             end
+				return rv
          end
       end
       totalElapsed = 0
