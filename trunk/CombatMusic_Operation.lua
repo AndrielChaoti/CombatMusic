@@ -42,7 +42,7 @@ function CombatMusic.enterCombat()
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	-- Set the timer to check the target every 0.5 seconds:
 	if not CombatMusic.Info["BossFight"] then
-		CombatMusic.Info["TargetUpdateTimer"] = CobmatMusic.SetTimer(0.5, CombatMusic.CheckTarget, true)
+		CombatMusic.Info["TargetUpdateTimer"] = CombatMusic.SetTimer(0.5, CombatMusic.CheckTarget, true)
 	end
 	
 	-- Change the CVars to what they need to be
