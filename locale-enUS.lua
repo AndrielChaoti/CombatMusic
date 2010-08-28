@@ -25,7 +25,7 @@
 ]]
 
 CombatMusic_AddonTitle = "CombatMusic"
-CombatMusic_VerStr = GetAddonInfo("CombatMusic", "VERSION")
+CombatMusic_VerStr = GetAddOnMetadata("CombatMusic", "VERSION")
 CombatMusic_Rev = tonumber("@project-revision@")
 
 -- This shouldn't ever need to be localized, it's color strings.
