@@ -27,9 +27,9 @@
 CombatMusic = {}
 CombatMusic_SavedDB = {}
 
---@debug@
+--@alpha@
 CombatMusic_SavedDB["DebugMode"] = true
---@end-debug@
+--@end-alpha@
 
 
 -- Your standard print message function
