@@ -74,6 +74,9 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		if CombatMusic.Info.TargetUpdateTimer then
+			CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+		end
 		return true
 	end
 end
@@ -103,6 +106,7 @@ function CombatMusic.leaveCombat(isDisabling)
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 		end
 	end
+	
 	
 	if CombatMusic.Info.TargetUpdateTimer then
 		CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
@@ -295,12 +299,6 @@ function CombatMusic.GetSavedStates()
 	-- Music Volume?
 	CombatMusic.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
 end
-
--- Ugh, Show the /command help for the noobies.
-function CombatMusic.ShowHelp()
-	CombatMusic_HelpFrame.Show()
-end
-
 
 -- Timer lib functions:
 
