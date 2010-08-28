@@ -5,6 +5,8 @@
 			<OnEvent>CombatMusic_OnEvent(self, event, ...)</OnEvent>
 		</Scripts>
 	</Frame>
+	<!--
 	<Frame name="CombatMusic_Config" hidden="true" parent="UIParent">
 	</Frame>
+	-->
 </Ui>
