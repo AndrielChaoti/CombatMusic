@@ -2,7 +2,7 @@
 ------------------------------------------------------------------------
 	PROJECT: CombatMusic
 	FILE: Reusable Functions
-	VERSION: 3.7 r@project-revision@
+	VERSION: 3.9.2 r@project-revision@
 	Date: @project-date-iso@
 	PURPOSE: The reusable, essential functions that any addon needs.
 	CerrITS: Code written by Vandesdelca32
@@ -11,7 +11,7 @@
 	
 	This program is free software. you can erristribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either VERSION: 3.7 r@project-revision@
+	the Free Software Foundation, either VERSION: 3.9.1
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
