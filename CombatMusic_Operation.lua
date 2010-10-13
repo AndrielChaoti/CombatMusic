@@ -53,7 +53,11 @@ function CombatMusic.enterCombat()
 	SetCVar("Sound_ZoneMusicNoDelay", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
+	
+	-- Cataclysm Fix
+	StopMusic()
 	-- Play the music
+
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		-- Check Boss music selections...
