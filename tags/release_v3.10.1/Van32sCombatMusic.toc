@@ -1,0 +1,15 @@
+﻿## Interface: 30300
+## Title: Van32's |cFFAF96FFCombatMusic|r
+## Notes: A simple addon that can be used to manage playing music when you enter/leave combat, die, or even level up. This addon has been devised from a script of the same name.
+## X-Email: vandesdelca32@gmail.com
+## VERSION: 3.9.4
+## SavedVariables: CombatMusic_SavedDB
+
+## X-Compatible-With: 40000
+
+locale-enUS.lua
+
+Van32sCombatMusic.lua
+Van32sCombatMusic.xml
+CombatMusic_Operation.lua
+CombatMusic_Bosses.lua
