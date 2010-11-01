@@ -9,7 +9,7 @@
 
 locale-enUS.lua
 
-CombatMusic.lua
-CombatMusic.xml
+Van32sCombatMusic.lua
+Van32sCombatMusic.xml
 CombatMusic_Operation.lua
 CombatMusic_Bosses.lua
