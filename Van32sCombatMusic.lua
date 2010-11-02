@@ -1,10 +1,10 @@
 ﻿--[[
 ------------------------------------------------------------------------
-	PROJECT: CombatMusic
-	FILE: Reusable Functions
+	Project: Van32sCombatMusic
+	File: Reusable Functions, @file-revision@
 	Date: @project-date-iso@
-	PURPOSE: The reusable, essential functions that any addon needs.
-	CerrITS: Code written by Vandesdelca32
+	Purpose: The reusable, essential functions that any addon needs.
+	Credits: Code written by Vandesdelca32
 
 	Copyright (c) 2010 Vandesdelca32
 
@@ -27,12 +27,13 @@
 ]]
 
 CombatMusic = {}
---CombatMusic_SavedDB = {}
---CombatMusic_BossList = {}
-
 --@alpha@
-CombatMusic_SavedDB["DebugMode"] = true
---@end-alpha@
+CombatMusic_DebugMode = true
+--@end-alpha
+
+--[===[@non-alpha@ 
+CombatMusic_DebugMode == false
+--@end-non-alpha@]===]
 
 
 -- Your standard print message function
@@ -46,7 +47,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 
 	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
 
-	if DEBUG and CombatMusic_SavedDB.DebugMode then
+	if DEBUG and CombatMusic_DebugMode then
 		DCF:Clear()
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
 	elseif DEBUG and not DebugMode then
@@ -62,6 +63,26 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	DCF:AddMessage(outMessage)
 end
 
+function CombatMusic.CheckSettingsLoaded()
+	local x
+	if not CombatMusic_SavedDB then
+		CombatMusic.SetDefaults()
+		x = true
+	end
+	
+	if not CombatMusic_BossList then
+		CombatMusic_BossList = {}
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
+		x = true
+	end
+	
+	-- Don't spam me out! Quit the function if defaults had to be loaded
+	if x then return end
+	
+	if CombatMusic_SavedDB and CombatMusic_BossList then
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.VarsLoaded)
+	end
+end
 
 -- Sets the CombatMusic settings to default values
 function CombatMusic.SetDefaults()
@@ -79,15 +100,17 @@ function CombatMusic.SetDefaults()
 			["Bosses"] = 0,
 		},
 		["MusicVolume"] = 0.85,
-		["SeenHelp"] = false,
 		["timeOuts"] = {
 			["Fanfare"] = 30,
 			["GameOver"] = 30,
 		},
-		["DebugMode"] = false,
 	}
+	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
+	
 	CombatMusic_BossList = {}
+	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
 end
+
 
 
 -- Event Handling function
@@ -96,16 +119,12 @@ function CombatMusic_OnEvent(self, event, ...)
 	--CombatMusic.PrintMessage(format("Event. %s", event or "nil"), false, true)
 	--CombatMusic.PrintMessage(..., false, true)
 	local arg1 = ...
-	if event == "ADDON_LOADED" and arg1 == "CombatMusic" then
+	if event == "ADDON_LOADED" and arg1 == "Van32sCombatMusic" then
 		-- The addon was loaded.
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
 		CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
-		-- Check to see if the vars were actually loaded, otherwise set defaults.
-		if not CombatMusic_SavedDB or not CombatMusic_BossList then
-			CombatMusic.SetDefaults()
-		else
-			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.VarsLoaded)
-		end
+		-- Do a settings Check
+		CombatMusic.CheckSettingsLoaded()
 		return
 	elseif event == "PLAYER_LEVEL_UP" then
 		CombatMusic.LevelUp()
@@ -225,10 +244,10 @@ function CombatMusic.SlashCommandHandler(args)
 	elseif command == CombatMusic_SlashArgs.Debug then
 		-- Debug mode slash command
 		if arg == "off" then
-			CombatMusic_SavedDB.DebugMode = false
+			CombatMusic_DebugMode = false
 			CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugOff)
 		elseif arg == "on" then
-			CombatMusic_SavedDB.DebugMode = true
+			CombatMusic_DebugMode = true
 			CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugOn)
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
@@ -263,11 +282,11 @@ function CombatMusic_OnLoad(self)
 
 	-- Static Popup for reset
 	StaticPopupDialogs["COMBATMUSIC_RESET"] = {
-		text = CombatMusic_Messages.OtherMessages.LoadDefaults,
+		text = CombatMusic_Messages.OtherMessages.ResetDialog,
 		button1 = OKAY,
 		button2 = CANCEL,
 		OnAccept = function()
-			CombatMusic.LoadDefaults()
+			CombatMusic.SetDefaults()
 			ReloadUI()
 		end,
 		whileDead = true,

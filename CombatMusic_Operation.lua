@@ -1,27 +1,27 @@
 ﻿--[[
 ------------------------------------------------------------------------
-	PROJECT: CombatMusic
-	FILE: Main Operations
+	Project: Van32sCombatMusic
+	File: Main Operations, @file-revision@
 	Date: @project-date-iso@
-	PURPOSE: The main operations of CombatMusic.
-	CerrITS: Code written by Vandesdelca32
+	Purpose: The main operations of CombatMusic.
+	Credits: Code written by Vandesdelca32
 	
 	Copyright (c) 2010 Vandesdelca32
 	
-    This file is part of CombatMusic.
+		This file is part of CombatMusic.
 
-    CombatMusic is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+		CombatMusic is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
 
-    CombatMusic is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+		CombatMusic is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with CombatMusic.  If not, see <http://www.gnu.org/licenses/>.
+		You should have received a copy of the GNU General Public License
+		along with CombatMusic.  If not, see <http://www.gnu.org/licenses/>.
 
 ------------------------------------------------------------------------
 ]]
@@ -50,7 +50,7 @@ function CombatMusic.enterCombat()
 	
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
-	SetCVar("Sound_ZoneMusicNoDelay", "1")
+	--SetCVar("Sound_ZoneMusicNoDelay", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
 	
@@ -59,17 +59,23 @@ function CombatMusic.enterCombat()
 	-- Play the music
 
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	if CombatMusic.Info.BossFight then
-		-- Check Boss music selections...
-		if CombatMusic.BossMusicSelections then
-			if CombatMusic.BossMusicSelections[UnitName('target')] then
-				PlayMusic(CombatMusic.BossMusicSelections[UnitName('target')])
-				return
-			elseif CombatMusic.BossMusicSelections[UnitName('focustarget')] then
-				PlayMusic(CombatMusic.BossMusicSelections[UnitName('focustarget')])
-				return
-			end
+	
+	-- Check Boss music selections...
+	if CombatMusic_BossList then
+		if CombatMusic_BossList[UnitName('target')] then
+			PlayMusic(CombatMusic_BossList[UnitName('target')])
+			CombatMusic.Info.BossFight = true
+			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName('target')]), false, true)
+			return
+		elseif CombatMusic_BossList[UnitName('focustarget')] then
+			PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
+			CombatMusic.Info.BossFight = true
+			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
+			return
 		end
+		CombatMusic.PrintMessage("Target not on BossList", false, true)
+	end
+	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 	else
 		PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.numSongs.Battles)))
@@ -91,12 +97,12 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		-- Check Boss music selections...
-		if CombatMusic.BossMusicSelections then
-			if CombatMusic.BossMusicSelections[UnitName('target')] then
-				PlayMusic(CombatMusic.BossMusicSelections[UnitName('target')])
+		if CombatMusic_BossList then
+			if CombatMusic_BossList[UnitName('target')] then
+				PlayMusic(CombatMusic_BossList[UnitName('target')])
 				return
-			elseif CombatMusic.BossMusicSelections[UnitName('focustarget')] then
-				PlayMusic(CombatMusic.BossMusicSelections[UnitName('focustarget')])
+			elseif CombatMusic_BossList[UnitName('focustarget')] then
+				PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
 				return
 			end
 		end
@@ -122,7 +128,7 @@ function CombatMusic.leaveCombat(isDisabling)
 	StopMusic()
 	-- Left Combat, Restore states.
 	SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
-	SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
+	--SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
 	SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
 	
 	-- Check for boss fight, and if the user wants to hear it...
@@ -154,7 +160,7 @@ function CombatMusic.GameOver()
 	if CombatMusic.Info.InCombat then
 		-- Left Combat, Restore states.
 		SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
-		SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
+		--SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
 		SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
 	end
 	
@@ -206,8 +212,8 @@ function CombatMusic.CheckTarget(unit)
 	local isBoss = false
 	
 	-- It's automatically a boss if the target is on the list, provided the unit is in combat.
-	if CombatMusic.BossMusicSelections then
-		if CombatMusic.BossMusicSelections[UnitName(unit)] then
+	if CombatMusic_BossList then
+		if CombatMusic_BossList[UnitName(unit)] then
 			isBoss = true
 			return isBoss
 		end
@@ -330,7 +336,7 @@ function CombatMusic.GetSavedStates()
 	-- Music was turned on?
 	CombatMusic.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
 	-- Music was looping?
-	CombatMusic.Info["LoopMusic"] = GetCVar("Sound_ZoneMusicNoDelay") or "1"
+	--CombatMusic.Info["LoopMusic"] = GetCVar("Sound_ZoneMusicNoDelay") or "1"
 	-- Music Volume?
 	CombatMusic.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
 end
