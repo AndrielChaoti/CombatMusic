@@ -74,7 +74,9 @@ CombatMusic_Messages = {
 	["OtherMessages"] = {
 		["AddonLoaded"] = "CombatMusic version " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " successfully loaded! " .. CombatMusic_Colors.var .. "/combatmusic" .. CombatMusic_Colors.close .. " shows command help.",
 		["VarsLoaded"] = "Configuration Loaded.",
-		["LoadDefaults"] = "No settings found, loading default settings...",
+		["SongListLoaded"] = "Boss defines loaded.",
+		["LoadDefaults"] = "Are you sure you want to reset " .. CombatMusic_AddonTitle .. " settings?\n Doing so will reload your interface.\n\n".. CombatMusic_Colors.err .. "WARNING!" .. CombatMusic_Colors.close .."\nThis action will erase your custom boss defines, and is irreversable!"
+		["SongListDefaults"] = "Song List not found. Loading defaults.",
 		["Enabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ".",
 		["Disabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
 		["BattleCount"] = "Current number of battle songs is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
@@ -84,6 +86,7 @@ CombatMusic_Messages = {
 		["CurMusicVol"] = "Current music volume is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["SetMusicVol"] = "In combat music volume set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["CurrentVerHelp"] = "Version: " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " - Help:"
+    
 	},
 }
 

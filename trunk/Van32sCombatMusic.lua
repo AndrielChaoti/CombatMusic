@@ -5,29 +5,30 @@
 	Date: @project-date-iso@
 	PURPOSE: The reusable, essential functions that any addon needs.
 	CerrITS: Code written by Vandesdelca32
-	
+
 	Copyright (c) 2010 Vandesdelca32
-	
-    This file is part of CombatMusic.
 
-    CombatMusic is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+		This file is part of CombatMusic.
 
-    CombatMusic is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+		CombatMusic is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with CombatMusic.  If not, see <http://www.gnu.org/licenses/>.
+		CombatMusic is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+
+		You should have received a copy of the GNU General Public License
+		along with CombatMusic.  If not, see <http://www.gnu.org/licenses/>.
 
 ------------------------------------------------------------------------
 ]]
 
 CombatMusic = {}
-CombatMusic_SavedDB = {}
+--CombatMusic_SavedDB = {}
+--CombatMusic_BossList = {}
 
 --@alpha@
 CombatMusic_SavedDB["DebugMode"] = true
@@ -39,23 +40,23 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	-- The typical args check
 	local DCF = DEFAULT_CHAT_FRAME
 	assert(DCF, "Cannot find DEFAULT_CHAT_FRAME.")
-	
+
 	if message == "" then message = nil end
 	assert(message, "Usage. PrintMessage(message[, isError[, DEBUG]])")
-	
+
 	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
-	
+
 	if DEBUG and CombatMusic_SavedDB.DebugMode then
 		DCF:Clear()
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
 	elseif DEBUG and not DebugMode then
 		return
 	end
-	
+
 	if isError then
 		outMessage = outMessage .. CombatMusic_Messages.ErrorHeader
 	end
-	
+
 	outMessage = outMessage .. message
 
 	DCF:AddMessage(outMessage)
@@ -64,8 +65,7 @@ end
 
 -- Sets the CombatMusic settings to default values
 function CombatMusic.SetDefaults()
-	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
-	
+
 	-- Load the default settings for CombatMusic
 	CombatMusic_SavedDB = {
 		["Enabled"] = true, 
@@ -86,9 +86,10 @@ function CombatMusic.SetDefaults()
 		},
 		["DebugMode"] = false,
 	}
+	CombatMusic_BossList = {}
 end
-	
-	
+
+
 -- Event Handling function
 function CombatMusic_OnEvent(self, event, ...)
 	-- Debug Messages
@@ -100,7 +101,7 @@ function CombatMusic_OnEvent(self, event, ...)
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
 		CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
 		-- Check to see if the vars were actually loaded, otherwise set defaults.
-		if not CombatMusic_SavedDB then
+		if not CombatMusic_SavedDB or not CombatMusic_BossList then
 			CombatMusic.SetDefaults()
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.VarsLoaded)
@@ -140,22 +141,36 @@ end
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
 	local command, arg = args:match("^(%S*)%s*(.-)$");
+
+	-- /cm help
+	-----------
 	if command == "" or command == CombatMusic_SlashArgs.Help then
 		-- Show /command help
 		CombatMusic.PrintHelp()
+
+	--/cm on
+	--------
 	elseif command == CombatMusic_SlashArgs.Enable then
 		-- Enable CombatMusic
 		CombatMusic_SavedDB.Enabled = true
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Enabled)
+
+	--/cm off
+	---------	
 	elseif command == CombatMusic_SlashArgs.Disable then
 		-- Disable CombatMusic
 		CombatMusic.leaveCombat(true)
 		CombatMusic_SavedDB.Enabled = false
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.Disabled)
+
+	--/cm reset
+	-----------
 	elseif command == CombatMusic_SlashArgs.Reset then
 		-- Reload defaults for CombatMusic
-		CombatMusic.SetDefaults()
-		ReloadUI()
+		StaticPopup_Show("COMBATMUSIC_RESET")
+
+	--/cm battles
+	------------
 	elseif command == CombatMusic_SlashArgs.BattleCount then
 		--Command to set number of battle songs
 		if not tonumber(arg) then
@@ -170,8 +185,11 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
 			end
 		end
+
+	--/cm bosses
+	------------
 	elseif command == CombatMusic_SlashArgs.BossCount then
-	-- Command to set the number of boss songs
+		-- Command to set the number of boss songs
 		if not tonumber(arg) then
 			--Show current setting if arg not provided.
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.numSongs.Bosses))
@@ -184,6 +202,9 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
 			end
 		end
+
+	--/cm volume
+	------------
 	elseif command == CombatMusic_SlashArgs.MusicVol then
 		--Command to change the in-combat music volume
 		if not tonumber(arg) then
@@ -198,6 +219,9 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.SetMusicVol, arg))
 			end
 		end
+		
+	--/cm debug
+	-----------
 	elseif command == CombatMusic_SlashArgs.Debug then
 		-- Debug mode slash command
 		if arg == "off" then
@@ -209,6 +233,8 @@ function CombatMusic.SlashCommandHandler(args)
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
 		end
+		
+	-- Unknown
 	else
 		CombatMusic.PrintMessage(format(CombatMusic_Messages.ErrorMessages.InvalidArg, args), true)
 	end
@@ -225,14 +251,28 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("PLAYER_DEAD")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UNIT_TARGET")
-	
+
 	-- Slash Command listings
 	SLASH_COMBATMUSIC_MAIN1 = "/combatmusic"
 	SLASH_COMBATMUSIC_MAIN2 = "/combat"
 	SLASH_COMBATMUSIC_MAIN3 = "/cm"
 
 	SlashCmdList["COMBATMUSIC_MAIN"] = function(args)
-		CombatMusic.SlashCommandHandler(args)
+	CombatMusic.SlashCommandHandler(args)
 	end
 
+	-- Static Popup for reset
+	StaticPopupDialogs["COMBATMUSIC_RESET"] = {
+		text = CombatMusic_Messages.OtherMessages.LoadDefaults,
+		button1 = OKAY,
+		button2 = CANCEL,
+		OnAccept = function()
+			CombatMusic.LoadDefaults()
+			ReloadUI()
+		end,
+		whileDead = true,
+		timeout = 0,
+		hideOnEscape = true,
+		showAlert = true,
+	}
 end
