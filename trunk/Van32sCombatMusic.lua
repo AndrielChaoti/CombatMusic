@@ -81,6 +81,7 @@ function CombatMusic.CheckSettingsLoaded()
 	
 	if CombatMusic_SavedDB and CombatMusic_BossList then
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.VarsLoaded)
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListLoaded)
 	end
 end
 
