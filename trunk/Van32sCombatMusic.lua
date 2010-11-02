@@ -1,7 +1,7 @@
 ﻿--[[
 ------------------------------------------------------------------------
 	Project: Van32sCombatMusic
-	File: Reusable Functions, @file-revision@
+	File: Reusable Functions, revision @file-revision@
 	Date: @project-date-iso@
 	Purpose: The reusable, essential functions that any addon needs.
 	Credits: Code written by Vandesdelca32
@@ -27,12 +27,12 @@
 ]]
 
 CombatMusic = {}
---@alpha@
+--@alpha@ 
 CombatMusic_DebugMode = true
---@end-alpha
+--@end-alpha@
 
 --[===[@non-alpha@ 
-CombatMusic_DebugMode == false
+CombatMusic_DebugMode = false
 --@end-non-alpha@]===]
 
 
