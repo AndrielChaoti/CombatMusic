@@ -1,7 +1,7 @@
 ﻿--[[
 ------------------------------------------------------------------------
 	Project: Van32sCombatMusic
-	File: Main Operations, @file-revision@
+	File: Main Operations, revision @file-revision@
 	Date: @project-date-iso@
 	Purpose: The main operations of CombatMusic.
 	Credits: Code written by Vandesdelca32
