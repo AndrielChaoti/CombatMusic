@@ -27,7 +27,7 @@
 ]]
 
 CombatMusic_AddonTitle = "CombatMusic"
-CombatMusic_VerStr = GetAddOnMetadata("Van32sCombatMusic", "VERSION")
+CombatMusic_VerStr = GetAddOnMetadata("Van32sCombatMusic", "Version")
 CombatMusic_Rev = tonumber("@project-revision@")
 
 -- This shouldn't ever need to be localized, it's color strings.
@@ -66,18 +66,18 @@ CombatMusic_Messages = {
 		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
 		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
-		["/cm debug [on|off]"] = "Sets Debug mode on or off, printing debug messages to your chat frames.",
-		["/cm reset"] = "Resets CombatMusic to default settings. RELAODS YOUR UI!",
+		["/cm debug [on|off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
+		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",
 		
 	},
 	-- Other Messages
 	["OtherMessages"] = {
 		["AddonLoaded"] = "CombatMusic version " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " successfully loaded! " .. CombatMusic_Colors.var .. "/combatmusic" .. CombatMusic_Colors.close .. " shows command help.",
 		["VarsLoaded"] = "Configuration Loaded.",
-		["SongListLoaded"] = "Boss defines loaded.",
+		["SongListLoaded"] = "Song list loaded.",
 		["LoadDefaults"] = "Configuration not set. Loading defaults...",
 		["SongListDefaults"] = "Song List not found. Loading defaults...",
-		["ResetDialog"] = "Are you sure you want to reset " .. CombatMusic_AddonTitle .. " settings?\n Doing so will reload your interface.\n\n".. CombatMusic_Colors.err .. "WARNING!" .. CombatMusic_Colors.close .."\nThis action will erase your custom boss defines, and is irreversable!",
+		["ResetDialog"] = CombatMusic_Colors.err .."WARNING!\n".. CombatMusic_colors.close .. "Resetting ".. CombatMusic_AddonTitle .. " will erase all of your settings and custom bosses!\nThis cannot be undone!\n\nAre you sure you want to reset ".. CombatMusic_AddonTitle .."?\n".. CombatMusic_colors.var .."(An interface reload is required.)" .. CombatMusic_Colors.close,
 		["Enabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ".",
 		["Disabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
 		["BattleCount"] = "Current number of battle songs is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
