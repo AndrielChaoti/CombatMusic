@@ -401,7 +401,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
 	-- Because of stupid floating point integers:
-	if CurVol < 0
+	if CurVol < 0 then
 		CurVol = 0
 	end
 	
