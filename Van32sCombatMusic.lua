@@ -35,6 +35,7 @@ CombatMusic_DebugMode = true
 CombatMusic_DebugMode = false
 --@end-non-alpha@]===]
 
+local currentSVVersion = "1"
 
 -- Your standard print message function
 function CombatMusic.PrintMessage(message, isError, DEBUG)
@@ -63,33 +64,40 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	DCF:AddMessage(outMessage)
 end
 
+-- Check that settings are loaded properly, and are up to date
 function CombatMusic.CheckSettingsLoaded()
-	local x
+	local x1 = 1
+	local x2 = 1
+	
 	if not CombatMusic_SavedDB then
 		CombatMusic.SetDefaults()
-		x = true
+		x1 = nil
+	elseif CombatMusic_SavedDB.SVVersion ~= currentSVVersion then
+		CombatMusic.SetDefaults(1)
+		x1 = nil
 	end
 	
 	if not CombatMusic_BossList then
 		CombatMusic_BossList = {}
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
-		x = true
+		x2 = nil
 	end
 	
-	-- Don't spam me out! Quit the function if defaults had to be loaded
-	if x then return end
-	
-	if CombatMusic_SavedDB and CombatMusic_BossList then
+	-- Spamcheck, if they're not 1 then don't spam
+	if x1 then
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.VarsLoaded)
+	end
+	if x2 then
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListLoaded)
 	end
 end
 
 -- Sets the CombatMusic settings to default values
-function CombatMusic.SetDefaults()
+function CombatMusic.SetDefaults(outOfDate)
 
 	-- Load the default settings for CombatMusic
 	CombatMusic_SavedDB = {
+		["SVVersion"] = currentSVVersion
 		["Enabled"] = true, 
 		["PlayWhen"] = {
 			["LevelUp"] = true,
@@ -105,11 +113,13 @@ function CombatMusic.SetDefaults()
 			["Fanfare"] = 30,
 			["GameOver"] = 30,
 		},
+		["FadeTime"] = 5,
 	}
 	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
-	
-	CombatMusic_BossList = {}
-	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
+	if not outOfDate then
+		CombatMusic_BossList = {}
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
+	end
 end
 
 
@@ -199,7 +209,7 @@ function CombatMusic.SlashCommandHandler(args)
 		else
 			-- Set the number of battles, if arg > 0
 			if tonumber(arg) <= 0 then
-				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0)
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
 				CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
@@ -216,7 +226,7 @@ function CombatMusic.SlashCommandHandler(args)
 		else
 			-- Set the number of boss batles, if arg > 0
 			if tonumber(arg) <= 0 then
-				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0)
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
 				CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
@@ -233,10 +243,28 @@ function CombatMusic.SlashCommandHandler(args)
 		else
 			--Change the setting if arg is in the accepted range.
 			if tonumber(arg) < 0 or tonumber(arg) > 1 then
-				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.Volume)
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.Volume, true)
 			else
 				CombatMusic_SavedDB.MusicVolume = tostring(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.SetMusicVol, arg))
+			end
+		end
+	
+	--/cm fade
+	----------
+	elseif command == CombatMusic_SlashArgs.Fade then
+		-- Command to change fadeout timer
+		if not tonumber(arg) then
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.FadeTime))
+		else
+			if tonumber(arg) < 0 then
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
+			elseif tonumber(arg) == 0 then
+				CombatMusic_SavedDB.FadeTime = 0
+				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingDisable)
+			else
+				CombatMusic_SavedDB.FadeTime = tonumber(arg)
+				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingSet, arg)
 			end
 		end
 		

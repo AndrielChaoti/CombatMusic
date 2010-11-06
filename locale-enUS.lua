@@ -66,9 +66,9 @@ CombatMusic_Messages = {
 		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
 		["/cm battles [value]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm fade [value]"] = "Sets the fade timer for playing music. Setting to 0 will disable fading. If value is not provided; shows the current value.",
 		["/cm debug [on|off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
-		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",
-		
+		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
 	-- Other Messages
 	["OtherMessages"] = {
@@ -86,8 +86,10 @@ CombatMusic_Messages = {
 		["NewBosses"] = "New boss count set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["CurMusicVol"] = "Current music volume is set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
 		["SetMusicVol"] = "In combat music volume set to " .. CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. ".",
-		["CurrentVerHelp"] = "Version: " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " - Help:"
-    
+		["CurrentVerHelp"] = "Version: " .. CombatMusic_Colors.var .. CombatMusic_VerStr .. " r" .. CombatMusic_Rev .. CombatMusic_Colors.close .. " - Help:",
+		["FadingSet"] = "Song fadeout set to " .. CombatMusic_Colors.var .. "%s seconds" .. CombatMusic_Colors.Close .. "."
+		["CurrentFade"] = "Song fadeout is set to " .. CombatMusic_Colors.var .. "%s seconds" .. CombatMusic_Colors.Close .. "."
+		["FadingDisable"] = "Song fadeout disabled.",    
 	},
 }
 
@@ -102,5 +104,6 @@ CombatMusic_SlashArgs = {
 	["BossCount"] = "bosses",
 	["Reset"] = "reset",
 	["MusicVol"] = "volume",
+	["FadeTime"] = "fade",
 }
 	

@@ -125,19 +125,19 @@ function CombatMusic.leaveCombat(isDisabling)
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
-	StopMusic()
-	-- Left Combat, Restore states.
-	SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
-	--SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
-	SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
+
 	
 	-- Check for boss fight, and if the user wants to hear it...
 	if CombatMusic.Info.BossFight and CombatMusic_SavedDB.PlayWhen.CombatFanfare and not isDisabling then
+		StopMusic()
 		-- Yay, play the fanfare.. if it's not on cooldown.
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 		end
+	else
+		-- Left Combat normally, start the fading cycle
+		CombatMusic.FadeOutStart()
 	end
 	
 	
@@ -155,16 +155,15 @@ end
 function CombatMusic.GameOver()
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
-		
-	StopMusic()
-	if CombatMusic.Info.InCombat then
-		-- Left Combat, Restore states.
-		SetCVar("Sound_EnableMusic", CombatMusic.Info.EnabledMusic or "0")
-		--SetCVar("Sound_ZoneMusicNoDelay", CombatMusic.Info.LoopMusic or "1")
-		SetCVar("Sound_MusicVolume", CombatMusic.Info.MusicVolume or "1")
-	end
 	
-
+	StopMusic
+	if CombatMusic.Info.InCombat then
+		--Leaving Combat, restore the saved vars.
+		CombatMusic.RestoreSavedStates()
+	end
+		
+	-- No music fading for game over, so skip that step
+	
 	-- Too bad, play the gameover, if it's not on CD, and the user wants to hear it
 	if CombatMusic_SavedDB.PlayWhen.GameOver then
 		if (not CombatMusic.Info.GameOverCD) or (GetTime() >= CombatMusic.Info.GameOverCD) then
@@ -340,6 +339,57 @@ function CombatMusic.GetSavedStates()
 	-- Music Volume?
 	CombatMusic.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
 end
+
+function CombatMusic.RestoreSavedStates()
+	if not CombatMusic.Info.EnabledMusic then return end
+	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
+	if not CombatMusic.Info.MusicVolume then return end
+	SetCVar("Sound_MusicVolume", tostring(CombatMusic.Info.MusicVolume))
+end
+
+
+-- Fading start
+function CombatMusic.FadeOutStart()
+	local FadeTime = CombatMusic_SavedDB.FadeTime
+	if FadeTime == 0 then 
+		StopMusic()
+	end
+	
+	-- Divide the process up into 20 steps.
+	local interval = FadeTime / 20
+	local volStep = CombatMusic.Info.MusicVolume / 20
+	
+	CombatMusic.Info["FadeTimer"] = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
+	CombatMusic.Info["FadeTimer_MaxVol"] = CombatMusic.Info.MusicVolume
+	CombatMusic.Info["FadeTimer_VolStep"] = volStep
+end
+
+-- Fading function
+function CombatMusic.FadeOutPlayingMusic()
+	-- Set some args
+	local MaxVol = CombatMusic.Info.FadeTimer_MaxVol
+	local CurVol = CombatMusic.Info.FadeTimer_CurVol
+	local Step = CombatMusic.Info.FadeTimer_VolStep
+	
+	-- Check if CurVol is set
+	if not CurVol then
+		CurVol = MaxVol
+	end
+	-- Subtract a step
+	CurVol = CurVol - volStep
+		
+	SetCVar("Sound_MusicVolume", tostring(CurVol))
+	if CurVol <= 0 then
+		CurVol = nil
+		SetCVar("Sound_MusicVolume", "0")
+		StopMusic()
+		CombatMusic.RestoreSavedStates()
+		return true
+	end
+end
+
+
+
 
 -- Timer lib functions:
 
