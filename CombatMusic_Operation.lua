@@ -156,7 +156,7 @@ function CombatMusic.GameOver()
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	
-	StopMusic
+	StopMusic()
 	if CombatMusic.Info.InCombat then
 		--Leaving Combat, restore the saved vars.
 		CombatMusic.RestoreSavedStates()
