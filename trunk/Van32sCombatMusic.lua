@@ -252,7 +252,7 @@ function CombatMusic.SlashCommandHandler(args)
 	
 	--/cm fade
 	----------
-	elseif command == CombatMusic_SlashArgs.Fade then
+	elseif command == CombatMusic_SlashArgs.FadeTime then
 		-- Command to change fadeout timer
 		if not tonumber(arg) then
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.FadeTime))
