@@ -400,6 +400,11 @@ function CombatMusic.FadeOutPlayingMusic()
 	CurVol = CurVol - Step
 	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
+	-- Because of stupid floating point integers:
+	if CurVol < 0
+		CurVol = 0
+	end
+	
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if CurVol <= 0 then
