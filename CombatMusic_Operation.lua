@@ -382,9 +382,9 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
-	
+	CombatMusic.Info.FadeTimer_CurVol = CurVol
 	if CurVol <= 0 then
-		CurVol = nil
+		CombatMusic.Info.FadeTimer_CurVol = nil
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
