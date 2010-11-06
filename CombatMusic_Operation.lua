@@ -374,12 +374,14 @@ function CombatMusic.FadeOutPlayingMusic()
 	
 	-- Check if CurVol is set
 	if not CurVol then
-		CurVol = MaxVol
+		CurVol = tonumber(MaxVol)
 	end
 	-- Subtract a step
 	CurVol = CurVol - Step
-		
+	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
+	
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
+	
 	if CurVol <= 0 then
 		CurVol = nil
 		SetCVar("Sound_MusicVolume", "0")
