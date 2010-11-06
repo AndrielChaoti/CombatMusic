@@ -37,6 +37,16 @@ function CombatMusic.enterCombat()
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	
+	-- Make sure we're not in combat before trying to enter it again
+	if CombatMusic.Info.InCombat then
+		CombatMusic.RestoreSavedStates()
+	end
+	
+	if CombatMusic.Info.FadeTimer then
+		CombatMusic.KillTimer(CombatMusic.Info.FadeTimer)
+		CombatMusic.RestoreSavedStates()
+	end
+
 	-- Save the CVar's last states, before continuing
 	CombatMusic.GetSavedStates()
 	
@@ -356,13 +366,17 @@ function CombatMusic.FadeOutStart()
 		StopMusic()
 		return
 	end
+	-- Check to make sure a fade timer isn't already running.
+	if CombatMusic.Info.FadeTimer then
+		return
+	end
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
-	local volStep = CombatMusic.Info.MusicVolume / 20
+	local volStep = CombatMusic_SavedDB.MusicVolume / 20
 	
 	CombatMusic.Info["FadeTimer"] = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
-	CombatMusic.Info["FadeTimer_MaxVol"] = CombatMusic.Info.MusicVolume
+	CombatMusic.Info["FadeTimer_MaxVol"] = CombatMusic_SavedDB.MusicVolume
 	CombatMusic.Info["FadeTimer_VolStep"] = volStep
 end
 
