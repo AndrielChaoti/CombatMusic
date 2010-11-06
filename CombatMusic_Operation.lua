@@ -353,6 +353,7 @@ function CombatMusic.FadeOutStart()
 	local FadeTime = CombatMusic_SavedDB.FadeTime
 	if FadeTime == 0 then 
 		StopMusic()
+		return
 	end
 	
 	-- Divide the process up into 20 steps.
