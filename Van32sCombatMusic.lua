@@ -264,7 +264,7 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingDisable)
 			else
 				CombatMusic_SavedDB.FadeTime = tonumber(arg)
-				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingSet, arg)
+				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.FadingSet, arg))
 			end
 		end
 		
