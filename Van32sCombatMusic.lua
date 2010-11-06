@@ -49,7 +49,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	outMessage = CombatMusic_Colors.title .. CombatMusic_AddonTitle .. CombatMusic_Colors.close .. ": "
 
 	if DEBUG and CombatMusic_DebugMode then
-		DCF:Clear()
+		--DCF:Clear()
 		outMessage = outMessage .. CombatMusic_Messages.DebugHeader
 	elseif DEBUG and not DebugMode then
 		return
