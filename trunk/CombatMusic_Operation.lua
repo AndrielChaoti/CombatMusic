@@ -367,6 +367,7 @@ function CombatMusic.FadeOutStart()
 	local FadeTime = CombatMusic_SavedDB.FadeTime
 	if FadeTime == 0 then 
 		StopMusic()
+		CombatMusic.RestoreSavedStates()
 		return
 	end
 	-- Check to make sure a fade timer isn't already running.
