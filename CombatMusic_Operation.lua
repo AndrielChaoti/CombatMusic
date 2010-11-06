@@ -121,6 +121,7 @@ end
 function CombatMusic.leaveCombat(isDisabling)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic.Info.InCombat then return end
 	
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
