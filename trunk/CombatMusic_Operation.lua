@@ -376,7 +376,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		CurVol = MaxVol
 	end
 	-- Subtract a step
-	CurVol = CurVol - volStep
+	CurVol = CurVol - Step
 		
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	if CurVol <= 0 then
