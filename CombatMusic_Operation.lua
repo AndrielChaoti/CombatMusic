@@ -42,8 +42,8 @@ function CombatMusic.enterCombat()
 		CombatMusic.RestoreSavedStates()
 	end
 	
-	if CombatMusic.Info.FadeTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.FadeTimer)
+	if CombatMusic.Info.FadeTimerVars.FadeTimer then
+		CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
 		CombatMusic.RestoreSavedStates()
 	end
 
@@ -367,25 +367,26 @@ function CombatMusic.FadeOutStart()
 		return
 	end
 	-- Check to make sure a fade timer isn't already running.
-	if CombatMusic.Info.FadeTimer then
+	if CombatMusic.Info.FadeTimerVars then
 		return
 	end
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
 	local volStep = CombatMusic_SavedDB.MusicVolume / 20
-	
-	CombatMusic.Info["FadeTimer"] = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
-	CombatMusic.Info["FadeTimer_MaxVol"] = CombatMusic_SavedDB.MusicVolume
-	CombatMusic.Info["FadeTimer_VolStep"] = volStep
+	CombatMusic.Info["FadeTimerVars"] = {
+		FadeTimer = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
+		MaxVol = CombatMusic_SavedDB.MusicVolume,
+		VolStep = volStep,
+	}
 end
 
 -- Fading function
 function CombatMusic.FadeOutPlayingMusic()
 	-- Set some args
-	local MaxVol = CombatMusic.Info.FadeTimer_MaxVol
-	local CurVol = CombatMusic.Info.FadeTimer_CurVol
-	local Step = CombatMusic.Info.FadeTimer_VolStep
+	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
+	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
+	local Step = CombatMusic.Info.FadeTimerVars.VolStep
 	
 	-- Check if CurVol is set
 	if not CurVol then
@@ -396,9 +397,9 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
-	CombatMusic.Info.FadeTimer_CurVol = CurVol
+	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if CurVol <= 0 then
-		CombatMusic.Info.FadeTimer_CurVol = nil
+		CombatMusic.Info.FadeTimerVars = {}
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
