@@ -97,7 +97,7 @@ function CombatMusic.SetDefaults(outOfDate)
 
 	-- Load the default settings for CombatMusic
 	CombatMusic_SavedDB = {
-		["SVVersion"] = currentSVVersion
+		["SVVersion"] = currentSVVersion,
 		["Enabled"] = true, 
 		["PlayWhen"] = {
 			["LevelUp"] = true,
