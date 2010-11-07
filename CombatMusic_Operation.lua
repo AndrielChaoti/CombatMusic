@@ -49,7 +49,7 @@ function CombatMusic.enterCombat()
 			CombatMusic.RestoreSavedStates()
 		end
 	end
-
+	
 	-- Save the CVar's last states, before continuing
 	CombatMusic.GetSavedStates()
 	
@@ -63,14 +63,14 @@ function CombatMusic.enterCombat()
 	
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
-	--SetCVar("Sound_ZoneMusicNoDelay", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
+	-- Make sure i'm not fading out music, or already in combat, otherwise, just quit before trying to play new music.
+	if CombatMusic.Info.FadeTimerVars then
+		if CombatMusic.Info.FadeTimerVars.FadeTimer then return end
+	end
 	
-	-- Cataclysm Fix
-	StopMusic()
 	-- Play the music
-
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	
 	-- Check Boss music selections...
