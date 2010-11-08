@@ -49,7 +49,7 @@ function CombatMusic.enterCombat()
 		if CombatMusic.Info.FadeTimerVars.RestoreTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.RestoreTimer)
 		end
-		CombatMusic.FadeTimerVars = nil
+		CombatMusic.Info.FadeTimerVars = nil
 		CombatMusic.RestoreSavedStates()
 	end
 	
