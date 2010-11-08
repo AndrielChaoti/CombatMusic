@@ -69,8 +69,9 @@ function CombatMusic.enterCombat()
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
 	-- Make sure i'm not fading out music, or already in combat, otherwise, just quit before trying to play new music.
-	if CombatMusic.Info.FadeTimerVars then
-		if CombatMusic.Info.FadeTimerVars.FadeTimer then return end
+	if CombatMusic.Info.IsFading then
+		CombatMusic.Info.IsFading = nil
+		return
 	end
 	
 	-- Play the music
@@ -374,7 +375,7 @@ function CombatMusic.FadeOutStart()
 		return
 	end
 	-- Check to make sure a fade timer isn't already running.
-	if CombatMusic.Info.FadeTimerVars then
+	if CombatMusic.Info.IsFading then
 		return
 	end
 	
@@ -386,6 +387,7 @@ function CombatMusic.FadeOutStart()
 		MaxVol = CombatMusic_SavedDB.MusicVolume,
 		VolStep = volStep,
 	}
+	CombatMusic.Info["IsFading"] = true
 end
 
 -- Fading function
@@ -417,6 +419,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
 		CombatMusic.Info.FadeTimerVars["RestoreTimer"] = CombatMusic.SetTimer(2, CombatMusic.RestoreSavedStates)
+		CombatMusic.Info.IsFading = nil
 		return true
 	end
 end
