@@ -81,22 +81,8 @@ function CombatMusic.enterCombat()
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	
 	-- Check Boss music selections...
-	if CombatMusic_BossList then
-		if CombatMusic_BossList[UnitName('target')] then
-			PlayMusic(CombatMusic_BossList[UnitName('target')])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName('target')]), false, true)
-			return
-		elseif CombatMusic_BossList[UnitName('focustarget')] then
-			PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
-			return
-		end
-		CombatMusic.PrintMessage("Target not on BossList", false, true)
-	end
+	local BossList = 	CombatMusic.CheckBossList()
+	if BossList then return end
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 	else
@@ -119,21 +105,32 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		-- Check Boss music selections...
-		if CombatMusic_BossList then
-			if CombatMusic_BossList[UnitName('target')] then
-				PlayMusic(CombatMusic_BossList[UnitName('target')])
-				return
-			elseif CombatMusic_BossList[UnitName('focustarget')] then
-				PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
-				return
-			end
-		end
+		local BossList = CombatMusic.CheckBossList()
+		if BossList then return end
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 		if CombatMusic.Info.UpdateTimers then
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 		end
 		return true
+	end
+end
+
+function CombatMusic.CheckBossList()
+	if CombatMusic_BossList then
+		if CombatMusic_BossList[UnitName('target')] then
+			PlayMusic(CombatMusic_BossList[UnitName('target')])
+			CombatMusic.Info.BossFight = true
+			CombatMusic.Info.InCombat = true
+			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName('target')]), false, true)
+			return true
+		elseif CombatMusic_BossList[UnitName('focustarget')] then
+			PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
+			CombatMusic.Info.BossFight = true
+			CombatMusic.Info.InCombat = true
+			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
+			return true
+		end
 	end
 end
 
@@ -238,13 +235,13 @@ function CombatMusic.CheckTarget(unit)
 	
 	local isBoss = false
 	
-	-- It's automatically a boss if the target is on the list, provided the unit is in combat.
+	--[[ It's automatically a boss if the target is on the list, provided the unit is in combat.
 	if CombatMusic_BossList then
 		if CombatMusic_BossList[UnitName(unit)] then
 			isBoss = true
 			return isBoss
 		end
-	end
+	end]]
 	
 	-- Get all the info we're going to need
 	local targetInfo = {
