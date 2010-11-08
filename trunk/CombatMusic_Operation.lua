@@ -377,6 +377,7 @@ end
 function CombatMusic.RestoreSavedStates()
 	CombatMusic.PrintMessage("RestoreSavedStates", false, true)
 	CombatMusic.Info.FadeTimerVars = nil
+	CombatMusic.Info.RestoreTimer = nil
 	if not CombatMusic.Info.EnabledMusic then return end
 	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
 	if not CombatMusic.Info.MusicVolume then return end
