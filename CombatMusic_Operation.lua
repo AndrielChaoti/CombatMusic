@@ -99,14 +99,16 @@ function CombatMusic.TargetChanged(unit)
 	if CombatMusic.Info.BossFight then return end
 	if not CombatMusic.Info.InCombat then return end
 	
+	-- Check Boss music selections...
+	local BossList = CombatMusic.CheckBossList()
+	if BossList then return end
+		
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit .. "target")
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
-		-- Check Boss music selections...
-		local BossList = CombatMusic.CheckBossList()
-		if BossList then return end
+
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 		if CombatMusic.Info.UpdateTimers then
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
