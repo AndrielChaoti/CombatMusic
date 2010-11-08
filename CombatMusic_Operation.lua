@@ -77,14 +77,16 @@ function CombatMusic.enterCombat()
 	
 	-- Check Boss music selections...
 	local BossList = 	CombatMusic.CheckBossList()
-	if BossList then return end
 	
 	-- Check to see if music is already fading, stop here, if so.
 	if CombatMusic.Info.IsFading then
+		CombatMusic.PrintMessage("IsFading!", false, true)
 		CombatMusic.Info.IsFading = nil
 		CombatMusic.Info.InCombat = true
 		return
 	end
+	
+	if BossList then return end
 	
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
@@ -122,6 +124,7 @@ function CombatMusic.TargetChanged(unit)
 end
 
 function CombatMusic.CheckBossList()
+	CombatMusic.PrintMessage("CheckBossList", false, true)
 	if CombatMusic_BossList then
 		if CombatMusic_BossList[UnitName('target')] then
 			PlayMusic(CombatMusic_BossList[UnitName('target')])
@@ -364,6 +367,7 @@ end
 
 -- Saves music state so we can restore it out of combat
 function CombatMusic.GetSavedStates()
+	CombatMusic.PrintMessage("GetSavedStates", false, true)
 	-- Music was turned on?
 	CombatMusic.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
 	-- Music was looping?
@@ -373,6 +377,7 @@ function CombatMusic.GetSavedStates()
 end
 
 function CombatMusic.RestoreSavedStates()
+	CombatMusic.PrintMessage("RestoreSavedStates", false, true)
 	if not CombatMusic.Info.EnabledMusic then return end
 	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
 	if not CombatMusic.Info.MusicVolume then return end
@@ -382,6 +387,7 @@ end
 
 -- Fading start
 function CombatMusic.FadeOutStart()
+	CombatMusic.PrintMessage("FadeOutStart", false, true)
 	local FadeTime = CombatMusic_SavedDB.FadeTime
 	if FadeTime == 0 then 
 		StopMusic()
@@ -418,7 +424,6 @@ function CombatMusic.FadeOutPlayingMusic()
 	end
 	-- Subtract a step
 	CurVol = CurVol - Step
-	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
 	-- Because of stupid floating point integers:
 	if CurVol <= 0 then
@@ -426,6 +431,8 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
+	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
+		
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if FadeFinished then
