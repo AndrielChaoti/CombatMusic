@@ -51,7 +51,7 @@ function CombatMusic.enterCombat()
 	end
 	
 	if CombatMusic.Info.RestoreTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.RestoreTimer)
+		CombatMusic.KillTimer(CombatMusic.Info.RestoreTimer)
 		CombatMusic.RestoreSavedStates()
 	end
 	-- Save the CVar's last states, before continuing
