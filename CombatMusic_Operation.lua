@@ -79,7 +79,7 @@ function CombatMusic.enterCombat()
 		CombatMusic.PrintMessage("IsFading!", false, true)
 		CombatMusic.Info.IsFading = nil
 		CombatMusic.Info.InCombat = true
-		return
+		if CombatMusic.Info.EnableMusic ~= 0 then return end
 	end
 	
 	if BossList then return end
