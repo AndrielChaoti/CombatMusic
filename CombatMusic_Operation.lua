@@ -45,12 +45,13 @@ function CombatMusic.enterCombat()
 	if CombatMusic.Info.FadeTimerVars then
 		if CombatMusic.Info.FadeTimerVars.FadeTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
-			CombatMusic.Info.FadeTimerVars = nil
 			CombatMusic.RestoreSavedStates()
 		end
 		if CombatMusic.Info.FadeTimerVars.RestoreTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.RestoreTimer)
+			CombatMusic.RestoreSavedStates()
 		end
+		CombatMusic.FadeTimerVars = nil
 	end
 	
 	-- Save the CVar's last states, before continuing
