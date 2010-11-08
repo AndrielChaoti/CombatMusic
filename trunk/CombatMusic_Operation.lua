@@ -45,13 +45,12 @@ function CombatMusic.enterCombat()
 	if CombatMusic.Info.FadeTimerVars then
 		if CombatMusic.Info.FadeTimerVars.FadeTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
-			CombatMusic.RestoreSavedStates()
 		end
 		if CombatMusic.Info.FadeTimerVars.RestoreTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.RestoreTimer)
-			CombatMusic.RestoreSavedStates()
 		end
 		CombatMusic.FadeTimerVars = nil
+		CombatMusic.RestoreSavedStates()
 	end
 	
 	-- Save the CVar's last states, before continuing
@@ -414,7 +413,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if FadeFinished then
-		CombatMusic.Info.FadeTimerVars = nil
+		--CombatMusic.Info.FadeTimerVars = nil
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
 		CombatMusic.Info.FadeTimerVars["RestoreTimer"] = CombatMusic.SetTimer(2, CombatMusic.RestoreSavedStates)
