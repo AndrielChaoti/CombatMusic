@@ -61,8 +61,8 @@ function CombatMusic.enterCombat()
 	-- Set the timer to check the target every 0.5 seconds:
 	if not CombatMusic.Info["BossFight"] then
 		CombatMusic.Info["UpdateTimers"] = {
-			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player")
-			Focus = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus")
+			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
+			Focus = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus"),
 		}
 	end
 	
