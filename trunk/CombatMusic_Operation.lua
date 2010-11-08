@@ -48,6 +48,9 @@ function CombatMusic.enterCombat()
 			CombatMusic.Info.FadeTimerVars = nil
 			CombatMusic.RestoreSavedStates()
 		end
+		if CombatMusic.Info.FadeTimerVars.RestoreTimer then
+			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.RestoreTimer)
+		end
 	end
 	
 	-- Save the CVar's last states, before continuing
@@ -391,6 +394,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
 	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
 	local Step = CombatMusic.Info.FadeTimerVars.VolStep
+	local FadeFinished
 	
 	-- Check if CurVol is set
 	if not CurVol then
@@ -401,17 +405,18 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 	
 	-- Because of stupid floating point integers:
-	if CurVol < 0 then
+	if CurVol <= 0 then
 		CurVol = 0
+		FadeFinished = true
 	end
 	
-	SetCVar("Sound_MusicVolume", tostring(CurVol))
+	SetCVar("Sound_MusicVolume", tostring(ceil(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
-	if CurVol <= 0 then
+	if FadeFinished then
 		CombatMusic.Info.FadeTimerVars = nil
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
-		CombatMusic.RestoreSavedStates()
+		CombatMusic.Info.FadeTimerVars["RestoreTimer"] = CombatMusic.SetTimer(2, CombatMusic.RestoreSavedStates)
 		return true
 	end
 end
