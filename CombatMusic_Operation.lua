@@ -131,6 +131,7 @@ function CombatMusic.CheckBossList()
 			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
 			return true
 		end
+		CombatMusic.PrintMessage("Target not on BossList.", false, true)
 	end
 end
 
