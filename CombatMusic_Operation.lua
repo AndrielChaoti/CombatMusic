@@ -46,7 +46,6 @@ function CombatMusic.enterCombat()
 		if CombatMusic.Info.FadeTimerVars.FadeTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
 		end
-		CombatMusic.Info.FadeTimerVars = nil
 		CombatMusic.RestoreSavedStates()
 	end
 	
@@ -72,9 +71,6 @@ function CombatMusic.enterCombat()
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
 	
-	-- Play the music
-	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	
 	-- Check Boss music selections...
 	local BossList = 	CombatMusic.CheckBossList()
 	
@@ -88,6 +84,8 @@ function CombatMusic.enterCombat()
 	
 	if BossList then return end
 	
+	-- Play the music
+	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 	else
@@ -378,6 +376,7 @@ end
 
 function CombatMusic.RestoreSavedStates()
 	CombatMusic.PrintMessage("RestoreSavedStates", false, true)
+	CombatMusic.Info.FadeTimerVars = nil
 	if not CombatMusic.Info.EnabledMusic then return end
 	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
 	if not CombatMusic.Info.MusicVolume then return end
