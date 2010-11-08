@@ -60,8 +60,10 @@ function CombatMusic.enterCombat()
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	-- Set the timer to check the target every 0.5 seconds:
 	if not CombatMusic.Info["BossFight"] then
-		CombatMusic.Info["TargetUpdateTimer"] = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player")
-		CombatMusic.Info["TargetUpdateTimer"] = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus")
+		CombatMusic.Info["UpdateTimers"] = {
+			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player")
+			Focus = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus")
+		}
 	end
 	
 	-- Change the CVars to what they need to be
@@ -71,6 +73,7 @@ function CombatMusic.enterCombat()
 	-- Make sure i'm not fading out music, or already in combat, otherwise, just quit before trying to play new music.
 	if CombatMusic.Info.IsFading then
 		CombatMusic.Info.IsFading = nil
+		CombatMusic.Info["InCombat"] = true
 		return
 	end
 	
@@ -124,8 +127,9 @@ function CombatMusic.TargetChanged(unit)
 			end
 		end
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
-		if CombatMusic.Info.TargetUpdateTimer then
-			CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+		if CombatMusic.Info.UpdateTimers then
+			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 		end
 		return true
 	end
@@ -159,12 +163,13 @@ function CombatMusic.leaveCombat(isDisabling)
 	end
 	
 	
-	if CombatMusic.Info.TargetUpdateTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	if CombatMusic.Info.UpdateTimers then
+		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	CombatMusic.Info.TargetUpdateTimer = nil
+	CombatMusic.Info.UpdateTimers = nil
 	
 end
 
@@ -191,12 +196,13 @@ function CombatMusic.GameOver()
 	end
 	
 	-- Clear those vars, we're not in combat anymore...
-	if CombatMusic.Info.TargetUpdateTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.TargetUpdateTimer)
+	if CombatMusic.Info.UpdateTimers then
+		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	CombatMusic.Info.TargetUpdateTimer = nil
+	CombatMusic.Info.UpdateTimers = nil
 	
 end
 
