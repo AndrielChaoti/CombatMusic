@@ -71,12 +71,6 @@ function CombatMusic.enterCombat()
 	SetCVar("Sound_EnableMusic", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
 	
-	-- Make sure i'm not fading out music, or already in combat, otherwise, just quit before trying to play new music.
-	if CombatMusic.Info.IsFading then
-		CombatMusic.Info.IsFading = nil
-		CombatMusic.Info.InCombat = true
-		return
-	end
 	
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
@@ -84,6 +78,14 @@ function CombatMusic.enterCombat()
 	-- Check Boss music selections...
 	local BossList = 	CombatMusic.CheckBossList()
 	if BossList then return end
+	
+	-- Check to see if music is already fading, stop here, if so.
+	if CombatMusic.Info.IsFading then
+		CombatMusic.Info.IsFading = nil
+		CombatMusic.Info.InCombat = true
+		return
+	end
+	
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
 	else
