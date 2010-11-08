@@ -73,7 +73,7 @@ function CombatMusic.enterCombat()
 	-- Make sure i'm not fading out music, or already in combat, otherwise, just quit before trying to play new music.
 	if CombatMusic.Info.IsFading then
 		CombatMusic.Info.IsFading = nil
-		CombatMusic.Info["InCombat"] = true
+		CombatMusic.Info.InCombat = true
 		return
 	end
 	
@@ -85,11 +85,13 @@ function CombatMusic.enterCombat()
 		if CombatMusic_BossList[UnitName('target')] then
 			PlayMusic(CombatMusic_BossList[UnitName('target')])
 			CombatMusic.Info.BossFight = true
+			CombatMusic.Info.InCombat = true
 			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName('target')]), false, true)
 			return
 		elseif CombatMusic_BossList[UnitName('focustarget')] then
 			PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
 			CombatMusic.Info.BossFight = true
+			CombatMusic.Info.InCombat = true
 			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
 			return
 		end
@@ -140,6 +142,7 @@ end
 -- Stop the music playing if it's leaving combat.
 -- If isDisabling, then don't play a victory fanfare when the music stops.
 function CombatMusic.leaveCombat(isDisabling)
+
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.InCombat then return end
@@ -147,7 +150,6 @@ function CombatMusic.leaveCombat(isDisabling)
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
-
 	
 	-- Check for boss fight, and if the user wants to hear it...
 	if CombatMusic.Info.BossFight and CombatMusic_SavedDB.PlayWhen.CombatFanfare and not isDisabling then
@@ -157,6 +159,8 @@ function CombatMusic.leaveCombat(isDisabling)
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 		end
+	elseif isDisabling then
+		StopMusic()
 	else
 		-- Left Combat normally, start the fading cycle
 		CombatMusic.FadeOutStart()
