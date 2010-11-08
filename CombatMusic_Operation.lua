@@ -159,6 +159,7 @@ function CombatMusic.leaveCombat(isDisabling)
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
+			CombatMusic.RestoreSavedStates()
 		end
 	elseif isDisabling then
 		StopMusic()
