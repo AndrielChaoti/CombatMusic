@@ -410,7 +410,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
-	SetCVar("Sound_MusicVolume", tostring(ceil(CurVol))
+	SetCVar("Sound_MusicVolume", tostring(ceil(CurVol)))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if FadeFinished then
 		CombatMusic.Info.FadeTimerVars = nil
