@@ -34,7 +34,7 @@ CombatMusic_Rev = tonumber("@project-revision@")
 CombatMusic_Colors = {
 		var = string.format("|cff%02X%02X%02X", 255, 75, 0),
 		title = string.format("|cff%02X%02X%02X", 175, 150, 255),
-		err = string.format("|cff%02X%02X%02X", 230, 10, 10),
+		err = string.format("|cff%02X%02X%02X", -),
 		close = "|r",
 }
 
