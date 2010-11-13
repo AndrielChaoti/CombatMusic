@@ -1,0 +1,16 @@
+﻿## Interface: 40000
+## Title: Van32's |cFFAF96FFCombatMusic [v4]|r
+## Notes: A simple, lightweight addon using the Ace3 framework, to control playing music during certain events.
+## Author: Vandesdelca32
+## Version: 4.0
+## SavedVariables: CombatMusic_SavedDB, CombatMusic_BossList
+## OptionalDeps: Ace3
+
+embeds.xml
+GlobalStrings.lua
+
+#Localization files:
+Locale\enUS.lua
+
+#Core files:
+Core.lua
