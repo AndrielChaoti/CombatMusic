@@ -26,6 +26,8 @@
 ------------------------------------------------------------------------
 ]]
 
+local addonName, _ = ...
+
 CombatMusic = {}
 --@alpha@ 
 CombatMusic_DebugMode = true
@@ -130,7 +132,7 @@ function CombatMusic_OnEvent(self, event, ...)
 	--CombatMusic.PrintMessage(format("Event. %s", event or "nil"), false, true)
 	--CombatMusic.PrintMessage(..., false, true)
 	local arg1 = ...
-	if event == "ADDON_LOADED" and arg1 == "Van32sCombatMusic" then
+	if event == "ADDON_LOADED" and arg1 == addonName then
 		-- The addon was loaded.
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
 		CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
