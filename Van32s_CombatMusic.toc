@@ -1,6 +1,6 @@
 ﻿## Interface: 40000
 ## Title: Van32's |cFFAF96FFCombatMusic|r
-## Version: 3.41
+## Version: 3.4.2
 ## Notes: An easy to use addon that is designed to play music while in combat.
 ## Author: Vandesdelca32
 ## X-EMail: Vandesdelca32@gmail.com
