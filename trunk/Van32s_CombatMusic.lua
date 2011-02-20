@@ -107,8 +107,8 @@ function CombatMusic.SetDefaults(outOfDate)
 			["GameOver"] = true,
 		},
 		["numSongs"] = {
-			["Battles"] = 0,
-			["Bosses"] = 0,
+			["Battles"] = -1,
+			["Bosses"] = -1,
 		},
 		["MusicVolume"] = 0.85,
 		["timeOuts"] = {
