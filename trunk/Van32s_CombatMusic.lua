@@ -267,11 +267,11 @@ function CombatMusic.SlashCommandHandler(args)
 		if (not tonumber(arg)) and arg ~= "off" then
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.FadeTime))
 		else
-			if tonumber(arg) < 0 then
-				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
-			elseif tonumber(arg) == 0 or arg == "off" then
-				CombatMusic_SavedDB.FadeTime = 0
+			if arg == "off" then
+				CombatMusoc_SavedDB.FadeTime = 0
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingDisable)
+			elseif tonumber(arg) <= 0 then
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
 				CombatMusic_SavedDB.FadeTime = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.FadingSet, arg))
