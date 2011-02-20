@@ -84,6 +84,7 @@ function CombatMusic.enterCombat()
 	
 	if BossList then return end
 	
+	CombatMusic.Info["InCombat"] = true
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
@@ -99,7 +100,6 @@ function CombatMusic.enterCombat()
 			CombatMusic.leaveCombat(1)
 		end
 	end
-	CombatMusic.Info["InCombat"] = true
 end
 
 -- Player Changed Target
