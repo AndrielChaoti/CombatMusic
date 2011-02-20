@@ -207,12 +207,15 @@ function CombatMusic.SlashCommandHandler(args)
 	------------
 	elseif command == CombatMusic_SlashArgs.BattleCount then
 		--Command to set number of battle songs
-		if not tonumber(arg) then
+		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BattleCount, CombatMusic_SavedDB.numSongs.Battles))
 		else
 			-- Set the number of battles, if arg > 0
-			if tonumber(arg) <= 0 then
+			if arg == "off" then
+				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.BattlesOff)
+				CombatMusic_SavedDB.numSongs.Battles = -1
+			elseif tonumber(arg) <= 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
 				CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
@@ -224,12 +227,15 @@ function CombatMusic.SlashCommandHandler(args)
 	------------
 	elseif command == CombatMusic_SlashArgs.BossCount then
 		-- Command to set the number of boss songs
-		if not tonumber(arg) then
+		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.numSongs.Bosses))
 		else
 			-- Set the number of boss batles, if arg > 0
-			if tonumber(arg) <= 0 then
+			if arg == "off" then
+				CombatMusic_SavedDB.numSongs.Bosses = -1
+				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.BossesOff)
+			elseif tonumber(arg) <= 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
 				CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
@@ -258,12 +264,12 @@ function CombatMusic.SlashCommandHandler(args)
 	----------
 	elseif command == CombatMusic_SlashArgs.FadeTime then
 		-- Command to change fadeout timer
-		if not tonumber(arg) then
+		if (not tonumber(arg)) and arg ~= "off" then
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.FadeTime))
 		else
 			if tonumber(arg) < 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
-			elseif tonumber(arg) == 0 then
+			elseif tonumber(arg) == 0 or arg == "off" then
 				CombatMusic_SavedDB.FadeTime = 0
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingDisable)
 			else
