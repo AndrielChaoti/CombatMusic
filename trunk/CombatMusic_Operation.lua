@@ -454,7 +454,7 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 end
 
 function CombatMusic.CommSettings()
-	local AddonMsg = format("%s,%d,%d", CombatMusic_VerString .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
+	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
 	-- Check Party/Raid
 	local inParty, inRaid = UnitInParty('player'), UnitInRaid('player')
 	local numParty = GetNumPartyMembers()
