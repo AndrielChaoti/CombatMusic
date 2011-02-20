@@ -87,9 +87,17 @@ function CombatMusic.enterCombat()
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
-		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		if CombatMusic_SavedDB.numSongs.Bosses > 0 then
+			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		else
+			CombatMusic.leaveCombat(1)
+		end
 	else
-		PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.numSongs.Battles)))
+		if CombatMusic_SavedDB.numSongs.Battles > 0 then
+			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.numSongs.Battles)))
+		else
+			CombatMusic.leaveCombat(1)
+		end
 	end
 	CombatMusic.Info["InCombat"] = true
 end
@@ -425,7 +433,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	-- Subtract a step
 	CurVol = CurVol - Step
 	
-	-- Because of stupid floating point integers:
+	-- Because of stupid floating point:
 	if CurVol <= 0 then
 		CurVol = 0
 		FadeFinished = true
@@ -450,23 +458,16 @@ end
 function CombatMusic.CheckComm(prefix, message, channel, sender)
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
-	CombatMusic.CommSettings()
+	CombatMusic.CommSettings(channel, sender)
 end
 
-function CombatMusic.CommSettings()
+function CombatMusic.CommSettings(channel, target)
 	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
-	-- Check Party/Raid
-	local inParty, inRaid = UnitInParty('player'), UnitInRaid('player')
-	local numParty = GetNumPartyMembers()
-	if inRaid then
-		Chan = "RAID"
-	elseif inParty and numParty ~= 0 then
-		Chan = "PARTY"
+	if channel ~= "WHISPER" then
+		SendAddonMessage("CM3", AddonMsg, channel)
 	else
-		Chan = nil
-		return
+		SendAddonMessage("CM3", AddonMsg, channel, target)
 	end
-	SendAddonMessage("CM3", AddonMsg, Chan)
 end
 
 
