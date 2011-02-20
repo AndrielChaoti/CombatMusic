@@ -174,6 +174,7 @@ function CombatMusic.leaveCombat(isDisabling)
 		end
 	elseif isDisabling then
 		StopMusic()
+		CombatMusic.RestoreSavedStates()
 	else
 		-- Left Combat normally, start the fading cycle
 		CombatMusic.FadeOutStart()
