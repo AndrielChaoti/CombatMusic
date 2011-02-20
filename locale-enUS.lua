@@ -68,7 +68,7 @@ CombatMusic_Messages = {
 		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
 		["/cm battles [value|off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value|off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
-		["/cm fade [value|off]"] = "Sets the fade timer for playing music. Setting to 0 will disable fading. If value is not provided; shows the current value.",
+		["/cm fade [value|off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
 		["/cm debug [on|off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
 		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
