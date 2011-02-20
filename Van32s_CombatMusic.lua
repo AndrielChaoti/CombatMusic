@@ -159,6 +159,8 @@ function CombatMusic_OnEvent(self, event, ...)
 			CombatMusic.TargetChanged(arg1)
 			return
 		end
+	elseif event == "CHAT_MSG_ADDON" then
+		CombatMusic.CheckComm(...)
 	end
 end
 
@@ -299,6 +301,8 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_DEAD")
+	self:RegisterEvent("CHAT_MSG_ADDON")
+	--self:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UNIT_TARGET")
 

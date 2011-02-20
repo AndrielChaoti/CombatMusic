@@ -446,6 +446,28 @@ function CombatMusic.FadeOutPlayingMusic()
 end
 
 
+-- Send Settings functions! This DOES NOT send personal, or any data that I can use to identify a user besides the user's toon's name.
+function CombatMusic.CheckComm(prefix, message, channel, sender)
+	if prefix ~= "CM3" then return end
+	if message ~= "SETTINGS" then return end
+	CombatMusic.CommSettings()
+end
+
+function CombatMusic.CommSettings()
+	local AddonMsg = format("%s,%d,%d", CombatMusic_VerString .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
+	-- Check Party/Raid
+	local inParty, inRaid = UnitInParty('player'), UnitInRaid('player')
+	local numParty = GetNumPartyMembers()
+	if inRaid then
+		Chan = "RAID"
+	elseif inParty and numParty ~= 0 then
+		Chan = "PARTY"
+	else
+		Chan = nil
+		return
+	end
+	SendAddonMessage("CM3", AddonMsg, Chan)
+end
 
 
 -- Timer lib functions:
