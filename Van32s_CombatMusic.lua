@@ -277,7 +277,23 @@ function CombatMusic.SlashCommandHandler(args)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.FadingSet, arg))
 			end
 		end
-		
+	
+	--/cm bosslist
+	--------------
+	if command == CombatMusic_SlashArgs.BossList then
+		if arg = "add" then
+			local dlg = StaticPopup_Show("COMBATMUIC_BOSSLISTADD")
+			if dlg then
+				dlg.data = {
+					CurTarget = UnitName("target")
+					--CurSong = CombatMusic.Info.CurrentSong
+				}
+			end
+		elseif arg == "delete" then
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented)
+		end
+	end
+	
 	--/cm debug
 	-----------
 	elseif command == CombatMusic_SlashArgs.Debug then
@@ -334,5 +350,57 @@ function CombatMusic_OnLoad(self)
 		timeout = 0,
 		hideOnEscape = true,
 		showAlert = true,
+	}
+	
+	-- Popups for BossList add
+	StaticPopupDialogs["COMBATMUIC_BOSSLISTADD"] = {
+		text = CombatMusic_Messages.OtherMessages.BossListAdd1, 
+		button1 = OKAY,
+		button2 = CANCEL,
+		hasEditbox = true,
+		whileDead = true,
+		hideOnEscape = true,
+		enterClicksFirstButton = true,
+		timeout = 0, 
+		OnShow = function(self, data)
+			self.editBox:SetText(data.CurTarget or "")
+		end,
+		OnAccept = function(self, data)
+			local UnitName = self.editbox:GetText()
+			if UnitName then
+				local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
+				if dlg2 then
+					dlg2.data = {
+						Name = self.editBox:GetText()
+					}
+				end
+			else
+				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+				StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
+			end
+		end,
+	}
+	
+	StaticPopupDialogs["COMBATMUSIC_BOSSLISTADD2"] = {
+		text= CombatMusic_Messages.OtherMessages.BossListAdd2,
+		button1 = OKAY,
+		button2 = CANCEL,
+		hasEditBox = true,
+		whileDead = true,
+		hideOnEscape = true,
+		enterClicksFirstButton = true,
+		timeout = 0,
+		OnShow = function(self, data)
+			self.editBox:SetText("Inteface\\Music\\")
+		end,
+		OnAccept = function(self, data)
+			local SongPath = self.editBox:GetText()
+			if SongPath then
+				CombatMusic_BossList[data.Name] = SongPath
+				CombatMusic_PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
+			else
+				CombatMusic_PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+			end
+		end,
 	}
 end
