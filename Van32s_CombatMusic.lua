@@ -356,13 +356,13 @@ function CombatMusic_OnLoad(self)
 		text = CombatMusic_Messages.OtherMessages.BossListAdd1, 
 		button1 = OKAY,
 		button2 = CANCEL,
-		hasEditbox = true,
+		hasEditBox = true,
 		whileDead = true,
 		hideOnEscape = true,
 		enterClicksFirstButton = true,
 		timeout = 0, 
 		OnShow = function(self, data)
-			self.editBox:SetText(data.CurTarget or "")
+			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self, data)
 			local UnitName = self.editbox:GetText()
