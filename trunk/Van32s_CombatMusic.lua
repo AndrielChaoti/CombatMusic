@@ -365,7 +365,7 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self, data)
-			local UnitName = self.editbox:GetText()
+			local UnitName = self.editBox:GetText()
 			if UnitName then
 				local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 				if dlg2 then
