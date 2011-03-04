@@ -48,7 +48,7 @@ CombatMusic_Messages = {
 	-- Error Messages
 	["ErrorMessages"] = {
 		["InvalidArg"] = CombatMusic_Colors.var .. "\"%s\"" .. CombatMusic_Colors.close .. " is an invalid argument.",
-		["NonEmpty"] = "Please enter something into the text field. The value can not be empty."
+		["NonEmpty"] = "Please enter something into the text field. The value can not be empty.",
 		["NotImplemented"] = "The feature you are trying to use has not been implemented yet.",
 		["Volume"] = "Music volume can only be set between the values of " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. " and " .. CombatMusic_Colors.var .. "1" .. CombatMusic_Colors.close .. ".",
 		["BiggerThan0"] = "The value you entered must be bigger than " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. ".",
@@ -96,7 +96,7 @@ CombatMusic_Messages = {
 		["BattlesOff"] = "Battle music disabled.",
 		["BossesOff"] = "Boss music disabled.",
 		["BossListAdd1"] = "Enter the name of the NPC you want to add to the boss list.",
-		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target. \n\n" .. CombatMusic_Colors.err "NOTE:" .. CombatMusic_Colors.close .. " Make sure to escape all backslashes (\\) with an extra backslash, like this: \\\\"
+		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target. \n\n" .. CombatMusic_Colors.err "NOTE:" .. CombatMusic_Colors.close .. " Make sure to escape all backslashes (\\) with an extra backslash, like this: \\\\",
 	},
 }
 

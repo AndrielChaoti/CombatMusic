@@ -281,7 +281,7 @@ function CombatMusic.SlashCommandHandler(args)
 	--/cm bosslist
 	--------------
 	if command == CombatMusic_SlashArgs.BossList then
-		if arg = "add" then
+		if arg == "add" then
 			local dlg = StaticPopup_Show("COMBATMUIC_BOSSLISTADD")
 			if dlg then
 				dlg.data = {
