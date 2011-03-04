@@ -292,7 +292,6 @@ function CombatMusic.SlashCommandHandler(args)
 		elseif arg == "delete" then
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
 		end
-	end
 	
 	--/cm debug
 	-----------
