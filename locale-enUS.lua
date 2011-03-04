@@ -97,7 +97,7 @@ CombatMusic_Messages = {
 		["BattlesOff"] = "Battle music disabled.",
 		["BossesOff"] = "Boss music disabled.",
 		["BossListAdd1"] = "Enter the name of the NPC you want to add to the boss list.",
-		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target. \n\n" .. CombatMusic_Colors.err "NOTE:" .. CombatMusic_Colors.close .. " Make sure to escape all backslashes (\\) with an extra backslash, like this: \\\\",
+		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target. \n\n" .. CombatMusic_Colors.err .. "NOTE:" .. CombatMusic_Colors.close .. " Make sure to escape all backslashes (\\) with an extra backslash, like this: \\\\",
 	},
 }
 
