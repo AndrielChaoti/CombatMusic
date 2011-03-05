@@ -313,6 +313,32 @@ function CombatMusic.SlashCommandHandler(args)
 	end
 end
 
+local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
+	if dialogNo == 1 then
+		local UnitName = self.editBox:GetText()
+		if UnitName then
+			local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
+			if dlg2 then
+				dlg2.data = {
+					Name = self.editBox:GetText()
+				}
+			end
+		else
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+			StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
+		end
+	elseif dialogNo == 2 then
+		local SongPath = self.editBox:GetText()
+		if SongPath then
+			CombatMusic_BossList[data.Name] = SongPath
+			CombatMusic_PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
+		else
+			CombatMusic_PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+		end
+	end
+end
+	
+
 function CombatMusic_OnLoad(self)
 
 	-- AddonEvents
@@ -353,31 +379,28 @@ function CombatMusic_OnLoad(self)
 	
 	-- Popups for BossList add
 	StaticPopupDialogs["COMBATMUIC_BOSSLISTADD"] = {
-		text = CombatMusic_Messages.OtherMessages.BossListAdd1, 
+		text = CombatMusic_Messages.OtherMessages.BossListAdd1,
 		button1 = OKAY,
 		button2 = CANCEL,
 		hasEditBox = true,
-		whileDead = true,
-		hideOnEscape = true,
-		enterClicksFirstButton = true,
-		timeout = 0, 
-		OnShow = function(self, data)
+		maxLetters = 128, 
+		editBoxWidth = 250,
+		OnShow = function(self)
 			self.editBox:SetText(UnitName('target') or "")
 		end,
-		OnAccept = function(self, data)
-			local UnitName = self.editBox:GetText()
-			if UnitName then
-				local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
-				if dlg2 then
-					dlg2.data = {
-						Name = self.editBox:GetText()
-					}
-				end
-			else
-				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
-				StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
-			end
+		OnAccept = function(self)
+			CombatMusic_CheckBossList(self, 1)
 		end,
+		EditBoxOnEnterPressed = function(self)
+			CombatMusic_CheckBossList(self, 1)
+		end,
+		
+		EditBoxOnEscapePressed = function(self)
+			self:GetParent():Hide()
+		end,
+		whileDead = true,
+		hideOnEscape = true,
+		timeout = 0,
 	}
 	
 	StaticPopupDialogs["COMBATMUSIC_BOSSLISTADD2"] = {
@@ -387,19 +410,18 @@ function CombatMusic_OnLoad(self)
 		hasEditBox = true,
 		whileDead = true,
 		hideOnEscape = true,
-		enterClicksFirstButton = true,
 		timeout = 0,
 		OnShow = function(self, data)
 			self.editBox:SetText("Inteface\\Music\\")
 		end,
 		OnAccept = function(self, data)
-			local SongPath = self.editBox:GetText()
-			if SongPath then
-				CombatMusic_BossList[data.Name] = SongPath
-				CombatMusic_PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
-			else
-				CombatMusic_PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
-			end
+			CombatMusic_CheckBossList(self, 2, data)
+		end,
+		EditBoxOnEnterPressed = function(self, data)
+			CombatMusic_CheckBossList(self, 2, data)
+		end,
+		EditBoxOnEscapePressed = function(self)
+			self:GetParent():Hide()
 		end,
 	}
 end
