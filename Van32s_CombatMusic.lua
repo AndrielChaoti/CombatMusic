@@ -316,7 +316,7 @@ end
 local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
-		if UnitName then
+		if UnitName and UnitName ~= "" then
 			self:Hide()
 			local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 			if dlg2 then
@@ -331,7 +331,7 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 		end
 	elseif dialogNo == 2 then
 		local SongPath = self.editBox:GetText()
-		if SongPath then
+		if SongPath and SongPath ~= "" then
 			CombatMusic_BossList[data.Name] = SongPath
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
 			self:Hide()
@@ -417,7 +417,7 @@ function CombatMusic_OnLoad(self)
 		hasEditBox = true,
 		editBoxWidth = 350,
 		OnShow = function(self, data)
-			self.editBox:SetText("Inteface\\\\Music\\\\")
+			self.editBox:SetText("Inteface\\Music\\")
 		end,
 		OnAccept = function(self, data)
 			CombatMusic_CheckBossList(self, 2, data)
