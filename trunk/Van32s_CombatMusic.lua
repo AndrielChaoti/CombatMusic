@@ -313,14 +313,14 @@ function CombatMusic.SlashCommandHandler(args)
 	end
 end
 
-local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
+local function CombatMusic_CheckBossList(editText, dialogNo, data, data2)
 	if dialogNo == 1 then
-		local UnitName = self.editBox:GetText()
+		local UnitName = editText
 		if UnitName then
 			local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 			if dlg2 then
 				dlg2.data = {
-					Name = self.editBox:GetText()
+					Name = editText
 				}
 			end
 		else
@@ -328,7 +328,7 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 			StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
 		end
 	elseif dialogNo == 2 then
-		local SongPath = self.editBox:GetText()
+		local SongPath = editText
 		if SongPath then
 			CombatMusic_BossList[data.Name] = SongPath
 			CombatMusic_PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
@@ -389,10 +389,10 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self)
-			CombatMusic_CheckBossList(self, 1)
+			CombatMusic_CheckBossList(self.editBox:GetText(), 1)
 		end,
 		EditBoxOnEnterPressed = function(self)
-			CombatMusic_CheckBossList(self, 1)
+			CombatMusic_CheckBossList(self:GetText(), 1)
 		end,
 		
 		EditBoxOnEscapePressed = function(self)
@@ -415,10 +415,10 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText("Inteface\\Music\\")
 		end,
 		OnAccept = function(self, data)
-			CombatMusic_CheckBossList(self, 2, data)
+			CombatMusic_CheckBossList(self.editBox:GetText(), 2, data)
 		end,
 		EditBoxOnEnterPressed = function(self, data)
-			CombatMusic_CheckBossList(self, 2, data)
+			CombatMusic_CheckBossList(self:GetText(), 2, data)
 		end,
 		EditBoxOnEscapePressed = function(self)
 			self:GetParent():Hide()
