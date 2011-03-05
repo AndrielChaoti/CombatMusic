@@ -325,9 +325,9 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 				}
 			end
 		else
-			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
 			self:Hide()
-			StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
+			--StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
 		end
 	elseif dialogNo == 2 then
 		local SongPath = self.editBox:GetText()
@@ -336,12 +336,14 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
 			self:Hide()
 		else
-			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty)
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
 			self:Hide()
+			--[[
 			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 			if dlg then
 				dlg.data = data
 			end
+			]]
 		end
 	end
 end
