@@ -440,9 +440,15 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText("Interface\\Music\\")
 		end,
 		OnAccept = function(self, data)
+			if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_CheckBossList(self, 2, data)
 		end,
 		EditBoxOnEnterPressed = function(self, data)
+			if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_CheckBossList(self:GetParent(), 2, data)
 		end,
 		EditBoxOnEscapePressed = function(self)
