@@ -331,7 +331,7 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 			end
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
-			self:Hide()
+			--self:Hide()
 			--StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
 		end
 	elseif dialogNo == 2 then
@@ -342,7 +342,7 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 			self:Hide()
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
-			self:Hide()
+			--self:Hide()
 			--[[
 			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 			if dlg then
@@ -447,6 +447,15 @@ function CombatMusic_OnLoad(self)
 		end,
 		EditBoxOnEscapePressed = function(self)
 			self:GetParent():Hide()
+		end,
+		EditBoxOnTextChanged = function(self)
+			local text = self:GetText()
+			local ext = strmatch(text, ".+(%.mp3)")
+			if ext == ".mp3" then
+				self:GetParent().button1:Enable()
+			else
+				self:GetParent().button1:Disable()
+			end
 		end,
 		whileDead = true,
 		hideOnEscape = true,
