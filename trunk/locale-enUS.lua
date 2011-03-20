@@ -68,11 +68,11 @@ CombatMusic_Messages = {
 		["/cm on"] = "Enables CombatMusic.",
 		["/cm off"] = "Disables CombatMusic.",
 		["/cm volume [value]"] = "Set the in-combat music volume to \"value\". If value is not provided; shows the current value.",
-		["/cm battles [value|off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
-		["/cm bosses [value|off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
-		["/cm fade [value|off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
-		["/cm bosslist [add|remove]"] = "Allows you to add or remove entries on the BossList table.",
-		["/cm debug [on|off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
+		["/cm battles [value\124off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm bosses [value\124off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
+		["/cm fade [value\124off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
+		["/cm bosslist [add\124remove]"] = "Allows you to add or remove entries on the BossList table.",
+		["/cm debug [on\124off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
 		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
 	-- Other Messages
@@ -97,8 +97,9 @@ CombatMusic_Messages = {
 		["FadingDisable"] = "Song fadeout disabled.",
 		["BattlesOff"] = "Battle music disabled.",
 		["BossesOff"] = "Boss music disabled.",
-		["BossListAdd1"] = "Enter the name of the NPC you want to add to the boss list.",
+		["BossListAdd1"] = "Enter the name of the NPC you want to add to the BossList.",
 		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target.",
+		["BossListRemove"] = "Enter the name of the NPC you no longer want on the BossList."
 		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
 		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!"
 	},
