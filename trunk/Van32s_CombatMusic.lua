@@ -160,7 +160,11 @@ function CombatMusic_OnEvent(self, event, ...)
 			return
 		end
 	elseif event == "CHAT_MSG_ADDON" then
-		CombatMusic.CheckComm(...)
+		-- They may have decided to comment this section out,
+		-- it is optional after all.
+		if CombatMusic.CheckComm then
+			CombatMusic.CheckComm(...)
+		end
 	end
 end
 
