@@ -489,7 +489,7 @@ end
 -- The code below was brought to you in part by the author of Hack.
 
 
-if CombatMusic.SetTimer then return endwwww
+if CombatMusic.SetTimer then return end
 local timers = {}
 
 function CombatMusic.SetTimer(interval, callback, recur, ...)
