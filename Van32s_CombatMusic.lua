@@ -292,7 +292,10 @@ function CombatMusic.SlashCommandHandler(args)
 		elseif arg == "remove" then
 			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTREMOVE")
 			
+		elseif arg == "list" then
+			-- Find the /dump command... That's right, be lazy.
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
+			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.UseDump)
 		end
 	
 	--/cm debug

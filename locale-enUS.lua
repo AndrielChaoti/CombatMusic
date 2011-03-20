@@ -101,7 +101,8 @@ CombatMusic_Messages = {
 		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target.",
 		["BossListRemove"] = "Enter the name of the NPC you no longer want on the BossList.",
 		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
-		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!"
+		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!",
+		["UseDump"] "You can however use " .. CombatMusic_Colors.var .. "\/dump CombatMusic_BossList" ..  CombatMusic_Colors.close .. " to see the information you're looking for."
 	},
 }
 
