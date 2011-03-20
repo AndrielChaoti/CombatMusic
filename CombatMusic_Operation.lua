@@ -209,7 +209,7 @@ function CombatMusic.GameOver()
 	if CombatMusic_SavedDB.PlayWhen.GameOver then
 		if (not CombatMusic.Info.GameOverCD) or (GetTime() >= CombatMusic.Info.GameOverCD) then
 			CombatMusic.Info["GameOverCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.GameOver
-			PlaySoundFile("Interface\\Music\\GameOver.mp3")
+			PlaySoundFile("Interface\\Music\\GameOver.mp3", "Master")
 		end
 	end
 	
@@ -234,7 +234,7 @@ function CombatMusic.LevelUp()
 	if CombatMusic_SavedDB.PlayWhen.LevelUp then
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
-			PlaySoundFile("Interface\\Music\\Victory.mp3")
+			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
 		end
 	end
 
@@ -489,7 +489,7 @@ end
 -- The code below was brought to you in part by the author of Hack.
 
 
-if CombatMusic.SetTimer then return end
+if CombatMusic.SetTimer then return endwwww
 local timers = {}
 
 function CombatMusic.SetTimer(interval, callback, recur, ...)
