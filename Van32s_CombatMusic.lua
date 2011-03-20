@@ -321,35 +321,18 @@ end
 local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
-		if UnitName and UnitName ~= "" then
-			self:Hide()
-			local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
-			if dlg2 then
-				dlg2.data = {
-					Name = UnitName
-				}
-			end
-		else
-			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
-			--self:Hide()
-			--StaticPopup_Show("COMBATMUSIC_BOSSLISTADD")
+		self:Hide()
+		local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
+		if dlg2 then
+			dlg2.data = {
+				Name = UnitName
+			}
 		end
 	elseif dialogNo == 2 then
 		local SongPath = self.editBox:GetText()
-		if SongPath and SongPath ~= "" then
-			CombatMusic_BossList[data.Name] = SongPath
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
-			self:Hide()
-		else
-			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NonEmpty, true)
-			--self:Hide()
-			--[[
-			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
-			if dlg then
-				dlg.data = data
-			end
-			]]
-		end
+		CombatMusic_BossList[data.Name] = SongPath
+		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListAdded, data.Name, SongPath))
+		self:Hide()
 	end
 end
 
@@ -417,13 +400,26 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self)
+			if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_CheckBossList(self, 1)
 		end,
 		EditBoxOnEnterPressed = function(self)
+			if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_CheckBossList(self:GetParent(), 1)
 		end,
 		EditBoxOnEscapePressed = function(self)
 			self:GetParent():Hide()
+		end,
+		EditBoxOnTextChanged = function(self)
+			if self:GetText() == "" or self:GetText() == nil then
+				self:GetParent().button1:Disable()
+			else
+				self:GetParent().button1:Enable()
+			end
 		end,
 		whileDead = true,
 		hideOnEscape = true,
@@ -476,16 +472,30 @@ function CombatMusic_OnLoad(self)
 		maxLetters = 128, 
 		editBoxWidth = 250,
 		OnShow = function(self)
+
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self)
+		if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_RemoveBossList(self)
 		end,
 		EditBoxOnEnterPressed = function(self)
+			if not self:GetParent().button1:IsEnabled() then
+				return
+			end
 			CombatMusic_RemoveBossList(self:GetParent())
 		end,
 		EditBoxOnEscapePressed = function(self)
 			self:GetParent():Hide()
+		end,
+		EditBoxOnTextChanged = function(self)
+			if self:GetText() == "" or self:GetText() == nil then
+				self:GetParent().button1:Disable()
+			else
+				self:GetParent().button1:Enable()
+			end
 		end,
 		whileDead = true,
 		hideOnEscape = true,
