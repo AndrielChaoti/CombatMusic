@@ -352,7 +352,7 @@ end
 
 -- Remove bosslist entry
 local function CombatMusic_RemoveBossList(self)
-	local unit = self.EditBox:GetText()
+	local unit = self.editBox:GetText()
 	-- Check the bosslist
 	if CombatMusic_BossList[unit] then
 		CombatMusic_BossList[unit] = nil
