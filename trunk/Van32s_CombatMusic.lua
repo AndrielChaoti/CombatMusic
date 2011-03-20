@@ -289,7 +289,9 @@ function CombatMusic.SlashCommandHandler(args)
 					--CurSong = CombatMusic.Info.CurrentSong
 				}
 			end
-		elseif arg == "delete" then
+		elseif arg == "remove" then
+			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTREMOVE")
+			
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
 		end
 	
@@ -347,7 +349,21 @@ local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
 		end
 	end
 end
-	
+
+-- Remove bosslist entry
+local function CombatMusic_RemoveBossList(self)
+	local unit = self.EditBox:GetText()
+	-- Check the bosslist
+	if CombatMusic_BossList[unit] then
+		CombatMusic_BossList[unit] = nil
+		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BosslistRemoved, unit))
+		self:Hide()
+	else
+		CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotOnList, true)
+	end
+
+end
+
 
 function CombatMusic_OnLoad(self)
 
@@ -419,7 +435,7 @@ function CombatMusic_OnLoad(self)
 		hasEditBox = true,
 		editBoxWidth = 350,
 		OnShow = function(self, data)
-			self.editBox:SetText("Inteface\\Music\\")
+			self.editBox:SetText("Interface\\Music\\")
 		end,
 		OnAccept = function(self, data)
 			CombatMusic_CheckBossList(self, 2, data)
@@ -434,4 +450,27 @@ function CombatMusic_OnLoad(self)
 		hideOnEscape = true,
 		timeout = 0,
 	}
+	
+	StaticPopupDialogs["COMBATMUSIC_BOSSLISTREMOVE"] = {
+		text = CombatMusic_Messages.OtherMessages.BossListRemove,
+		button1 = OKAY,
+		button2 = CANCEL,
+		hasEditBox = true,
+		maxLetters = 128, 
+		editBoxWidth = 250,
+		OnShow = function(self)
+			self.editBox:SetText(UnitName('target') or "")
+		end,
+		OnAccept = function(self)
+			CombatMusic_RemoveBossList(self)
+		end,
+		EditBoxOnEnterPressed = function(self)
+			CombatMusic_RemoveBossList(self:GetParent())
+		end,
+		EditBoxOnEscapePressed = function(self)
+			self:GetParent():Hide()
+		end,
+		whileDead = true,
+		hideOnEscape = true,
+		timeout = 0,
 end

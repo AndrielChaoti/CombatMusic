@@ -53,6 +53,7 @@ CombatMusic_Messages = {
 		["Volume"] = "Music volume can only be set between the values of " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. " and " .. CombatMusic_Colors.var .. "1" .. CombatMusic_Colors.close .. ".",
 		["BiggerThan0"] = "The value you entered must be bigger than " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. ".",
 		["OnOrOff"] = "Please use " .. CombatMusic_Colors.var .. "on" .. CombatMusic_Colors.close .. " or " .. CombatMusic_Colors.var .. "off" .. CombatMusic_Colors.close .. ".",
+		["NotOnList"] = "That unit wasn't found on the BossList!",
 	},
 	
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
@@ -70,7 +71,7 @@ CombatMusic_Messages = {
 		["/cm battles [value|off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value|off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm fade [value|off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
-		["/cm bosslist [add|remove]"] = "Allows you to add/remove entries on the BossList table.",
+		["/cm bosslist [add|remove]"] = "Allows you to add or remove entries on the BossList table.",
 		["/cm debug [on|off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
 		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
@@ -98,7 +99,8 @@ CombatMusic_Messages = {
 		["BossesOff"] = "Boss music disabled.",
 		["BossListAdd1"] = "Enter the name of the NPC you want to add to the boss list.",
 		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target.",
-		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!"
+		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
+		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!"
 	},
 }
 
