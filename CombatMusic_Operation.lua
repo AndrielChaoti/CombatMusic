@@ -455,7 +455,19 @@ function CombatMusic.FadeOutPlayingMusic()
 end
 
 
--- Send Settings functions! This DOES NOT send personal, or any data that I can use to identify a user besides the user's toon's name.
+-- My survey function
+--[=[ DISCLAIMER: THIS CODE IS USED TO SEND INFORMATION ABOUT YOUR CURRENT COMBATMUSIC 
+		CONFIGURATION TO THE PLAYER WHO ASKS FOR IT. THE INFORMATION SENT IS AS FOLLOWS:
+		 -YOUR TOON'S NAME (THIS IS AVAILABLE TO THE DEFAULT API AND IS IN NO WAY USED
+				TO IDENTIFY YOU.)
+		 -YOUR VERSION OF COMBATMUSIC
+		 -YOUR NUMBER OF BOSS AND BATTLE SONGS
+		 
+		I ADDED THIS FUNCTIONALITY IN, MERELY OUT OF CURIOSITY AS TO WHO USES THE ADDON.
+		DON'T WORRY, YOUR INFORMATION IS NOT STORED, OR USED IN ANY WAY.
+]=]
+--[[IF YOU DO NOT WISH TO SEND THIS DATA, DELETE THE LINE BELOW TO DISABLE THIS CODE.
+	]]
 function CombatMusic.CheckComm(prefix, message, channel, sender)
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
@@ -470,7 +482,7 @@ function CombatMusic.CommSettings(channel, target)
 		SendAddonMessage("CM3", AddonMsg, channel, target)
 	end
 end
-
+-- ]]
 
 -- Timer lib functions:
 
