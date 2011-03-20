@@ -361,7 +361,6 @@ local function CombatMusic_RemoveBossList(self)
 	else
 		CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotOnList, true)
 	end
-
 end
 
 
