@@ -99,7 +99,7 @@ CombatMusic_Messages = {
 		["BossesOff"] = "Boss music disabled.",
 		["BossListAdd1"] = "Enter the name of the NPC you want to add to the BossList.",
 		["BossListAdd2"] = "Enter the path to the song you want to play when CombatMusic finds this target.",
-		["BossListRemove"] = "Enter the name of the NPC you no longer want on the BossList."
+		["BossListRemove"] = "Enter the name of the NPC you no longer want on the BossList.",
 		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
 		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!"
 	},
