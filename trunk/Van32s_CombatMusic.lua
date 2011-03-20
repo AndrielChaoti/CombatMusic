@@ -472,4 +472,5 @@ function CombatMusic_OnLoad(self)
 		whileDead = true,
 		hideOnEscape = true,
 		timeout = 0,
+	}
 end
