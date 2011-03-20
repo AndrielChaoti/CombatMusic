@@ -71,7 +71,7 @@ CombatMusic_Messages = {
 		["/cm battles [value\124off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value\124off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm fade [value\124off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
-		["/cm bosslist [add\124remove]"] = "Allows you to add or remove entries on the BossList table.",
+		["/cm bosslist [add\124\124remove]"] = "Allows you to add or remove entries on the BossList table.",
 		["/cm debug [on\124off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
 		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
