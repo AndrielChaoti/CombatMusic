@@ -68,7 +68,7 @@ function CombatMusic.enterCombat()
 	
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
-	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.MusicVolume)
+	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.Music.Volume)
 	
 	
 	-- Check Boss music selections...
@@ -94,8 +94,8 @@ function CombatMusic.enterCombat()
 			CombatMusic.leaveCombat(1)
 		end
 	else
-		if CombatMusic_SavedDB.numSongs.Battles > 0 then
-			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.numSongs.Battles)))
+		if CombatMusic_SavedDB.Music.numSongs.Battles > 0 then
+			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.Music.numSongs.Battles)))
 		else
 			CombatMusic.leaveCombat(1)
 		end
@@ -163,12 +163,12 @@ function CombatMusic.leaveCombat(isDisabling)
 	if UnitIsDeadOrGhost("player") then return end
 	
 	
-	-- Check for boss fight, and if the user wants to hear it...
-	if CombatMusic.Info.BossFight and CombatMusic_SavedDB.PlayWhen.CombatFanfare and not isDisabling then
+	-- Check for boss fight, and if the user wants to hear it....
+	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CombatMusic.Info.BossFight then
 		StopMusic()
-		-- Yay, play the fanfare.. if it's not on cooldown.
+		--Boss Only?
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
+			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 			CombatMusic.RestoreSavedStates()
 		end
@@ -206,9 +206,9 @@ function CombatMusic.GameOver()
 	-- No music fading for game over, so skip that step
 	
 	-- Too bad, play the gameover, if it's not on CD, and the user wants to hear it
-	if CombatMusic_SavedDB.PlayWhen.GameOver then
+	if CombatMusic_SavedDB.GameOver.Enabled then
 		if (not CombatMusic.Info.GameOverCD) or (GetTime() >= CombatMusic.Info.GameOverCD) then
-			CombatMusic.Info["GameOverCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.GameOver
+			CombatMusic.Info["GameOverCD"] = GetTime() + CombatMusic_SavedDB.GameOver.Cooldown
 			PlaySoundFile("Interface\\Music\\GameOver.mp3", "Master")
 		end
 	end
@@ -231,13 +231,21 @@ function CombatMusic.LevelUp()
 	if not CombatMusic_SavedDB.Enabled then return end
 	
 	-- Yay, play the fanfare.. if it's not on cooldown, and the user wants to hear it.
-	if CombatMusic_SavedDB.PlayWhen.LevelUp then
-		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.timeOuts.Fanfare
-			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
+	-- We have two options here, Check to see if they want to use their victory fanfare, or the new
+	--   level up fanfare.
+	if CombatMusic_SavedDB.LevelUp.Enabled then
+		if CombatMusic_SavedDB.PlayWhen.UseLevelUp then
+			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
+				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+				PlaySoundFile("Interface\\Music\\DING.mp3", "Master")
+			end
+		else
+			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
+				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+				PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
+			end
 		end
 	end
-
 end
 
 -- target Checking. Same logic as the original CombatMusic script I've written in the past.
@@ -397,7 +405,7 @@ end
 -- Fading start
 function CombatMusic.FadeOutStart()
 	CombatMusic.PrintMessage("FadeOutStart", false, true)
-	local FadeTime = CombatMusic_SavedDB.FadeTime
+	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
 	if FadeTime == 0 then 
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
@@ -410,10 +418,10 @@ function CombatMusic.FadeOutStart()
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
-	local volStep = CombatMusic_SavedDB.MusicVolume / 20
+	local volStep = CombatMusic_SavedDB.Music.Volume / 20
 	CombatMusic.Info["FadeTimerVars"] = {
 		FadeTimer = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
-		MaxVol = CombatMusic_SavedDB.MusicVolume,
+		MaxVol = CombatMusic_SavedDB.Music.Volume,
 		VolStep = volStep,
 	}
 	CombatMusic.Info["IsFading"] = true
@@ -475,7 +483,7 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 end
 
 function CombatMusic.CommSettings(channel, target)
-	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
+	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
 	else

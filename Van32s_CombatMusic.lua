@@ -37,13 +37,11 @@ CombatMusic_DebugMode = true
 CombatMusic_DebugMode = false
 --@end-non-alpha@]===]
 
-local currentSVVersion = "1"
+local currentSVVersion = "2"
 
 -- Your standard print message function
 function CombatMusic.PrintMessage(message, isError, DEBUG)
 	-- The typical args check
-	local DCF = DEFAULT_CHAT_FRAME
-	assert(DCF, "Cannot find DEFAULT_CHAT_FRAME.")
 
 	if message == "" then message = nil end
 	assert(message, "Usage. PrintMessage(message[, isError[, DEBUG]])")
@@ -63,7 +61,7 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 
 	outMessage = outMessage .. message
 
-	DCF:AddMessage(outMessage)
+	print(outMessage)
 end
 
 -- Check that settings are loaded properly, and are up to date
@@ -100,9 +98,34 @@ function CombatMusic.SetDefaults(outOfDate)
 	-- Load the default settings for CombatMusic
 	CombatMusic_SavedDB = {
 		["SVVersion"] = currentSVVersion,
-		["Enabled"] = true, 
+		["Enabled"] = true,
+		["Music"] = {
+			["Enabled"] = true,
+			["numSongs"] = {
+				["Battles"] = -1,
+				["Bosses"] = -1,
+			},
+			["Volume"] = 0.85,
+			["FadeOut"] = 5,
+		},
+		["GameOver"] = {
+			["Enabled"] = true,
+			["Cooldown"] = 30,
+		},
+		["Victory"] = {
+			["Enabled"] = true,
+			["Cooldown"] = 30,
+		},
+		["LevelUp"] = {
+			["Enabled"] = true,
+			["NewFanfare"] = false,
+		}
+	}
+	
+		--[[ DB Ver 1
 		["PlayWhen"] = {
-			["LevelUp"] = true,
+			["LevelUp"] = {true,
+				
 			["CombatFanfare"] = true,
 			["GameOver"] = true,
 		},
@@ -116,6 +139,7 @@ function CombatMusic.SetDefaults(outOfDate)
 			["GameOver"] = 30,
 		},
 		["FadeTime"] = 5,
+	]]
 	}
 	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
 	if not outOfDate then
@@ -213,16 +237,16 @@ function CombatMusic.SlashCommandHandler(args)
 		--Command to set number of battle songs
 		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BattleCount, CombatMusic_SavedDB.numSongs.Battles))
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BattleCount, CombatMusic_SavedDB.Music.numSongs.Battles))
 		else
 			-- Set the number of battles, if arg > 0
 			if arg == "off" then
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.BattlesOff)
-				CombatMusic_SavedDB.numSongs.Battles = -1
+				CombatMusic_SavedDB.Music.numSongs.Battles = -1
 			elseif tonumber(arg) <= 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
-				CombatMusic_SavedDB.numSongs.Battles = tonumber(arg)
+				CombatMusic_SavedDB.Music.numSongs.Battles = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBattles, arg))
 			end
 		end
@@ -233,16 +257,16 @@ function CombatMusic.SlashCommandHandler(args)
 		-- Command to set the number of boss songs
 		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.numSongs.Bosses))
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossCount, CombatMusic_SavedDB.Music.numSongs.Bosses))
 		else
 			-- Set the number of boss batles, if arg > 0
 			if arg == "off" then
-				CombatMusic_SavedDB.numSongs.Bosses = -1
+				CombatMusic_SavedDB.Music.numSongs.Bosses = -1
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.BossesOff)
 			elseif tonumber(arg) <= 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
-				CombatMusic_SavedDB.numSongs.Bosses = tonumber(arg)
+				CombatMusic_SavedDB.Music.numSongs.Bosses = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.NewBosses, arg))
 			end
 		end
@@ -253,13 +277,13 @@ function CombatMusic.SlashCommandHandler(args)
 		--Command to change the in-combat music volume
 		if not tonumber(arg) then
 			--Show current setting if arg not provided.
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurMusicVol, CombatMusic_SavedDB.MusicVolume))
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurMusicVol, CombatMusic_SavedDB.Music.Volume))
 		else
 			--Change the setting if arg is in the accepted range.
 			if tonumber(arg) < 0 or tonumber(arg) > 1 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.Volume, true)
 			else
-				CombatMusic_SavedDB.MusicVolume = tostring(arg)
+				CombatMusic_SavedDB.Music.Volume = tostring(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.SetMusicVol, arg))
 			end
 		end
@@ -269,15 +293,15 @@ function CombatMusic.SlashCommandHandler(args)
 	elseif command == CombatMusic_SlashArgs.FadeTime then
 		-- Command to change fadeout timer
 		if (not tonumber(arg)) and arg ~= "off" then
-			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.FadeTime))
+			CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.CurrentFade, CombatMusic_SavedDB.Music.FadeOut))
 		else
 			if arg == "off" then
-				CombatMusic_SavedDB.FadeTime = 0
+				CombatMusic_SavedDB.Music.FadeOut = 0
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.FadingDisable)
 			elseif tonumber(arg) <= 0 then
 				CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.BiggerThan0, true)
 			else
-				CombatMusic_SavedDB.FadeTime = tonumber(arg)
+				CombatMusic_SavedDB.Music.FadeOut = tonumber(arg)
 				CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.FadingSet, arg))
 			end
 		end
@@ -404,7 +428,7 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self)
-			if not self:GetParent().button1:IsEnabled() then
+			if not self.button1:IsEnabled() then
 				return
 			end
 			CombatMusic_CheckBossList(self, 1)
@@ -440,7 +464,7 @@ function CombatMusic_OnLoad(self)
 			self.editBox:SetText("Interface\\Music\\")
 		end,
 		OnAccept = function(self, data)
-			if not self:GetParent().button1:IsEnabled() then
+			if not self.button1:IsEnabled() then
 				return
 			end
 			CombatMusic_CheckBossList(self, 2, data)
