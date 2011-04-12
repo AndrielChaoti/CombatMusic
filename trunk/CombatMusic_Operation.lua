@@ -88,8 +88,8 @@ function CombatMusic.enterCombat()
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
-		if CombatMusic_SavedDB.numSongs.Bosses > 0 then
-			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		if CombatMusic_SavedDB.Music.numSongs.Bosses > 0 then
+			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
 		else
 			CombatMusic.leaveCombat(1)
 		end
@@ -120,7 +120,7 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 
-		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.numSongs.Bosses)))
+		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
 		if CombatMusic.Info.UpdateTimers then
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
@@ -483,7 +483,7 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 end
 
 function CombatMusic.CommSettings(channel, target)
-	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.numSongs.Bosses)
+	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
 	else

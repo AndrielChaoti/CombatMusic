@@ -94,35 +94,82 @@ end
 
 -- Sets the CombatMusic settings to default values
 function CombatMusic.SetDefaults(outOfDate)
-
-	-- Load the default settings for CombatMusic
-	CombatMusic_SavedDB = {
-		["SVVersion"] = currentSVVersion,
-		["Enabled"] = true,
-		["Music"] = {
-			["Enabled"] = true,
-			["numSongs"] = {
-				["Battles"] = -1,
-				["Bosses"] = -1,
+	-- Are settings there, but out of date? Try to update them.
+	if outOfDate and CombatMusic_SavedDB.SVVersion == "1" then
+		--[[Settings Version 1:
+			CombatMusic_SavedDB = {
+				["SVVersion"] = "1",
+				["Enabled"] = true, 
+				["PlayWhen"] = {
+					["LevelUp"] = true,
+					["CombatFanfare"] = true,
+					["GameOver"] = true,
+				},
+				["numSongs"] = {
+					["Battles"] = -1,
+					["Bosses"] = -1,
+				},
+				["MusicVolume"] = 0.85,
+				["timeOuts"] = {
+					["Fanfare"] = 30,
+					["GameOver"] = 30,
+				},
+				["FadeTime"] = 5,
+			}
+		]]
+		local tempDB = {
+			["SVVersion"] = currentSVVersion,
+			["Enabled"] = CombatMusic_SavedDB.Enabled or true,
+			["Music"] = {
+				["Enabled"] = true,
+				["numSongs"] = CombatMusic_SavedDB.numSongs or {["Battles"] = -1, ["Bosses"] = -1},
+				["Volume"] = CombatMusic_SavedDB.MusicVolume or 0.85,
+				["FadeOut"] = CombatMusic_SavedDB.FadeTime or 5,
+			}, 
+			["GameOver"] = {
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.GameOver or true,
+				["Cooldown"] = CombatMusic_SavedDB.timeOuts.GameOver or 30,
 			},
-			["Volume"] = 0.85,
-			["FadeOut"] = 5,
-		},
-		["GameOver"] = {
-			["Enabled"] = true,
-			["Cooldown"] = 30,
-		},
-		["Victory"] = {
-			["Enabled"] = true,
-			["Cooldown"] = 30,
-		},
-		["LevelUp"] = {
-			["Enabled"] = true,
-			["NewFanfare"] = false,
+			["Victory"] = {
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.CombatFanfare or true,
+				["Cooldown"] = CombatMusic_SavedDB.timeOuts.Fanfare or 30,
+			},
+			["LevelUp"] = {
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.LevelUp or true, 
+				["NewFanfare"] = false,
+			},
 		}
-	}
-	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
-	if not outOfDate then
+
+		CombatMusic_SavedDB = tempDB
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.UpdateSettings)
+	else
+		-- Load the default settings for CombatMusic
+		CombatMusic_SavedDB = {
+			["SVVersion"] = currentSVVersion,
+			["Enabled"] = true,
+			["Music"] = {
+				["Enabled"] = true,
+				["numSongs"] = {
+					["Battles"] = -1,
+					["Bosses"] = -1,
+				},
+				["Volume"] = 0.85,
+				["FadeOut"] = 5,
+			},
+			["GameOver"] = {
+				["Enabled"] = true,
+				["Cooldown"] = 30,
+			},
+			["Victory"] = {
+				["Enabled"] = true,
+				["Cooldown"] = 30,
+			},
+			["LevelUp"] = {
+				["Enabled"] = true,
+				["NewFanfare"] = false,
+			}
+		}
+		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
 		CombatMusic_BossList = {}
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.SongListDefaults)
 	end
