@@ -82,6 +82,7 @@ CombatMusic_Messages = {
 		["SongListLoaded"] = "Song list loaded.",
 		["LoadDefaults"] = "Configuration not set. Loading defaults...",
 		["SongListDefaults"] = "Song List not found. Loading defaults...",
+		["UpdateSettings"] = "Settings updated to new format. Some settings may have been lost.",
 		["ResetDialog"] = CombatMusic_Colors.err .."WARNING!\n".. CombatMusic_Colors.close .. "Resetting ".. CombatMusic_AddonTitle .. " will erase all of your settings and custom bosses!\nThis cannot be undone!\n\nAre you sure you want to reset ".. CombatMusic_AddonTitle .."?\n".. CombatMusic_Colors.var .."(An interface reload is required.)" .. CombatMusic_Colors.close,
 		["Enabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ".",
 		["Disabled"] = CombatMusic_AddonTitle .. " has been " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ".",
