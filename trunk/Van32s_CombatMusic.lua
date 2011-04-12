@@ -121,26 +121,6 @@ function CombatMusic.SetDefaults(outOfDate)
 			["NewFanfare"] = false,
 		}
 	}
-	
-		--[[ DB Ver 1
-		["PlayWhen"] = {
-			["LevelUp"] = {true,
-				
-			["CombatFanfare"] = true,
-			["GameOver"] = true,
-		},
-		["numSongs"] = {
-			["Battles"] = -1,
-			["Bosses"] = -1,
-		},
-		["MusicVolume"] = 0.85,
-		["timeOuts"] = {
-			["Fanfare"] = 30,
-			["GameOver"] = 30,
-		},
-		["FadeTime"] = 5,
-	]]
-	}
 	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
 	if not outOfDate then
 		CombatMusic_BossList = {}
