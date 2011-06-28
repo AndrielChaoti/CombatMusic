@@ -422,7 +422,7 @@ function CombatMusic_OnLoad(self)
 	SLASH_COMBATMUSIC_MAIN3 = "/cm"
 
 	SlashCmdList["COMBATMUSIC_MAIN"] = function(args)
-	CombatMusic.SlashCommandHandler(args)
+		CombatMusic.SlashCommandHandler(args)
 	end
 
 	-- Static Popup for reset
