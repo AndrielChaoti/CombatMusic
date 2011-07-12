@@ -467,7 +467,7 @@ end
 		IF YOU SHOULD CHANGE YOUR MIND, ENTER '/cm comm on' WITHOUT QUOTES TO RE-ENABLE.
 ]=]
 function CombatMusic.CheckComm(prefix, message, channel, sender)
-	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled thAllows you to enable/disable responding to settings requests from other players.en return end
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
 	CombatMusic.CommSettings(channel, sender)

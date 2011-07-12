@@ -52,6 +52,7 @@ CombatMusic_Messages = {
 		["BiggerThan0"] = "The value you entered must be bigger than " .. CombatMusic_Colors.var .. "0" .. CombatMusic_Colors.close .. ".",
 		["OnOrOff"] = "Please use " .. CombatMusic_Colors.var .. "on" .. CombatMusic_Colors.close .. " or " .. CombatMusic_Colors.var .. "off" .. CombatMusic_Colors.close .. ".",
 		["NotOnList"] = "That unit wasn't found on the BossList!",
+		["AddRemoveDisplay"] = "Please use ".. CombatMusic_Colors.var .. "add" .. CombatMusic_Colors.close .. ", ".. CombatMusic_Colors.var .. "remove" .. CombatMusic_Colors.close .. ", or ".. CombatMusic_Colors.var .. "display" .. CombatMusic_Colors.close .. ".",
 	},
 	
 	-- Debug Messages, These are most likely going to be hardcoded into the acutal files...
@@ -69,8 +70,8 @@ CombatMusic_Messages = {
 		["/cm battles [value\124off]"] = "Sets the number of \"Battles\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm bosses [value\124off]"] = "Sets the number of \"Bosses\" songs to \"value\". If value is not provided; shows the current value.",
 		["/cm fade [value\124off]"] = "Sets the fade timer for playing music. If value is not provided; shows the current value.",
-		["/cm bosslist [add\124\124remove]"] = "Allows you to add or remove entries on the BossList table.",
-		["/cm comm [on\124off]"] = "Allows you to enable/disable responding to settings requests from other players."
+		["/cm bosslist [add\124\124remove\124display]"] = "Allows you to add/remove/view entries on the BossList table.",
+		["/cm comm [on\124off]"] = "Allows you to enable/disable responding to settings requests from other players.",
 		["/cm debug [on\124off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
 		["/cm reset"] = "Shows the prompt to reset your ".. CombatMusic_AddonTitle .." setings. This cannot be undone!",		
 	},
@@ -102,9 +103,11 @@ CombatMusic_Messages = {
 		["BossListRemove"] = "Enter the name of the NPC you no longer want on the BossList.",
 		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
 		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!",
-		["UseDump"] = "You can however use " .. CombatMusic_Colors.var .. "\/dump CombatMusic_BossList" ..  CombatMusic_Colors.close .. " to see the information you're looking for."
-		["AddonCommOff"] = "Addon communications for " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ". No longer replying to settings requests!"
-		["AddonCommOn"] = "Addon communications for " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ". Thanks for showing your support!"
+		["UseDump"] = "Printing " .. CombatMusic_Colors.var .. "Bosslist" .. CombatMusic_Colors.close .. ".",
+		["AddonCommOff"] = "Addon communications for " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ". No longer replying to settings requests!",
+		["AddonCommOn"] = "Addon communications for " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ". Thanks for showing your support!",
+		["BossListDump"] = CombatMusic_Colors.var .. "%s" .. CombatMusic_Colors.close .. " will play "..  CombatMusic_Colors.var .. "\"%s\"" .. CombatMusic_Colors.close,
+		["HelpLine"] = CombatMusic_Colors.var .. "%s " .. CombatMusic_Colors.close .. "- %s",
 	},
 }
 
@@ -121,6 +124,6 @@ CombatMusic_SlashArgs = {
 	["MusicVol"] = "volume",
 	["FadeTime"] = "fade",
 	["BossList"] = "bosslist",
-	["Comm"] = "comm"
+	["Comm"] = "comm",
 }
 	
