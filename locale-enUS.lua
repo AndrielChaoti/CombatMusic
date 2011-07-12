@@ -102,6 +102,8 @@ CombatMusic_Messages = {
 		["BossListAdded"] = "Successfully added " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " to the BossList with the song at " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. "!",
 		["BosslistRemoved"] = "Successfully removed " .. CombatMusic_Colors.var .. "%s" ..  CombatMusic_Colors.close .. " from the BossList!",
 		["UseDump"] = "You can however use " .. CombatMusic_Colors.var .. "\/dump CombatMusic_BossList" ..  CombatMusic_Colors.close .. " to see the information you're looking for."
+		["AddonCommOff"] = "Addon communications for " .. CombatMusic_Colors.var .. "disabled" .. CombatMusic_Colors.close .. ". No longer replying to settings requests!"
+		["AddonCommOn"] = "Addon communications for " .. CombatMusic_Colors.var .. "enabled" .. CombatMusic_Colors.close .. ". Thanks for showing your support!"
 	},
 }
 
