@@ -135,6 +135,7 @@ function CombatMusic.SetDefaults(outOfDate)
 				["Enabled"] = CombatMusic_SavedDB.PlayWhen.LevelUp or true, 
 				["NewFanfare"] = false,
 			},
+			["AllowComm"] = true,
 		}
 
 		CombatMusic_SavedDB = tempDB
@@ -165,6 +166,7 @@ function CombatMusic.SetDefaults(outOfDate)
 				["Enabled"] = true,
 				["NewFanfare"] = false,
 			}
+			["AllowComm"] = true,
 		}
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
 		CombatMusic_BossList = {}
@@ -349,6 +351,20 @@ function CombatMusic.SlashCommandHandler(args)
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.NotImplemented, true)
 			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.UseDump)
 		end
+		
+	--/cm comm
+	----------
+	elseif command == CombatMusic_SlashArgs.comm then
+		if arg == "off" then	
+			CombatMusic_SavedDB.AllowComm = false
+			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonCommOff)
+		elseif arg == "on" then
+			CombatMusic_SavedDB.AllowComm = true
+			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonCommOn)
+		else
+			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
+		end
+	end
 	
 	--/cm debug
 	-----------

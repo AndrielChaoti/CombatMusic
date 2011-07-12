@@ -104,7 +104,7 @@ end
 function CombatMusic.TargetChanged(unit)
 	if not CombatMusic_SavedDB.Enabled then return end
 	
-	-- Only changing target, so addtional checks, it's not going to change the music unless it's from reg to boss
+	-- There's no need to do this again if we already have a boss.
 	if CombatMusic.Info.BossFight then return end
 	if not CombatMusic.Info.InCombat then return end
 	
@@ -130,17 +130,17 @@ end
 function CombatMusic.CheckBossList()
 	CombatMusic.PrintMessage("CheckBossList", false, true)
 	if CombatMusic_BossList then
-		if CombatMusic_BossList[UnitName('target')] then
-			PlayMusic(CombatMusic_BossList[UnitName('target')])
+		if CombatMusic_BossList[UnitName("target")] then
+			PlayMusic(CombatMusic_BossList[UnitName("target")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName('target')]), false, true)
+			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
 			return true
-		elseif CombatMusic_BossList[UnitName('focustarget')] then
-			PlayMusic(CombatMusic_BossList[UnitName('focustarget')])
+		elseif CombatMusic_BossList[UnitName("focustarget")] then
+			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName('focustarget')]), false, true)
+			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
 			return true
 		end
 		CombatMusic.PrintMessage("Target not on BossList.", false, true)
@@ -211,7 +211,7 @@ function CombatMusic.GameOver()
 		end
 	end
 	
-	-- Clear those vars, we're not in combat anymore...
+	-- Clear those vars, we"re not in combat anymore...
 	if CombatMusic.Info.UpdateTimers then
 		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
 		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
@@ -244,145 +244,138 @@ function CombatMusic.LevelUp()
 	end
 end
 
--- target Checking. Same logic as the original CombatMusic script I've written in the past.
+-- Target Checking.
+-- Checks mobtype, player, group, level
 function CombatMusic.CheckTarget(unit)
-	--Check that CombatMusic is turned on
-	if not unit then unit = 'target' end
-	if not CombatMusic_SavedDB.Enabled then return end
-	if not UnitAffectingCombat(unit) then 
-		CombatMusic.PrintMessage("Unit not in combat", false, true)
-		return nil
+	-- Lazy coding ftw:
+	if not unit then unit = "target" end
+	
+	-- Why am I checking targets if they don't exist?
+	if not UnitExists("target") or UnitExists("focustarget") then 
+		CombatMusic.PrintMessage("No targets selected!", true, true)
+		return false
 	end
 	
-	local isBoss = false
-	
-	--[[ It's automatically a boss if the target is on the list, provided the unit is in combat.
-	if CombatMusic_BossList then
-		if CombatMusic_BossList[UnitName(unit)] then
-			isBoss = true
-			return isBoss
-		end
-	end]]
-	
-	-- Get all the info we're going to need
+	-- Prepare a table full of values we need.
 	local targetInfo = {
-		["level"] = {
-			["raw"] = function()
-				local ft, t = UnitLevel("focustarget"), UnitLevel("target")
-				-- Either target is a worldboss, return -1
-				if ft == -1 or t == -1 then
-					return -1
-				end
-				-- Checking if focustarget exists
-				if UnitExists('focustarget') then
-					if ft > t then
-						-- Focustarget is stronger than target
-						return ft
-					else
-						-- Target is stronger
-						return t
-					end
-				else
-					-- No focustarget
-					return t
-				end
+		level = {
+			-- This function gets the greater of the two levels.
+			raw = function()
+				-- Get level info
+				-- UnitLevel will never be lower than -1 so, use -2 as a placeholder instead of nil
+				return math.max((UnitLevel("target") or -2), (UnitLevel("focusTarget") or -2))
 			end,
 		},
-		["isPvP"] = UnitIsPVP("focustarget") or UnitIsPVP("target"),
-		["isPlayer"] = UnitIsPlayer("focustarget") or UnitIsPlayer("target"),
-		["mobType"] = function()
+		-- Get if they"re flagged:
+		isPvP = UnitIsPVP("focustarget") or UnitIsPVP("target"),
+		-- Get if they"re a player:
+		isPlayer = UnitIsPlayer("focustarget") or UnitIsPlayer("target")
+		-- Get the unit"s classification:
+		mobType = function()
+			-- Get the types
 			local ft, t = UnitClassification("focustarget"), UnitClassification("target")
 			local ct = {normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5 }
+			-- Make them into something comparable:
 			ft, t = ct[ft], ct[t]
-			if UnitExists('focustarget') then
-				if ft > t then
-					-- Focustarget is stronger than target
-					return ft
-				else
-					-- Target is stronger
-					return t
-				end
-			else
-				-- No focustarget
-				return t
+			return math.max(ft or -2, t or -2)
 			end
 		end,
-		["inGroup"] = (UnitInParty("focustarget") or UnitInRaid("focustarget")) or (UnitInParty("target") or UnitInRaid("target")),
-		["factionGroup"] = UnitFactionGroup("focustarget") or UnitFactionGroup("target"),
+		-- Get if they're in my group: (AND is used here to make sure NEITHER are in the group.)
+		inGroup = (UnitInParty("focustarget") or UnitInRaid("focustarget")) and (UnitInParty("target") or UnitInRaid("target")),
+		-- Get if the unit is grey: (AND is used here, to make sure that NEITHER unit is grey.)
+		isTrival = (UnitIsTrival("focustarget") and UnitIsTrival("target"))
 	}
+	
+	-- Get some info about the player:
 	local playerInfo = {
 		["level"] = UnitLevel("player"),
 		["factionGroup"] = UnitFactionGroup("player"),
 		["instanceType"] = select(2, GetInstanceInfo()),
 	}
-	local reason = ""
-	-- Make those checks
-	targetInfo.level["adjusted"] = targetInfo.level.raw()
-	-- Checking the mob type, normal mobs aren't bosses...
+	
+	-- Prepare a local var
+	-- When this is set to true at the end,
+	-- the unit is determined to be a boss;
+	-- otherwise it's nil.
+	local isBoss
+	
+	-- Set the adjusted level:
+	targetInfo.level.adj = targetInfo.level.raw()
+	-- Check to see if it needs to be changed.
 	if targetInfo.mobType() ~= 1 then
 	
-		-- Give it a 3 level bonus for being an elite, worldbosses have -1 for a level, and that's checked later.
-		if targetInfo.mobType() == 3 or targetInfo.mobType() == 4 then
-			targetInfo.level["adjusted"] = targetInfo.level.raw() + 3
+		-- A target that's elite or rareElite gets a bonus of 3 levels:
+		if targetInfo.mobType() == 2 or targetInfo.mobType() == 3 then
+			targetInfo.level.adj = targetInfo.level.adj + 3
 		end
 		
-		isBoss = true
-		
-		-- If I'm in an instance full of elite mobs, I don't want it playing boss music all the time D.
-		if playerInfo.instanceType == "party" or playerInfo.instanceType == "raid" then
-		
-			-- it's a regular mob in an instance
-			if targetInfo.mobType() == 3 then 
+		-- The monster's only a boss if I'm not in a group dungeon.
+		if (playerInfo.instanceType == "party" or playerInfo.instanceType == "raid") then
+			-- And it's non-elite
+			if targetInfo.mobType() == 3 then
 				isBoss = false
-				reason = reason .. "Elite in instance,"
 			else
-				-- Lo and behold, it's a boss!
 				isBoss = true
 			end
 		end
+	elseif targetInfo.mobType() == -2 then
+		-- Why are we still here? This means there was no target
+		CombatMusic.PrintMessage("No targets selected!", true, true)
+		return false
 	end
 	
-	-- Checking for players
-	if targetInfo.isPlayer and targetInfo.isPvP then
-		if not targetInfo.inGroup then
+
+	--[[ This section of code is a bit iffy, I"m not quite sure how to implement it.
+			If EITHER codepath returns false, the other MAY NOT provide a TRUE. But if the
+			EITHER codepath remains unchanged, it can continue to execute the next.
+			In essence, it needs to change the order operators are preferred in:
+				- false (stop the code)
+				- nil (This is where code would normally stop)
+				- true
+	]]
+	
+	
+	------------------------------------
+	-- Level checking.
+	-- Start by seeing if its level is -1 or a weighted 5 levels higher than me:
+	if targetInfo.level.raw() == -1 or targetInfo.level.adj >= (5 + playerInfo.level) then 
+		isBoss = true
+	-- If the target is grey to me, do NOT under any circumstances allow the code to continue
+	elseif targetInfo.isTrival then
+		isBoss = false
+		return isBoss
+	elseif targetInfo.level.raw() == -2 then
+		-- Why are we still here? This means there was no target
+		CombatMusic.PrintMessage("No targets selected!", true, true)
+		return false
+	end
+	------------------------------------
+	
+	
+	------------------------------------
+	-- Player/PvP and Group Checking
+	-- Checks to see if the player's in my group.
+	if targetInfo.isPlayer then
+		-- They can't be in my group, at all
+		if targetInfo.isPvP and not targetInfo.inGroup then
 			isBoss = true
 		else
 			isBoss = false
-			reason = reason .. "Player Ingroup,"
+			return isBoss or false
 		end
 	end
+	------------------------------------
 	
-	-- ogod, it's got -1 for a level(worldBoss, ??) or it's 5 levels higher than me!
-	if targetInfo.level.raw() == -1 or targetInfo.level.adjusted >= 5 + playerInfo.level then
-		isBoss = true
-	elseif targetInfo.level.adjusted <= 5 - playerInfo.level then
-		-- Heh, this is too easy... Not a boss anymore.
-		isBoss = false
-		reason = reason .. "Level too low(" .. targetInfo.level.adjusted ..")"
-	end
-	if reason == "" then
-		reason = "No critera met(" .. targetInfo.level.adjusted .. ")"
-	end
-	--[[
-	MobType: <>
-	Level: <>
-	Flagged/Player: <> <>
-	IsBoss: <>:<>
-	]]
-	CombatMusic.PrintMessage("MobType: " .. (targetInfo.mobType() or "nil") .. "\n" .. "Level: " .. (targetInfo.level.raw() or "nil") .. "\n" .. "Flagged/Player: " .. (targetInfo.isPvP or "nil") .. " " .. (targetInfo.isPlayer or "nil") .. "\n" .. "IsBoss: " .. (tostring(isBoss) or "nil") .. ":" .. reason, false, true)
-	targetInfo = nil
-	playerInfo = nil
-	return isBoss
-	
+	-- All right, return what we got, if we made it that far.
+	return isBoss or false
 end
+
 
 -- Saves music state so we can restore it out of combat
 function CombatMusic.GetSavedStates()
 	CombatMusic.PrintMessage("GetSavedStates", false, true)
 	-- Music was turned on?
 	CombatMusic.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
-	-- Music was looping?
-	--CombatMusic.Info["LoopMusic"] = GetCVar("Sound_ZoneMusicNoDelay") or "1"
 	-- Music Volume?
 	CombatMusic.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
 end
@@ -407,7 +400,7 @@ function CombatMusic.FadeOutStart()
 		CombatMusic.RestoreSavedStates()
 		return
 	end
-	-- Check to make sure a fade timer isn't already running.
+	-- Check to make sure a fade timer isn"t already running.
 	if CombatMusic.Info.IsFading then
 		return
 	end
@@ -463,22 +456,25 @@ end
 --[=[ DISCLAIMER: THIS CODE IS USED TO SEND INFORMATION ABOUT YOUR CURRENT COMBATMUSIC 
 		CONFIGURATION TO THE PLAYER WHO ASKS FOR IT. THE INFORMATION SENT IS AS FOLLOWS:
 		 -YOUR TOON'S NAME (THIS IS AVAILABLE TO THE DEFAULT API AND IS IN NO WAY USED
-				TO IDENTIFY YOU.)
+				TO IDENTIFY YOU BEYOND SEPERATING REPLIES.)
 		 -YOUR VERSION OF COMBATMUSIC
 		 -YOUR NUMBER OF BOSS AND BATTLE SONGS
 		 
 		I ADDED THIS FUNCTIONALITY IN, MERELY OUT OF CURIOSITY AS TO WHO USES THE ADDON.
 		DON'T WORRY, YOUR INFORMATION IS NOT STORED, OR USED IN ANY WAY.
+		
+		TO DISABLE THIS, ENTER INTO YOUR CHAT '/cm comm off' WITHOUT THE QUOTES.
+		IF YOU SHOULD CHANGE YOUR MIND, ENTER '/cm comm on' WITHOUT QUOTES TO RE-ENABLE.
 ]=]
---[[IF YOU DO NOT WISH TO SEND THIS DATA, DELETE THE LINE BELOW TO DISABLE THIS CODE.
-	]]
 function CombatMusic.CheckComm(prefix, message, channel, sender)
+	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
 	CombatMusic.CommSettings(channel, sender)
 end
 
 function CombatMusic.CommSettings(channel, target)
+	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
 	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
@@ -534,4 +530,4 @@ local function OnUpdate(self, elapsed)
       totalElapsed = 0
    end
 end
-CreateFrame('Frame'):SetScript('OnUpdate', OnUpdate)
+CreateFrame("Frame"):SetScript("OnUpdate", OnUpdate)
