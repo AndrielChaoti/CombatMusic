@@ -222,7 +222,7 @@ end
 function CombatMusic.PrintHelp()
 	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.CurrentVerHelp)
 	for k, v in pairs(CombatMusic_Messages.SlashHelp) do
-		CombatMusic.PrintMessage(format(CombatMusic_Colors.var .. "%s " .. CombatMusic_Colors.close .. "- %s", k, v))
+		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.HelpLine, k, v))
 	end
 end
 
