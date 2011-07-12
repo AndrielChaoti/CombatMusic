@@ -354,7 +354,7 @@ function CombatMusic.SlashCommandHandler(args)
 		
 	--/cm comm
 	----------
-	elseif command == CombatMusic_SlashArgs.comm then
+	elseif command == CombatMusic_SlashArgs.Comm then
 		if arg == "off" then	
 			CombatMusic_SavedDB.AllowComm = false
 			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonCommOff)
