@@ -79,11 +79,10 @@ function CombatMusic.enterCombat()
 		-- Restart the update timers!
 		if CombatMusic.Info.UpdateTimers then
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
+			CombatMusic.Info["UpdateTimers"] = {
+				Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
+			}
 		end
-		CombatMusic.Info["UpdateTimers"] = {
-			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
-		}
 		if CombatMusic.Info.EnabledMusic ~= "0" then return end
 	end
 	
@@ -116,16 +115,20 @@ function CombatMusic.TargetChanged(unit)
 	if CombatMusic.Info.BossFight then return end
 	if not CombatMusic.Info.InCombat then return end
 	
-	-- Check Boss music selections...
+	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
-	if BossList then return end
+	if BossList then 
+		if CombatMusic.Info.UpdateTimers then
+			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+		end
+		return
+	end
 		
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
-
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
 		if CombatMusic.Info.UpdateTimers then
 			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
