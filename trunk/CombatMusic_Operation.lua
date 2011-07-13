@@ -600,7 +600,7 @@ if CombatMusic.SetTimer then return end
 local timers = {}
 
 -- SetTimer(interval, callback, [recur], [id], [parameters...])
-function CombatMusic.SetTimer(interval, callback, recur, id ...)
+function CombatMusic.SetTimer(interval, callback, recur, id, ...)
    local timer = {
       interval = interval,
 		ID = (id or nil),
