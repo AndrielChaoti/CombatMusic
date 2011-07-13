@@ -362,7 +362,7 @@ function CombatMusic.CheckTarget(unit)
 		This is disabled while in debug mode!
 		Debug text below to tell me if it would have passed an inCombat check
 	]]
-	CombatMusic.PrintMessage("Check inCombat: " .. CombatMusic.ns(targetInfo.inCombat), false, true)
+	CombatMusic.PrintMessage("inCombat: " .. CombatMusic.ns(targetInfo.inCombat), false, true)
 	if not CombatMusic_DebugMode then
 		if not targetInfo.inCombat then
 			isBoss = false
@@ -375,7 +375,7 @@ function CombatMusic.CheckTarget(unit)
 			* An 'elite' will never play boss music while inside an instance
 			* Anything else, will always play boss music
 	]]
-	CombatMusic.PrintMessage("mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. "/ instanceType: " .. CombatMusic.ns(playerInfo.instanceType), false, true)
+	CombatMusic.PrintMessage("mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. " / instanceType: " .. CombatMusic.ns(playerInfo.instanceType), false, true)
 	if targetInfo.mobType() ~= 1 then
 		-- We're giving something that's flagged as an elite a 3 level bonus.
 		-- This is how we're going to tell if the monster's a boss in an instance.
@@ -422,7 +422,7 @@ function CombatMusic.CheckTarget(unit)
 			* Anything with an adjusted level of > 5 will play boss music
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
-	CombatMusic.PrintMessage("level.raw: " .. CombatMusic.ns(targetInfo.level.raw()) .. "/ level.adj:" .. CombatMusic.ns(targetInfo.level.adj) .. "/ isTrivial: " .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
+	CombatMusic.PrintMessage("level.raw: " .. CombatMusic.ns(targetInfo.level.raw()) .. " / level.adj: " .. CombatMusic.ns(targetInfo.level.adj) .. " / isTrivial: " .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
 	if targetInfo.level.raw() == -1 or targetInfo.level.adj >= (5 + playerInfo.level) then 
 		isBoss = true
 		CombatMusic.PrintMessage("TRUE!", false, true)
@@ -447,7 +447,7 @@ function CombatMusic.CheckTarget(unit)
 			* They are not considered 'trival'.
 			* They are not in your group.
 		]]
-	CombatMusic.PrintMessage("isPlayer: " .. CombatMusic.ns(targetInfo.isPlayer) .. "/ isPvP: " .. CombatMusic.ns(targetInfo.isPvP) .. "/ inGroup:" .. CombatMusic.ns(targetInfo.inGroup()), false, true)
+	CombatMusic.PrintMessage("isPlayer: " .. CombatMusic.ns(targetInfo.isPlayer) .. " / isPvP: " .. CombatMusic.ns(targetInfo.isPvP) .. " / inGroup: " .. CombatMusic.ns(targetInfo.inGroup()), false, true)
 	if targetInfo.isPlayer then
 		-- Is the player flagged?
 		if targetInfo.isPvP then
