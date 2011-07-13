@@ -57,7 +57,12 @@ function CombatMusic.PrintMessage(message, isError, DEBUG)
 	end
 
 	outMessage = outMessage .. message
-
+	if DEBUG then
+		if ChatFrame4:IsVisible() then
+			ChatFrame4:AddMessage(outMessage)
+			return
+		end
+	end
 	print(outMessage)
 end
 
@@ -165,7 +170,7 @@ function CombatMusic.SetDefaults(outOfDate)
 			["LevelUp"] = {
 				["Enabled"] = true,
 				["NewFanfare"] = false,
-			}
+			},
 			["AllowComm"] = true,
 		}
 		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.LoadDefaults)
@@ -346,7 +351,7 @@ function CombatMusic.SlashCommandHandler(args)
 		elseif arg == "remove" then
 			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTREMOVE")
 		elseif arg == "display" then
-			CombatMusic.PrintMessage(CombatMusic.OtherMessages.UseDump)
+			CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.UseDump)
 			CombatMusic.DumpBossList()
 		else
 			-- Find the /dump command... That's right, be lazy.
@@ -365,7 +370,6 @@ function CombatMusic.SlashCommandHandler(args)
 		else
 			CombatMusic.PrintMessage(CombatMusic_Messages.ErrorMessages.OnOrOff, true)
 		end
-	end
 	
 	--/cm debug
 	-----------
@@ -419,7 +423,7 @@ local function CombatMusic_RemoveBossList(self)
 end
 
 -- BossList dumper
-local function CombatMusic.DumpBossList()
+function CombatMusic.DumpBossList()
 	for k,v in pairs(CombatMusic_BossList) do
 		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListDump, k,v))
 	end

@@ -28,7 +28,7 @@ local addonName, _ = ...
 
 CombatMusic_AddonTitle = "CombatMusic"
 CombatMusic_VerStr = GetAddOnMetadata(addonName, "Version")
-CombatMusic_Rev = tonumber("@project-revision@")
+CombatMusic_Rev = tonumber("@project-revision@") or "DEV"
 
 -- This shouldn't ever need to be localized, it's color strings.
 CombatMusic_Colors = {
