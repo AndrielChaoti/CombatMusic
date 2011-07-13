@@ -40,13 +40,16 @@ function CombatMusic.enterCombat()
 		CombatMusic.RestoreSavedStates()
 	end
 	
+	-- Cancel the music fade-out if it's fading.
 	if CombatMusic.Info.FadeTimerVars then
 		if CombatMusic.Info.FadeTimerVars.FadeTimer then
 			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
 		end
+		-- Restore the saved states, so they can be saved again.
 		CombatMusic.RestoreSavedStates()
 	end
 	
+	--Cancel restoring saved states if it's trying to.
 	if CombatMusic.Info.RestoreTimer then
 		CombatMusic.KillTimer(CombatMusic.Info.RestoreTimer)
 		CombatMusic.RestoreSavedStates()
@@ -56,13 +59,7 @@ function CombatMusic.enterCombat()
 	
 	-- Check the player's target
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
-	-- Set the timer to check the target every 0.5 seconds:
-	if not CombatMusic.Info["BossFight"] then
-		CombatMusic.Info["UpdateTimers"] = {
-			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
-		}
-	end
-	
+
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.Music.Volume)
@@ -76,13 +73,6 @@ function CombatMusic.enterCombat()
 		CombatMusic.PrintMessage("IsFading!", false, true)
 		CombatMusic.Info.IsFading = nil
 		CombatMusic.Info.InCombat = true
-		-- Restart the update timers!
-		if CombatMusic.Info.UpdateTimers then
-			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-			CombatMusic.Info["UpdateTimers"] = {
-				Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
-			}
-		end
 		if CombatMusic.Info.EnabledMusic ~= "0" then return end
 	end
 	
@@ -125,10 +115,6 @@ function CombatMusic.TargetChanged(unit)
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
-		if CombatMusic.Info.UpdateTimers then
-			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
-		end
 		return true
 	end
 end
@@ -140,18 +126,12 @@ function CombatMusic.CheckBossList()
 			PlayMusic(CombatMusic_BossList[UnitName("target")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
-			if CombatMusic.Info.UpdateTimers then
-				CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-			end
 			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
 			return true
 		elseif CombatMusic_BossList[UnitName("focustarget")] then
 			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
-			if CombatMusic.Info.UpdateTimers then
-				CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-			end
 			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
 			return true
 		end
@@ -190,13 +170,9 @@ function CombatMusic.leaveCombat(isDisabling)
 		CombatMusic.FadeOutStart()
 	end
 	
-	
-	if CombatMusic.Info.UpdateTimers then
-		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	CombatMusic.Info.UpdateTimers = nil
+	 = nil
 	
 end
 
@@ -223,14 +199,9 @@ function CombatMusic.GameOver()
 		end
 	end
 	
-	-- Clear those vars, we"re not in combat anymore...
-	if CombatMusic.Info.UpdateTimers then
-		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	CombatMusic.Info.UpdateTimers = nil
-	
+	 = nil
 end
 
 
@@ -483,6 +454,10 @@ function CombatMusic.CheckTarget()
 	
 	-- All right, return what we got, if we made it that far.
 	CombatMusic.PrintMessage("Final Result: ".. tostring(isBoss or false), false, true)
+	-- Recurse this function every half a second if there is no boss.
+	if not isBoss then
+		CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+	end
 	return isBoss or false
 end
 
