@@ -117,12 +117,7 @@ function CombatMusic.TargetChanged(unit)
 	
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
-	if BossList then 
-		if CombatMusic.Info.UpdateTimers then
-			CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-		end
-		return
-	end
+	if BossList then return	end
 		
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	
@@ -145,12 +140,18 @@ function CombatMusic.CheckBossList()
 			PlayMusic(CombatMusic_BossList[UnitName("target")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
+			if CombatMusic.Info.UpdateTimers then
+				CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+			end
 			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
 			return true
 		elseif CombatMusic_BossList[UnitName("focustarget")] then
 			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
 			CombatMusic.Info.BossFight = true
 			CombatMusic.Info.InCombat = true
+			if CombatMusic.Info.UpdateTimers then
+				CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
+			end
 			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
 			return true
 		end
