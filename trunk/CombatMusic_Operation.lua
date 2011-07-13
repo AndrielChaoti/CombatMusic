@@ -101,6 +101,7 @@ end
 -- The value returned depends on why the timer needed to stop:
 -- 1 = Not_Enabled_Error
 -- 2 = In_Combat_Error
+-- 3 = No_Target_Error
 function CombatMusic.TargetChanged(unit)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "TargetChanged(".. CombatMusic.ns(unit) ..")", false, true)
 	if not CombatMusic_SavedDB.Enabled then return 1 end
@@ -112,7 +113,12 @@ function CombatMusic.TargetChanged(unit)
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
 	if BossList then return 0 end
-		
+	
+	-- Why am I checking targets if they don't exist?
+	if not (UnitExists("focustarget") or UnitExists("target")) then 
+		CombatMusic.PrintMessage("No targets selected!", true, true)
+		return 3
+	end
 	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit)
 	
 	-- Get that music changed
@@ -155,7 +161,6 @@ function CombatMusic.leaveCombat(isDisabling)
 	
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
-	
 	
 	-- Check for boss fight, and if the user wants to hear it....
 	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CombatMusic.Info.BossFight then
@@ -370,7 +375,7 @@ function CombatMusic.CheckTarget(unit)
 			* An 'elite' will never play boss music while inside an instance
 			* Anything else, will always play boss music
 	]]
-	CombatMusic.PrintMessage("Check mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. "/" .. CombatMusic.ns(playerInfo.instanceType), false, true)
+	CombatMusic.PrintMessage("mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. "/ instanceType: " .. CombatMusic.ns(playerInfo.instanceType), false, true)
 	if targetInfo.mobType() ~= 1 then
 		-- We're giving something that's flagged as an elite a 3 level bonus.
 		-- This is how we're going to tell if the monster's a boss in an instance.
@@ -417,7 +422,7 @@ function CombatMusic.CheckTarget(unit)
 			* Anything with an adjusted level of > 5 will play boss music
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
-	CombatMusic.PrintMessage("Check level: " .. CombatMusic.ns(targetInfo.level.raw()) .. "/" .. CombatMusic.ns(targetInfo.level.adj) .. "/" .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
+	CombatMusic.PrintMessage("level.raw: " .. CombatMusic.ns(targetInfo.level.raw()) .. "/ level.adj:" .. CombatMusic.ns(targetInfo.level.adj) .. "/ isTrivial: " .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
 	if targetInfo.level.raw() == -1 or targetInfo.level.adj >= (5 + playerInfo.level) then 
 		isBoss = true
 		CombatMusic.PrintMessage("TRUE!", false, true)
@@ -442,7 +447,7 @@ function CombatMusic.CheckTarget(unit)
 			* They are not considered 'trival'.
 			* They are not in your group.
 		]]
-	CombatMusic.PrintMessage("Check PvP/Player: " .. CombatMusic.ns(targetInfo.isPlayer) .. "/" .. CombatMusic.ns(targetInfo.isPvP) .. "/" .. CombatMusic.ns(targetInfo.inGroup()), false, true)
+	CombatMusic.PrintMessage("isPlayer: " .. CombatMusic.ns(targetInfo.isPlayer) .. "/ isPvP: " .. CombatMusic.ns(targetInfo.isPvP) .. "/ inGroup:" .. CombatMusic.ns(targetInfo.inGroup()), false, true)
 	if targetInfo.isPlayer then
 		-- Is the player flagged?
 		if targetInfo.isPvP then
