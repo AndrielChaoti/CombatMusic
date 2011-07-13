@@ -221,6 +221,9 @@ function CombatMusic_OnEvent(self, event, ...)
 			CombatMusic.TargetChanged(arg1)
 			return
 		end
+	elseif event == "PLAYER_LEAVING_WORLD" then
+		CombatMusic.leaveCombat(1)
+		return
 	elseif event == "CHAT_MSG_ADDON" then
 		-- They may have decided to comment this section out,
 		-- it is optional after all.
@@ -451,6 +454,7 @@ function CombatMusic_OnLoad(self)
 	--self:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UNIT_TARGET")
+	self:RegisterEvent("PLAYER_LEAVING_WORLD")
 
 	-- Slash Command listings
 	SLASH_COMBATMUSIC_MAIN1 = "/combatmusic"
