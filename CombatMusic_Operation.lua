@@ -232,6 +232,11 @@ end
 function CombatMusic.CheckTarget()
 	CombatMusic.PrintMessage("CheckTarget()", false, true)
 	
+	-- If it's a boss fight, I don't need to check anything.
+	if CombatMusic.Info.BossFight then
+		return true
+	end
+	
 	-- Why am I checking targets if they don't exist?
 	if not UnitExists("target") or UnitExists("focustarget") then 
 		CombatMusic.PrintMessage("No targets selected!", true, true)
