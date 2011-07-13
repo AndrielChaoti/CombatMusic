@@ -58,7 +58,7 @@ function CombatMusic.enterCombat()
 	CombatMusic.GetSavedStates()
 	
 	-- Check the player's target
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
+	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget("_EC")
 
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
@@ -97,25 +97,29 @@ function CombatMusic.enterCombat()
 end
 
 -- Player Changed Target
+-- This function is linked to a timer, and thus returns a value when the timer should stop
+-- The value returned depends on why the timer needed to stop:
+-- 1 = Not_Enabled_Error
+-- 2 = In_Combat_Error
 function CombatMusic.TargetChanged(unit)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "TargetChanged("..CombatMusic.ns(unit))..")", false, true)
-	if not CombatMusic_SavedDB.Enabled then return end
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "TargetChanged(".. CombatMusic.ns(unit) ..")", false, true)
+	if not CombatMusic_SavedDB.Enabled then return 1 end
 	
 	-- There's no need to do this again if we already have a boss.
-	if CombatMusic.Info.BossFight then return end
-	if not CombatMusic.Info.InCombat then return end
+	if CombatMusic.Info.BossFight then return 0 end
+	if not CombatMusic.Info.InCombat then return 2 end
 	
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
-	if BossList then return	end
+	if BossList then return 0 end
 		
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
+	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit)
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CombatMusic.Info.BossFight then
 		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
-		return true
+		return 0
 	end
 end
 
@@ -227,8 +231,8 @@ end
 
 -- Target Checking.
 -- Checks combat -> mobType/instance -> level -> player/inGroup
-function CombatMusic.CheckTarget()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckTarget()", false, true)
+function CombatMusic.CheckTarget(unit)
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckTarget(".. CombatMusic.ns(unit) ..")", false, true)
 	
 	-- If it's a boss fight, I don't need to check anything.
 	if CombatMusic.Info.BossFight then
@@ -236,7 +240,7 @@ function CombatMusic.CheckTarget()
 	end
 	
 	-- Why am I checking targets if they don't exist?
-	if not UnitExists("target") or UnitExists("focustarget") then 
+	if not (UnitExists("focustarget") or UnitExists("target")) then 
 		CombatMusic.PrintMessage("No targets selected!", true, true)
 		return false
 	end
@@ -366,7 +370,7 @@ function CombatMusic.CheckTarget()
 			* An 'elite' will never play boss music while inside an instance
 			* Anything else, will always play boss music
 	]]
-	CombatMusic.PrintMessage("Check mobType: " .. CombatMusic.ns(targetInfo.mobType) .. "/" .. CombatMusic.ns(playerInfo.instanceType), false, true)
+	CombatMusic.PrintMessage("Check mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. "/" .. CombatMusic.ns(playerInfo.instanceType), false, true)
 	if targetInfo.mobType() ~= 1 then
 		-- We're giving something that's flagged as an elite a 3 level bonus.
 		-- This is how we're going to tell if the monster's a boss in an instance.
@@ -463,7 +467,10 @@ function CombatMusic.CheckTarget()
 	CombatMusic.PrintMessage("Final Result: ".. CombatMusic.ns(isBoss), false, true)
 	-- Recurse this function every half a second if there is no boss.
 	if not isBoss then
-		CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+		local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+		if t ~= -1 then
+			CombatMusic.Info["updateTimer"] = t
+		end
 	end
 	return isBoss or false
 end
@@ -536,7 +543,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "FadeVolume: " .. CurVol * 100, false, true)
+	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 		
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
@@ -592,15 +599,26 @@ end
 if CombatMusic.SetTimer then return end
 local timers = {}
 
-function CombatMusic.SetTimer(interval, callback, recur, ...)
+-- SetTimer(interval, callback, [recur], [id], [parameters...])
+function CombatMusic.SetTimer(interval, callback, recur, id ...)
    local timer = {
       interval = interval,
+		ID = (id or nil),
       callback = callback,
       recur = recur,
       update = 0,
       ...
    }
-  timers[timer] = timer
+	if id then
+		-- they want a unique timer:
+		for k,_ in pairs(timers) do
+			if k.ID == id then
+				CombatMusic.PrintMessage("Timer creation failed. ID already used!", true, true)
+				return -1
+			end
+		end
+	end
+	timers[timer] = timer
    return timer
 end
 
