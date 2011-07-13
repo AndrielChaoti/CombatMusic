@@ -422,9 +422,7 @@ function CombatMusic.CheckTarget()
 		isBoss = false
 		CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 		-- Recurse this function every half a second if there is no boss.
-		if not isBoss then
-			CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
-		end
+		CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
 		return isBoss
 	elseif targetInfo.level.raw() == -2 then
 		-- Why are we still here? This means there was no target
@@ -455,9 +453,7 @@ function CombatMusic.CheckTarget()
 			isBoss = false
 			CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 			-- Recurse this function every half a second if there is no boss.
-			if not isBoss then
-				CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
-			end
+			CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
 			return isBoss or false
 		end
 	end
