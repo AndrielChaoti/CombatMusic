@@ -60,7 +60,6 @@ function CombatMusic.enterCombat()
 	if not CombatMusic.Info["BossFight"] then
 		CombatMusic.Info["UpdateTimers"] = {
 			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
-			Focus = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus"),
 		}
 	end
 	
@@ -84,7 +83,6 @@ function CombatMusic.enterCombat()
 		end
 		CombatMusic.Info["UpdateTimers"] = {
 			Target = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "player"),
-			Focus = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, "focus"),
 		}
 		if CombatMusic.Info.EnabledMusic ~= "0" then return end
 	end
@@ -122,7 +120,7 @@ function CombatMusic.TargetChanged(unit)
 	local BossList = CombatMusic.CheckBossList()
 	if BossList then return end
 		
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit .. "target")
+	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget()
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
@@ -191,7 +189,6 @@ function CombatMusic.leaveCombat(isDisabling)
 	
 	if CombatMusic.Info.UpdateTimers then
 		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
@@ -225,7 +222,6 @@ function CombatMusic.GameOver()
 	-- Clear those vars, we"re not in combat anymore...
 	if CombatMusic.Info.UpdateTimers then
 		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Target)
-		CombatMusic.KillTimer(CombatMusic.Info.UpdateTimers.Focus)
 	end
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
