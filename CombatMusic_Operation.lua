@@ -172,7 +172,6 @@ function CombatMusic.leaveCombat(isDisabling)
 	
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	 = nil
 	
 end
 
@@ -201,7 +200,6 @@ function CombatMusic.GameOver()
 	
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
-	 = nil
 end
 
 
