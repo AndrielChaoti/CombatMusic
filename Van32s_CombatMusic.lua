@@ -36,6 +36,11 @@ CombatMusic_DebugMode = false
 
 local currentSVVersion = "2"
 
+function CombatMusic.ns(var)
+	return tostring(var) or "nil"
+end
+
+
 -- Your standard print message function
 function CombatMusic.PrintMessage(message, isError, DEBUG)
 	-- The typical args check
@@ -68,6 +73,7 @@ end
 
 -- Check that settings are loaded properly, and are up to date
 function CombatMusic.CheckSettingsLoaded()
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckSettingsLoaded()", false, true)
 	local x1 = 1
 	local x2 = 1
 	
@@ -96,6 +102,7 @@ end
 
 -- Sets the CombatMusic settings to default values
 function CombatMusic.SetDefaults(outOfDate)
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "SetDefaults(" .. CombatMusic.ns(outOfDate) .. ")", false, true)
 	-- Are settings there, but out of date? Try to update them.
 	if outOfDate and CombatMusic_SavedDB.SVVersion == "1" then
 		--[[Settings Version 1:
@@ -225,6 +232,7 @@ end
 
 -- PrintHelp()
 function CombatMusic.PrintHelp()
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "PrintHelp()", false, true)
 	CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.CurrentVerHelp)
 	for k, v in pairs(CombatMusic_Messages.SlashHelp) do
 		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.HelpLine, k, v))
@@ -233,6 +241,7 @@ end
 
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
+	CombatMusic.PrintMessage("SlashCommandHandler(" .. CombatMusic.ns(args) .. ")"
 	local command, arg = args:match("^(%S*)%s*(.-)$");
 
 	-- /cm help
@@ -389,6 +398,7 @@ function CombatMusic.SlashCommandHandler(args)
 end
 
 local function CombatMusic_CheckBossList(self, dialogNo, data, data2)
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckBossList()", false, true)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
 		self:Hide()
@@ -408,6 +418,7 @@ end
 
 -- Remove bosslist entry
 local function CombatMusic_RemoveBossList(self)
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "RemoveBossList()", false, true)
 	local unit = self.editBox:GetText()
 	-- Check the bosslist
 	if CombatMusic_BossList[unit] then
@@ -421,6 +432,7 @@ end
 
 -- BossList dumper
 function CombatMusic.DumpBossList()
+	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "DumpBossList()", false, true)
 	for k,v in pairs(CombatMusic_BossList) do
 		CombatMusic.PrintMessage(format(CombatMusic_Messages.OtherMessages.BossListDump, k,v))
 	end
