@@ -421,6 +421,10 @@ function CombatMusic.CheckTarget()
 	elseif targetInfo.isTrival() then
 		isBoss = false
 		CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
+		-- Recurse this function every half a second if there is no boss.
+		if not isBoss then
+			CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+		end
 		return isBoss
 	elseif targetInfo.level.raw() == -2 then
 		-- Why are we still here? This means there was no target
@@ -450,6 +454,10 @@ function CombatMusic.CheckTarget()
 		if targetInfo.inGroup() then
 			isBoss = false
 			CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
+			-- Recurse this function every half a second if there is no boss.
+			if not isBoss then
+				CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+			end
 			return isBoss or false
 		end
 	end
