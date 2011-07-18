@@ -1,9 +1,9 @@
 ﻿--[[
 ------------------------------------------------------------------------
-	Project: Van32sCombatMusic
+	Project: Van32sCM
 	File: Main Operations, revision @file-revision@
 	Date: @project-date-iso@
-	Purpose: The main operations of CombatMusic.
+	Purpose: The main operations of CM.
 	Credits: Code written by Vandesdelca32
 	
     Copyright (C) 2011  Vandesdelca32
@@ -24,74 +24,75 @@
 ------------------------------------------------------------------------
 ]]
 
+local addonName, CM = ...
 
-CombatMusic["Info"]= {}
+CM["Info"]= {}
 
 
 
 -- Entering Combat
-function CombatMusic.enterCombat()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "enterCombat()", false, true)
-	--Check that CombatMusic is turned on
-	if not CombatMusic_SavedDB.Enabled then return end
+function CM.enterCombat()
+	CM.PrintMessage(CM.Colours.var .. "enterCombat()", false, true)
+	--Check that CM is turned on
+	if not CM_SavedDB.Enabled then return end
 	
 	-- Make sure we're not in combat before trying to enter it again
-	if CombatMusic.Info.InCombat then
-		CombatMusic.RestoreSavedStates()
+	if CM.Info.InCombat then
+		CM.RestoreSavedStates()
 	end
 	
 	-- Cancel the music fade-out if it's fading.
-	if CombatMusic.Info.FadeTimerVars then
-		if CombatMusic.Info.FadeTimerVars.FadeTimer then
-			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
+	if CM.Info.FadeTimerVars then
+		if CM.Info.FadeTimerVars.FadeTimer then
+			CM.KillTimer(CM.Info.FadeTimerVars.FadeTimer)
 		end
 		-- Restore the saved states, so they can be saved again.
-		CombatMusic.RestoreSavedStates()
+		CM.RestoreSavedStates()
 	end
 	
 	--Cancel restoring saved states if it's trying to.
-	if CombatMusic.Info.RestoreTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.RestoreTimer)
-		CombatMusic.RestoreSavedStates()
+	if CM.Info.RestoreTimer then
+		CM.KillTimer(CM.Info.RestoreTimer)
+		CM.RestoreSavedStates()
 	end
 	-- Save the CVar's last states, before continuing
-	CombatMusic.GetSavedStates()
+	CM.GetSavedStates()
 	
 	-- Check the player's target
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget("_EC")
+	CM.Info["BossFight"] = CM.CheckTarget("_EC")
 
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
-	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.Music.Volume)
+	SetCVar("Sound_MusicVolume", CM_SavedDB.Music.Volume)
 	
 	
 	-- Check the BossList.
-	local BossList = CombatMusic.CheckBossList()
+	local BossList = CM.CheckBossList()
 	
 	-- Check to see if music is already fading, stop here, if so.
-	if CombatMusic.Info.IsFading then
-		CombatMusic.PrintMessage("IsFading!", false, true)
-		CombatMusic.Info.IsFading = nil
-		CombatMusic.Info.InCombat = true
-		if CombatMusic.Info.EnabledMusic ~= "0" then return end
+	if CM.Info.IsFading then
+		CM.PrintMessage("IsFading!", false, true)
+		CM.Info.IsFading = nil
+		CM.Info.InCombat = true
+		if CM.Info.EnabledMusic ~= "0" then return end
 	end
 	
 	if BossList then return end
 	
-	CombatMusic.Info["InCombat"] = true
+	CM.Info["InCombat"] = true
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	if CombatMusic.Info.BossFight then
-		if CombatMusic_SavedDB.Music.numSongs.Bosses > 0 then
-			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
+	if CM.Info.BossFight then
+		if CM_SavedDB.Music.numSongs.Bosses > 0 then
+			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CM_SavedDB.Music.numSongs.Bosses)))
 		else
-			CombatMusic.leaveCombat(1)
+			CM.leaveCombat(1)
 		end
 	else
-		if CombatMusic_SavedDB.Music.numSongs.Battles > 0 then
-			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.Music.numSongs.Battles)))
+		if CM_SavedDB.Music.numSongs.Battles > 0 then
+			PlayMusic(format(filePath, "Battles", "Battle", random(1, CM_SavedDB.Music.numSongs.Battles)))
 		else
-			CombatMusic.leaveCombat(1)
+			CM.leaveCombat(1)
 		end
 	end
 end
@@ -102,50 +103,50 @@ end
 -- 1 = Not_Enabled_Error
 -- 2 = In_Combat_Error
 -- 3 = No_Target_Error
-function CombatMusic.TargetChanged(unit)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "TargetChanged(".. CombatMusic.ns(unit) ..")", false, true)
-	if not CombatMusic_SavedDB.Enabled then return 1 end
+function CM.TargetChanged(unit)
+	CM.PrintMessage(CM.Colours.var .. "TargetChanged(".. CM.ns(unit) ..")", false, true)
+	if not CM_SavedDB.Enabled then return 1 end
 	
 	-- There's no need to do this again if we already have a boss.
-	if CombatMusic.Info.BossFight then return 0 end
-	if not CombatMusic.Info.InCombat then return 2 end
+	if CM.Info.BossFight then return 0 end
+	if not CM.Info.InCombat then return 2 end
 	
 	-- Check BossList
-	local BossList = CombatMusic.CheckBossList()
+	local BossList = CM.CheckBossList()
 	if BossList then return 0 end
 	
 	-- Why am I checking targets if they don't exist?
 	if not (UnitExists("focustarget") or UnitExists("target")) then 
-		CombatMusic.PrintMessage("No targets selected!", true, true)
+		CM.PrintMessage("No targets selected!", true, true)
 		return 3
 	end
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget(unit)
+	CM.Info["BossFight"] = CM.CheckTarget(unit)
 	
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	if CombatMusic.Info.BossFight then
-		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
+	if CM.Info.BossFight then
+		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CM_SavedDB.Music.numSongs.Bosses)))
 		return 0
 	end
 end
 
-function CombatMusic.CheckBossList()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckBossList()", false, true)
-	if CombatMusic_BossList then
-		if CombatMusic_BossList[UnitName("target")] then
-			PlayMusic(CombatMusic_BossList[UnitName("target")])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
+function CM.CheckBossList()
+	CM.PrintMessage(CM.Colours.var .. "CheckBossList()", false, true)
+	if CM_BossList then
+		if CM_BossList[UnitName("target")] then
+			PlayMusic(CM_BossList[UnitName("target")])
+			CM.Info.BossFight = true
+			CM.Info.InCombat = true
+			CM.PrintMessage("Target on BossList. Playing ".. tostring(CM_BossList[UnitName("target")]), false, true)
 			return true
-		elseif CombatMusic_BossList[UnitName("focustarget")] then
-			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			CombatMusic.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
+		elseif CM_BossList[UnitName("focustarget")] then
+			PlayMusic(CM_BossList[UnitName("focustarget")])
+			CM.Info.BossFight = true
+			CM.Info.InCombat = true
+			CM.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CM_BossList[UnitName("focustarget")]), false, true)
 			return true
 		end
-		CombatMusic.PrintMessage("Target not on BossList.", false, true)
+		CM.PrintMessage("Target not on BossList.", false, true)
 	end
 end
 
@@ -153,82 +154,82 @@ end
 -- Leaving Combat
 -- Stop the music playing if it's leaving combat.
 -- If isDisabling, then don't play a victory fanfare when the music stops.
-function CombatMusic.leaveCombat(isDisabling)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "leaveCombat("..CombatMusic.ns(isDisabling)..")", false, true)
-	--Check that CombatMusic is turned on
-	if not CombatMusic_SavedDB.Enabled then return end
-	if not CombatMusic.Info.InCombat then return end
+function CM.leaveCombat(isDisabling)
+	CM.PrintMessage(CM.Colours.var .. "leaveCombat("..CM.ns(isDisabling)..")", false, true)
+	--Check that CM is turned on
+	if not CM_SavedDB.Enabled then return end
+	if not CM.Info.InCombat then return end
 	
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
 	-- Check for boss fight, and if the user wants to hear it....
-	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CombatMusic.Info.BossFight then
+	if CM_SavedDB.Victory.Enabled and not isDisabling and CM.Info.BossFight then
 		StopMusic()
 		--Boss Only?
-		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
+			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
-			CombatMusic.RestoreSavedStates()
+			CM.RestoreSavedStates()
 		end
 	elseif isDisabling then
 		StopMusic()
-		CombatMusic.RestoreSavedStates()
+		CM.RestoreSavedStates()
 	else
 		-- Left Combat normally, start the fading cycle
-		CombatMusic.FadeOutStart()
+		CM.FadeOutStart()
 	end
 	
-	CombatMusic.Info.InCombat = nil
-	CombatMusic.Info.BossFight = nil
+	CM.Info.InCombat = nil
+	CM.Info.BossFight = nil
 	
 end
 
 -- Game Over
 -- Aww, I died, play some game over music for me
-function CombatMusic.GameOver()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "GameOver()", false, true)
-	--Check that CombatMusic is turned on
-	if not CombatMusic_SavedDB.Enabled then return end
+function CM.GameOver()
+	CM.PrintMessage(CM.Colours.var .. "GameOver()", false, true)
+	--Check that CM is turned on
+	if not CM_SavedDB.Enabled then return end
 	
 	StopMusic()
-	if CombatMusic.Info.InCombat then
+	if CM.Info.InCombat then
 		--Leaving Combat, restore the saved vars.
-		CombatMusic.RestoreSavedStates()
+		CM.RestoreSavedStates()
 	end
 		
 	-- No music fading for game over, so skip that step
 	
 	-- Too bad, play the gameover, if it's not on CD, and the user wants to hear it
-	if CombatMusic_SavedDB.GameOver.Enabled then
-		if (not CombatMusic.Info.GameOverCD) or (GetTime() >= CombatMusic.Info.GameOverCD) then
-			CombatMusic.Info["GameOverCD"] = GetTime() + CombatMusic_SavedDB.GameOver.Cooldown
+	if CM_SavedDB.GameOver.Enabled then
+		if (not CM.Info.GameOverCD) or (GetTime() >= CM.Info.GameOverCD) then
+			CM.Info["GameOverCD"] = GetTime() + CM_SavedDB.GameOver.Cooldown
 			PlaySoundFile("Interface\\Music\\GameOver.mp3", "Master")
 		end
 	end
 	
-	CombatMusic.Info.InCombat = nil
-	CombatMusic.Info.BossFight = nil
+	CM.Info.InCombat = nil
+	CM.Info.BossFight = nil
 end
 
 
 -- DING! Level up handler, just plays the fanfare overtop of whatever's playing... on purpose.
-function CombatMusic.LevelUp()	
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "LevelUp()", false, true)
-	--Check that CombatMusic is turned on
-	if not CombatMusic_SavedDB.Enabled then return end
+function CM.LevelUp()	
+	CM.PrintMessage(CM.Colours.var .. "LevelUp()", false, true)
+	--Check that CM is turned on
+	if not CM_SavedDB.Enabled then return end
 	
 	-- Yay, play the fanfare.. if it's not on cooldown, and the user wants to hear it.
 	-- We have two options here, Check to see if they want to use their victory fanfare, or the new
 	--   level up fanfare.
-	if CombatMusic_SavedDB.LevelUp.Enabled and CombatMusic_SavedDB.LevelUp.NewFanfare then
-		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+	if CM_SavedDB.LevelUp.Enabled and CM_SavedDB.LevelUp.NewFanfare then
+		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
+			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\DING.mp3", "Master")
 		end
-	elseif CombatMusic_SavedDB.LevelUp.Enabled and not CombatMusic_SavedDB.LevelUp.NewFanfare then
-		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+	elseif CM_SavedDB.LevelUp.Enabled and not CM_SavedDB.LevelUp.NewFanfare then
+		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
+			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
 		end
 	end
@@ -236,17 +237,17 @@ end
 
 -- Target Checking.
 -- Checks combat -> mobType/instance -> level -> player/inGroup
-function CombatMusic.CheckTarget(unit)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckTarget(".. CombatMusic.ns(unit) ..")", false, true)
+function CM.CheckTarget(unit)
+	CM.PrintMessage(CM.Colours.var .. "CheckTarget(".. CM.ns(unit) ..")", false, true)
 	
 	-- If it's a boss fight, I don't need to check anything.
-	if CombatMusic.Info.BossFight then
+	if CM.Info.BossFight then
 		return true
 	end
 	
 	-- Why am I checking targets if they don't exist?
 	if not (UnitExists("focustarget") or UnitExists("target")) then 
-		CombatMusic.PrintMessage("No targets selected!", true, true)
+		CM.PrintMessage("No targets selected!", true, true)
 		return false
 	end
 	
@@ -362,14 +363,14 @@ function CombatMusic.CheckTarget(unit)
 		This is disabled while in debug mode!
 		Debug text below to tell me if it would have passed an inCombat check
 	]]
-	CombatMusic.PrintMessage("inCombat: " .. CombatMusic.ns(targetInfo.inCombat), false, true)
-	if not CombatMusic_DebugMode then
+	CM.PrintMessage("inCombat: " .. CM.ns(targetInfo.inCombat), false, true)
+	if not CM.DebugMode then
 		if not targetInfo.inCombat then
 			isBoss = false
 			if not isBoss then
-				local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+				local t = CM.SetTimer(0.5, CM.TargetChanged, true, 0, unit)
 				if t ~= -1 then
-					CombatMusic.Info["updateTimer"] = t
+					CM.Info["updateTimer"] = t
 				end
 			end
 			return isBoss
@@ -381,7 +382,7 @@ function CombatMusic.CheckTarget(unit)
 			* An 'elite' will never play boss music while inside an instance
 			* Anything else, will always play boss music
 	]]
-	CombatMusic.PrintMessage("mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. " / instanceType: " .. CombatMusic.ns(playerInfo.instanceType), false, true)
+	CM.PrintMessage("mobType: " .. CM.ns(targetInfo.mobType()) .. " / instanceType: " .. CM.ns(playerInfo.instanceType), false, true)
 	if targetInfo.mobType() ~= 1 then
 		-- We're giving something that's flagged as an elite a 3 level bonus.
 		-- This is how we're going to tell if the monster's a boss in an instance.
@@ -396,18 +397,18 @@ function CombatMusic.CheckTarget(unit)
 				we don't want to always have boss music.]]
 			if targetInfo.mobType() == 3 then
 				isBoss = false
-				CombatMusic.PrintMessage("FALSE!", false, true)
+				CM.PrintMessage("FALSE!", false, true)
 			else
-				CombatMusic.PrintMessage("TRUE!", false, true)
+				CM.PrintMessage("TRUE!", false, true)
 				isBoss = true
 			end
 		else
 			isBoss = true
-			CombatMusic.PrintMessage("TRUE!", false, true)
+			CM.PrintMessage("TRUE!", false, true)
 		end
 	elseif targetInfo.mobType() == -2 then
 		-- Why are we still here? This means there was no target
-		CombatMusic.PrintMessage("No targets selected!", true, true)
+		CM.PrintMessage("No targets selected!", true, true)
 		return false
 	end
 	
@@ -428,20 +429,20 @@ function CombatMusic.CheckTarget(unit)
 			* Anything with an adjusted level of > 5 will play boss music
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
-	CombatMusic.PrintMessage("level.raw: " .. CombatMusic.ns(targetInfo.level.raw()) .. " / level.adj: " .. CombatMusic.ns(targetInfo.level.adj) .. " / isTrivial: " .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
+	CM.PrintMessage("level.raw: " .. CM.ns(targetInfo.level.raw()) .. " / level.adj: " .. CM.ns(targetInfo.level.adj) .. " / isTrivial: " .. CM.ns(targetInfo.isTrival()) , false, true)
 	if targetInfo.level.raw() == -1 or targetInfo.level.adj >= (5 + playerInfo.level) then 
 		isBoss = true
-		CombatMusic.PrintMessage("TRUE!", false, true)
+		CM.PrintMessage("TRUE!", false, true)
 	-- If the target is grey to me, do NOT under any circumstances allow the code to continue
 	elseif targetInfo.isTrival() then
 		isBoss = false
-		CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
+		CM.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 		-- Recurse this function every half a second if there is no boss.
-		CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+		CM.SetTimer(0.5, CM.TargetChanged)
 		return isBoss
 	elseif targetInfo.level.raw() == -2 then
 		-- Why are we still here? This means there was no target
-		CombatMusic.PrintMessage("No targets selected!", true, true)
+		CM.PrintMessage("No targets selected!", true, true)
 		return false
 	end
 	------------------------------------
@@ -453,34 +454,34 @@ function CombatMusic.CheckTarget(unit)
 			* They are not considered 'trival'.
 			* They are not in your group.
 		]]
-	CombatMusic.PrintMessage("isPlayer: " .. CombatMusic.ns(targetInfo.isPlayer) .. " / isPvP: " .. CombatMusic.ns(targetInfo.isPvP) .. " / inGroup: " .. CombatMusic.ns(targetInfo.inGroup()), false, true)
+	CM.PrintMessage("isPlayer: " .. CM.ns(targetInfo.isPlayer) .. " / isPvP: " .. CM.ns(targetInfo.isPvP) .. " / inGroup: " .. CM.ns(targetInfo.inGroup()), false, true)
 	if targetInfo.isPlayer then
 		-- Is the player flagged?
 		if targetInfo.isPvP then
 			isBoss = true
-			CombatMusic.PrintMessage("TRUE!", false, true)
+			CM.PrintMessage("TRUE!", false, true)
 		else
 			isBoss = false
-			CombatMusic.PrintMessage("FALSE!", false, true)
+			CM.PrintMessage("FALSE!", false, true)
 		end
 		-- They're in my group?
 		if targetInfo.inGroup() then
 			isBoss = false
-			CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
+			CM.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 			-- Recurse this function every half a second if there is no boss.
-			CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+			CM.SetTimer(0.5, CM.TargetChanged)
 			return isBoss or false
 		end
 	end
 	------------------------------------
 	
 	-- All right, return what we got, if we made it that far.
-	CombatMusic.PrintMessage("Final Result: ".. CombatMusic.ns(isBoss), false, true)
+	CM.PrintMessage("Final Result: ".. CM.ns(isBoss), false, true)
 	-- Recurse this function every half a second if there is no boss.
 	if not isBoss then
-		local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+		local t = CM.SetTimer(0.5, CM.TargetChanged, true, 0, unit)
 		if t ~= -1 then
-			CombatMusic.Info["updateTimer"] = t
+			CM.Info["updateTimer"] = t
 		end
 	end
 	return isBoss or false
@@ -488,57 +489,57 @@ end
 
 
 -- Saves music state so we can restore it out of combat
-function CombatMusic.GetSavedStates()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "GetSavedStates()", false, true)
+function CM.GetSavedStates()
+	CM.PrintMessage(CM.Colours.var .. "GetSavedStates()", false, true)
 	-- Music was turned on?
-	CombatMusic.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
+	CM.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
 	-- Music Volume?
-	CombatMusic.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
+	CM.Info["MusicVolume"] = GetCVar("Sound_MusicVolume") or "1"
 end
 
-function CombatMusic.RestoreSavedStates()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "RestoreSavedStates()", false, true)
-	CombatMusic.Info.FadeTimerVars = nil
-	CombatMusic.Info.RestoreTimer = nil
-	if not CombatMusic.Info.EnabledMusic then return end
-	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
-	if not CombatMusic.Info.MusicVolume then return end
-	SetCVar("Sound_MusicVolume", tostring(CombatMusic.Info.MusicVolume))
+function CM.RestoreSavedStates()
+	CM.PrintMessage(CM.Colours.var .. "RestoreSavedStates()", false, true)
+	CM.Info.FadeTimerVars = nil
+	CM.Info.RestoreTimer = nil
+	if not CM.Info.EnabledMusic then return end
+	SetCVar("Sound_EnableMusic", tostring(CM.Info.EnabledMusic))
+	if not CM.Info.MusicVolume then return end
+	SetCVar("Sound_MusicVolume", tostring(CM.Info.MusicVolume))
 end
 
 
 -- Fading start
-function CombatMusic.FadeOutStart()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "FadeOutStart()", false, true)
-	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
+function CM.FadeOutStart()
+	CM.PrintMessage(CM.Colours.var .. "FadeOutStart()", false, true)
+	local FadeTime = CM_SavedDB.Music.FadeOut
 	if FadeTime == 0 then 
 		StopMusic()
-		CombatMusic.RestoreSavedStates()
+		CM.RestoreSavedStates()
 		return
 	end
 	-- Check to make sure a fade timer isn"t already running.
-	if CombatMusic.Info.IsFading then
+	if CM.Info.IsFading then
 		return
 	end
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
-	local volStep = CombatMusic_SavedDB.Music.Volume / 20
-	CombatMusic.Info["FadeTimerVars"] = {
-		FadeTimer = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
-		MaxVol = CombatMusic_SavedDB.Music.Volume,
+	local volStep = CM_SavedDB.Music.Volume / 20
+	CM.Info["FadeTimerVars"] = {
+		FadeTimer = CM.SetTimer(interval, CM.FadeOutPlayingMusic, true),
+		MaxVol = CM_SavedDB.Music.Volume,
 		VolStep = volStep,
 	}
-	CombatMusic.Info["IsFading"] = true
+	CM.Info["IsFading"] = true
 end
 
 -- Fading function
-function CombatMusic.FadeOutPlayingMusic()
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "FadeOutPlayingMusic()", false, true)
+function CM.FadeOutPlayingMusic()
+	CM.PrintMessage(CM.Colours.var .. "FadeOutPlayingMusic()", false, true)
 	-- Set some args
-	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
-	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
-	local Step = CombatMusic.Info.FadeTimerVars.VolStep
+	local MaxVol = CM.Info.FadeTimerVars.MaxVol
+	local CurVol = CM.Info.FadeTimerVars.CurVol
+	local Step = CM.Info.FadeTimerVars.VolStep
 	local FadeFinished
 	
 	-- Check if CurVol is set
@@ -554,27 +555,27 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
-	CombatMusic.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
+	CM.PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
 		
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
-	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
+	CM.Info.FadeTimerVars.CurVol = CurVol
 	if FadeFinished then
-		CombatMusic.Info.FadeTimerVars = nil
+		CM.Info.FadeTimerVars = nil
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
-		CombatMusic.Info["RestoreTimer"] = CombatMusic.SetTimer(2, CombatMusic.RestoreSavedStates)
-		CombatMusic.Info.IsFading = nil
+		CM.Info["RestoreTimer"] = CM.SetTimer(2, CM.RestoreSavedStates)
+		CM.Info.IsFading = nil
 		return true
 	end
 end
 
 
 -- My survey function
---[=[ DISCLAIMER: THIS CODE IS USED TO SEND INFORMATION ABOUT YOUR CURRENT COMBATMUSIC 
+--[=[ DISCLAIMER: THIS CODE IS USED TO SEND INFORMATION ABOUT YOUR CURRENT CM 
 		CONFIGURATION TO THE PLAYER WHO ASKS FOR IT. THE INFORMATION SENT IS AS FOLLOWS:
 		 -YOUR TOON'S NAME (THIS IS AVAILABLE TO THE DEFAULT API AND IS IN NO WAY USED
 				TO IDENTIFY YOU BEYOND SEPERATING REPLIES.)
-		 -YOUR VERSION OF COMBATMUSIC
+		 -YOUR VERSION OF CM
 		 -YOUR NUMBER OF BOSS AND BATTLE SONGS
 		 
 		I ADDED THIS FUNCTIONALITY IN, MERELY OUT OF CURIOSITY AS TO WHO USES THE ADDON.
@@ -583,18 +584,18 @@ end
 		TO DISABLE THIS, ENTER INTO YOUR CHAT '/cm comm off' WITHOUT THE QUOTES.
 		IF YOU SHOULD CHANGE YOUR MIND, ENTER '/cm comm on' WITHOUT QUOTES TO RE-ENABLE.
 ]=]
-function CombatMusic.CheckComm(prefix, message, channel, sender)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckComm(" .. CombatMusic.ns(prefix) .. "," ..  CombatMusic.ns(message) .. "," ..  CombatMusic.ns(channel) .. "," .. CombatMusic.ns(sender) .. ")", false, true)
-	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
+function CM.CheckComm(prefix, message, channel, sender)
+	CM.PrintMessage(CM.Colours.var .. "CheckComm(" .. CM.ns(prefix) .. "," ..  CM.ns(message) .. "," ..  CM.ns(channel) .. "," .. CM.ns(sender) .. ")", false, true)
+	if not CM_SavedDB.AllowComm or not CM_SavedDB.Enabled then return end
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
-	CombatMusic.CommSettings(channel, sender)
+	CM.CommSettings(channel, sender)
 end
 
-function CombatMusic.CommSettings(channel, target)
-	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CommSettings(" .. CombatMusic.ns(channel) .. ", " .. CombatMusic.ns(target) .. ")", false, true)
-	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
-	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
+function CM.CommSettings(channel, target)
+	CM.PrintMessage(CM.Colours.var .. "CommSettings(" .. CM.ns(channel) .. ", " .. CM.ns(target) .. ")", false, true)
+	if not CM_SavedDB.AllowComm or not CM_SavedDB.Enabled then return end
+	local AddonMsg = format("%s,%d,%d", CM.VerStr .. " r" .. CM.Rev, CM_SavedDB.Music.numSongs.Battles, CM_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
 	else
@@ -607,11 +608,11 @@ end
 -- The code below was brought to you in part by the author of Hack.
 
 
-if CombatMusic.SetTimer then return end
+if CM.SetTimer then return end
 local timers = {}
 
 -- SetTimer(interval, callback, [recur], [id], [parameters...])
-function CombatMusic.SetTimer(interval, callback, recur, id, ...)
+function CM.SetTimer(interval, callback, recur, id, ...)
    local timer = {
       interval = interval,
 		ID = (id or nil),
@@ -624,7 +625,7 @@ function CombatMusic.SetTimer(interval, callback, recur, id, ...)
 		-- they want a unique timer:
 		for k,_ in pairs(timers) do
 			if k.ID == id then
-				CombatMusic.PrintMessage("Timer creation failed. ID already used!", true, true)
+				CM.PrintMessage("Timer creation failed. ID already used!", true, true)
 				return -1
 			end
 		end
@@ -633,7 +634,7 @@ function CombatMusic.SetTimer(interval, callback, recur, id, ...)
    return timer
 end
 
-function CombatMusic.KillTimer(timer)
+function CM.KillTimer(timer)
    timers[timer] = nil
 end
 
@@ -652,7 +653,7 @@ local function OnUpdate(self, elapsed)
                t.update = 0
             else
                timers[t] = nil
-               if not success then CombatMusic.PrintMessage("Timer Callback failed:" .. rv , true, true) end
+               if not success then CM.PrintMessage("Timer Callback failed:" .. rv , true, true) end
             end
          end
       end

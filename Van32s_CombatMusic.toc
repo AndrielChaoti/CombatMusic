@@ -1,15 +1,15 @@
 ﻿## Interface: 40200
-## Title: Van32's |cFFAF96FFCombatMusic|r
-## Version: 3.7.5
+## Title: Van32's |cFFAF96FFCM|r
+## Version: 3.8
 ## Notes: An easy to use addon that is designed to play music while in combat.
 ## Author: Vandesdelca32
 ## X-EMail: Vandesdelca32@gmail.com
 
-## SavedVariables: CombatMusic_SavedDB, CombatMusic_BossList
+## SavedVariables: CM_SavedDB, CM_BossList
 
 locale-enUS.lua
 
-Van32s_CombatMusic.lua
-Van32s_CombatMusic.xml
-CombatMusic_Operation.lua
-CombatMusic_Bosses.lua
+Van32s_CM.lua
+Van32s_CM.xml
+CM_Operation.lua
+CM_Bosses.lua
