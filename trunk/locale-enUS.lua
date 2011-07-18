@@ -1,9 +1,9 @@
 ﻿--[[
 ------------------------------------------------------------------------
-	Project: Van32sCM
+	Project: Van32s_CombatMusic
 	File: English Localization, revision @file-revision@
 	Date: @project-date-iso@
-	Purpose: The English string localization for CM.
+	Purpose: The English string localization for CombatMusic.
 	Credits: Code written by Vandesdelca32
 	
     Copyright (C) 2011  Vandesdelca32

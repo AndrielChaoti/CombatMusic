@@ -1,6 +1,6 @@
 ﻿--[[
 ------------------------------------------------------------------------
-	Project: Van32sCM
+	Project: Van32s_CombatMusic
 	File: Reusable Functions, revision @file-revision@
 	Date: @project-date-iso@
 	Purpose: The reusable, essential functions that any addon needs.
