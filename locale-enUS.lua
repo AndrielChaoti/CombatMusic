@@ -103,7 +103,9 @@ CM.L = {
 		["/cm bosslist [add\124\124remove]"] = "Allows you to add/remove entries on the BossList table. Without an argument, will print the contents to the chat frame.",
 		["/cm comm [on\124off]"] = "Allows you to enable/disable responding to settings requests from other players.",
 		["/cm debug [on\124off]"] = "Sets Debug mode on or off. When enabled, it will print debug messages to your chat frame.",
-		["/cm reset"] = "Shows the prompt to reset your ".. CM.AddonTitle .." setings. This cannot be undone!",		
+		["/cm reset"] = "Shows the prompt to reset your ".. CM.AddonTitle .." setings. This cannot be undone!",
+	}
+}
 --[[
 	-- Message headers.. These get added onto a message to specify it's type.
 	["DebugHeader"] = "<Debug> ",
@@ -182,7 +184,6 @@ CM.SlashArgs = {
 	["Help"]    = "help",
 	["Enable"]  = "on",
 	["Disable"] = "off",
-	--["Config"]  = "config",
 	["Debug"] = "debug",
 	["BattleCount"] = "battles",
 	["BossCount"] = "bosses",
