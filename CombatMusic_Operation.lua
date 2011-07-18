@@ -366,6 +366,12 @@ function CombatMusic.CheckTarget(unit)
 	if not CombatMusic_DebugMode then
 		if not targetInfo.inCombat then
 			isBoss = false
+			if not isBoss then
+				local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+				if t ~= -1 then
+					CombatMusic.Info["updateTimer"] = t
+				end
+			end
 			return isBoss
 		end
 	end
