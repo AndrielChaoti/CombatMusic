@@ -34,7 +34,7 @@ CM["Info"]= {}
 function CM.enterCombat()
 	CM.PrintMessage(CM.Colours.var .. "enterCombat()", false, true)
 	--Check that CM is turned on
-	if not CM_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.Enabled then return end
 	
 	-- Make sure we're not in combat before trying to enter it again
 	if CM.Info.InCombat then
@@ -63,7 +63,7 @@ function CM.enterCombat()
 
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
-	SetCVar("Sound_MusicVolume", CM_SavedDB.Music.Volume)
+	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.Music.Volume)
 	
 	
 	-- Check the BossList.
@@ -83,14 +83,14 @@ function CM.enterCombat()
 	-- Play the music
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CM.Info.BossFight then
-		if CM_SavedDB.Music.numSongs.Bosses > 0 then
-			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CM_SavedDB.Music.numSongs.Bosses)))
+		if CombatMusic_SavedDB.Music.numSongs.Bosses > 0 then
+			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
 		else
 			CM.leaveCombat(1)
 		end
 	else
-		if CM_SavedDB.Music.numSongs.Battles > 0 then
-			PlayMusic(format(filePath, "Battles", "Battle", random(1, CM_SavedDB.Music.numSongs.Battles)))
+		if CombatMusic_SavedDB.Music.numSongs.Battles > 0 then
+			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.Music.numSongs.Battles)))
 		else
 			CM.leaveCombat(1)
 		end
@@ -105,7 +105,7 @@ end
 -- 3 = No_Target_Error
 function CM.TargetChanged(unit)
 	CM.PrintMessage(CM.Colours.var .. "TargetChanged(".. CM.ns(unit) ..")", false, true)
-	if not CM_SavedDB.Enabled then return 1 end
+	if not CombatMusic_SavedDB.Enabled then return 1 end
 	
 	-- There's no need to do this again if we already have a boss.
 	if CM.Info.BossFight then return 0 end
@@ -125,25 +125,25 @@ function CM.TargetChanged(unit)
 	-- Get that music changed
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
 	if CM.Info.BossFight then
-		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CM_SavedDB.Music.numSongs.Bosses)))
+		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
 		return 0
 	end
 end
 
 function CM.CheckBossList()
 	CM.PrintMessage(CM.Colours.var .. "CheckBossList()", false, true)
-	if CM_BossList then
-		if CM_BossList[UnitName("target")] then
-			PlayMusic(CM_BossList[UnitName("target")])
+	if CombatMusic_BossList then
+		if CombatMusic_BossList[UnitName("target")] then
+			PlayMusic(CombatMusic_BossList[UnitName("target")])
 			CM.Info.BossFight = true
 			CM.Info.InCombat = true
-			CM.PrintMessage("Target on BossList. Playing ".. tostring(CM_BossList[UnitName("target")]), false, true)
+			CM.PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
 			return true
-		elseif CM_BossList[UnitName("focustarget")] then
-			PlayMusic(CM_BossList[UnitName("focustarget")])
+		elseif CombatMusic_BossList[UnitName("focustarget")] then
+			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
 			CM.Info.BossFight = true
 			CM.Info.InCombat = true
-			CM.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CM_BossList[UnitName("focustarget")]), false, true)
+			CM.PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
 			return true
 		end
 		CM.PrintMessage("Target not on BossList.", false, true)
@@ -157,18 +157,18 @@ end
 function CM.leaveCombat(isDisabling)
 	CM.PrintMessage(CM.Colours.var .. "leaveCombat("..CM.ns(isDisabling)..")", false, true)
 	--Check that CM is turned on
-	if not CM_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.Enabled then return end
 	if not CM.Info.InCombat then return end
 	
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
 	-- Check for boss fight, and if the user wants to hear it....
-	if CM_SavedDB.Victory.Enabled and not isDisabling and CM.Info.BossFight then
+	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CM.Info.BossFight then
 		StopMusic()
 		--Boss Only?
 		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
-			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
+			CM.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
 			CM.RestoreSavedStates()
 		end
@@ -190,7 +190,7 @@ end
 function CM.GameOver()
 	CM.PrintMessage(CM.Colours.var .. "GameOver()", false, true)
 	--Check that CM is turned on
-	if not CM_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.Enabled then return end
 	
 	StopMusic()
 	if CM.Info.InCombat then
@@ -201,9 +201,9 @@ function CM.GameOver()
 	-- No music fading for game over, so skip that step
 	
 	-- Too bad, play the gameover, if it's not on CD, and the user wants to hear it
-	if CM_SavedDB.GameOver.Enabled then
+	if CombatMusic_SavedDB.GameOver.Enabled then
 		if (not CM.Info.GameOverCD) or (GetTime() >= CM.Info.GameOverCD) then
-			CM.Info["GameOverCD"] = GetTime() + CM_SavedDB.GameOver.Cooldown
+			CM.Info["GameOverCD"] = GetTime() + CombatMusic_SavedDB.GameOver.Cooldown
 			PlaySoundFile("Interface\\Music\\GameOver.mp3", "Master")
 		end
 	end
@@ -217,19 +217,19 @@ end
 function CM.LevelUp()	
 	CM.PrintMessage(CM.Colours.var .. "LevelUp()", false, true)
 	--Check that CM is turned on
-	if not CM_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.Enabled then return end
 	
 	-- Yay, play the fanfare.. if it's not on cooldown, and the user wants to hear it.
 	-- We have two options here, Check to see if they want to use their victory fanfare, or the new
 	--   level up fanfare.
-	if CM_SavedDB.LevelUp.Enabled and CM_SavedDB.LevelUp.NewFanfare then
+	if CombatMusic_SavedDB.LevelUp.Enabled and CombatMusic_SavedDB.LevelUp.NewFanfare then
 		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
-			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
+			CM.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\DING.mp3", "Master")
 		end
-	elseif CM_SavedDB.LevelUp.Enabled and not CM_SavedDB.LevelUp.NewFanfare then
+	elseif CombatMusic_SavedDB.LevelUp.Enabled and not CombatMusic_SavedDB.LevelUp.NewFanfare then
 		if (not CM.Info.FanfareCD) or (GetTime() >= CM.Info.FanfareCD) then
-			CM.Info["FanfareCD"] = GetTime() + CM_SavedDB.Victory.Cooldown
+			CM.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
 		end
 	end
@@ -511,7 +511,7 @@ end
 -- Fading start
 function CM.FadeOutStart()
 	CM.PrintMessage(CM.Colours.var .. "FadeOutStart()", false, true)
-	local FadeTime = CM_SavedDB.Music.FadeOut
+	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
 	if FadeTime == 0 then 
 		StopMusic()
 		CM.RestoreSavedStates()
@@ -524,10 +524,10 @@ function CM.FadeOutStart()
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
-	local volStep = CM_SavedDB.Music.Volume / 20
+	local volStep = CombatMusic_SavedDB.Music.Volume / 20
 	CM.Info["FadeTimerVars"] = {
 		FadeTimer = CM.SetTimer(interval, CM.FadeOutPlayingMusic, true),
-		MaxVol = CM_SavedDB.Music.Volume,
+		MaxVol = CombatMusic_SavedDB.Music.Volume,
 		VolStep = volStep,
 	}
 	CM.Info["IsFading"] = true
@@ -586,7 +586,7 @@ end
 ]=]
 function CM.CheckComm(prefix, message, channel, sender)
 	CM.PrintMessage(CM.Colours.var .. "CheckComm(" .. CM.ns(prefix) .. "," ..  CM.ns(message) .. "," ..  CM.ns(channel) .. "," .. CM.ns(sender) .. ")", false, true)
-	if not CM_SavedDB.AllowComm or not CM_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
 	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
 	CM.CommSettings(channel, sender)
@@ -594,8 +594,8 @@ end
 
 function CM.CommSettings(channel, target)
 	CM.PrintMessage(CM.Colours.var .. "CommSettings(" .. CM.ns(channel) .. ", " .. CM.ns(target) .. ")", false, true)
-	if not CM_SavedDB.AllowComm or not CM_SavedDB.Enabled then return end
-	local AddonMsg = format("%s,%d,%d", CM.VerStr .. " r" .. CM.Rev, CM_SavedDB.Music.numSongs.Battles, CM_SavedDB.Music.numSongs.Bosses)
+	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
+	local AddonMsg = format("%s,%d,%d", CM.VerStr .. " r" .. CM.Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
 	else

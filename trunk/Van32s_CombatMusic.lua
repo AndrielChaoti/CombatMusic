@@ -76,16 +76,16 @@ function CM.CheckSettingsLoaded()
 	local x1 = 1
 	local x2 = 1
 	
-	if not CM_SavedDB then
+	if not CombatMusic_SavedDB then
 		CM.SetDefaults()
 		x1 = nil
-	elseif CM_SavedDB.SVVersion ~= currentSVVersion then
+	elseif CombatMusic_SavedDB.SVVersion ~= currentSVVersion then
 		CM.SetDefaults(1)
 		x1 = nil
 	end
 	
-	if not CM_BossList then
-		CM_BossList = {}
+	if not CombatMusic_BossList then
+		CombatMusic_BossList = {}
 		CM.PrintMessage(CM.L.Other.SongListDefaults)
 		x2 = nil
 	end
@@ -103,9 +103,9 @@ end
 function CM.SetDefaults(outOfDate)
 	CM.PrintMessage(CM.Colours.var .. "SetDefaults(" .. CM.ns(outOfDate) .. ")", false, true)
 	-- Are settings there, but out of date? Try to update them.
-	if outOfDate and CM_SavedDB.SVVersion == "1" then
+	if outOfDate and CombatMusic_SavedDB.SVVersion == "1" then
 		--[[Settings Version 1:
-			CM_SavedDB = {
+			CombatMusic_SavedDB = {
 				["SVVersion"] = "1",
 				["Enabled"] = true, 
 				["PlayWhen"] = {
@@ -127,33 +127,33 @@ function CM.SetDefaults(outOfDate)
 		]]
 		local tempDB = {
 			["SVVersion"] = currentSVVersion,
-			["Enabled"] = CM_SavedDB.Enabled or true,
+			["Enabled"] = CombatMusic_SavedDB.Enabled or true,
 			["Music"] = {
 				["Enabled"] = true,
-				["numSongs"] = CM_SavedDB.numSongs or {["Battles"] = -1, ["Bosses"] = -1},
-				["Volume"] = CM_SavedDB.MusicVolume or 0.85,
-				["FadeOut"] = CM_SavedDB.FadeTime or 5,
+				["numSongs"] = CombatMusic_SavedDB.numSongs or {["Battles"] = -1, ["Bosses"] = -1},
+				["Volume"] = CombatMusic_SavedDB.MusicVolume or 0.85,
+				["FadeOut"] = CombatMusic_SavedDB.FadeTime or 5,
 			}, 
 			["GameOver"] = {
-				["Enabled"] = CM_SavedDB.PlayWhen.GameOver or true,
-				["Cooldown"] = CM_SavedDB.timeOuts.GameOver or 30,
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.GameOver or true,
+				["Cooldown"] = CombatMusic_SavedDB.timeOuts.GameOver or 30,
 			},
 			["Victory"] = {
-				["Enabled"] = CM_SavedDB.PlayWhen.CombatFanfare or true,
-				["Cooldown"] = CM_SavedDB.timeOuts.Fanfare or 30,
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.CombatFanfare or true,
+				["Cooldown"] = CombatMusic_SavedDB.timeOuts.Fanfare or 30,
 			},
 			["LevelUp"] = {
-				["Enabled"] = CM_SavedDB.PlayWhen.LevelUp or true, 
+				["Enabled"] = CombatMusic_SavedDB.PlayWhen.LevelUp or true, 
 				["NewFanfare"] = false,
 			},
 			["AllowComm"] = true,
 		}
 
-		CM_SavedDB = tempDB
+		CombatMusic_SavedDB = tempDB
 		CM.PrintMessage(CM.L.Other.UpdateSettings)
 	else
 		-- Load the default settings for CM
-		CM_SavedDB = {
+		CombatMusic_SavedDB = {
 			["SVVersion"] = currentSVVersion,
 			["Enabled"] = true,
 			["Music"] = {
@@ -180,7 +180,7 @@ function CM.SetDefaults(outOfDate)
 			["AllowComm"] = true,
 		}
 		CM.PrintMessage(CM.L.Other.LoadDefaults)
-		CM_BossList = {}
+		CombatMusic_BossList = {}
 		CM.PrintMessage(CM.L.Other.SongListDefaults)
 	end
 end
@@ -256,7 +256,7 @@ function CM.SlashCommandHandler(args)
 	--------
 	elseif command == CM.SlashArgs.Enable then
 		-- Enable CM
-		CM_SavedDB.Enabled = true
+		CombatMusic_SavedDB.Enabled = true
 		CM.PrintMessage(CM.L.Other.Enabled)
 
 	--/cm off
@@ -264,7 +264,7 @@ function CM.SlashCommandHandler(args)
 	elseif command == CM.SlashArgs.Disable then
 		-- Disable CM
 		CM.leaveCombat(true)
-		CM_SavedDB.Enabled = false
+		CombatMusic_SavedDB.Enabled = false
 		CM.PrintMessage(CM.L.Other.Disabled)
 
 	--/cm reset
@@ -279,16 +279,16 @@ function CM.SlashCommandHandler(args)
 		--Command to set number of battle songs
 		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
-			CM.PrintMessage(format(CM.L.Other.BattleCount, CM_SavedDB.Music.numSongs.Battles))
+			CM.PrintMessage(format(CM.L.Other.BattleCount, CombatMusic_SavedDB.Music.numSongs.Battles))
 		else
 			-- Set the number of battles, if arg > 0
 			if arg == "off" then
 				CM.PrintMessage(CM.L.Other.BattlesOff)
-				CM_SavedDB.Music.numSongs.Battles = -1
+				CombatMusic_SavedDB.Music.numSongs.Battles = -1
 			elseif tonumber(arg) <= 0 then
 				CM.PrintMessage(CM.L.Errors.BiggerThan0, true)
 			else
-				CM_SavedDB.Music.numSongs.Battles = tonumber(arg)
+				CombatMusic_SavedDB.Music.numSongs.Battles = tonumber(arg)
 				CM.PrintMessage(format(CM.L.Other.NewBattles, arg))
 			end
 		end
@@ -299,16 +299,16 @@ function CM.SlashCommandHandler(args)
 		-- Command to set the number of boss songs
 		if (not tonumber(arg)) and arg ~= "off" then
 			--Show current setting if arg not provided.
-			CM.PrintMessage(format(CM.L.Other.BossCount, CM_SavedDB.Music.numSongs.Bosses))
+			CM.PrintMessage(format(CM.L.Other.BossCount, CombatMusic_SavedDB.Music.numSongs.Bosses))
 		else
 			-- Set the number of boss batles, if arg > 0
 			if arg == "off" then
-				CM_SavedDB.Music.numSongs.Bosses = -1
+				CombatMusic_SavedDB.Music.numSongs.Bosses = -1
 				CM.PrintMessage(CM.L.Other.BossesOff)
 			elseif tonumber(arg) <= 0 then
 				CM.PrintMessage(CM.L.Errors.BiggerThan0, true)
 			else
-				CM_SavedDB.Music.numSongs.Bosses = tonumber(arg)
+				CombatMusic_SavedDB.Music.numSongs.Bosses = tonumber(arg)
 				CM.PrintMessage(format(CM.L.Other.NewBosses, arg))
 			end
 		end
@@ -319,13 +319,13 @@ function CM.SlashCommandHandler(args)
 		--Command to change the in-combat music volume
 		if not tonumber(arg) then
 			--Show current setting if arg not provided.
-			CM.PrintMessage(format(CM.L.Other.CurMusicVol, CM_SavedDB.Music.Volume))
+			CM.PrintMessage(format(CM.L.Other.CurMusicVol, CombatMusic_SavedDB.Music.Volume))
 		else
 			--Change the setting if arg is in the accepted range.
 			if tonumber(arg) < 0 or tonumber(arg) > 1 then
 				CM.PrintMessage(CM.L.Errors.Volume, true)
 			else
-				CM_SavedDB.Music.Volume = tostring(arg)
+				CombatMusic_SavedDB.Music.Volume = tostring(arg)
 				CM.PrintMessage(format(CM.L.Other.SetMusicVol, arg))
 			end
 		end
@@ -335,15 +335,15 @@ function CM.SlashCommandHandler(args)
 	elseif command == CM.SlashArgs.FadeTime then
 		-- Command to change fadeout timer
 		if (not tonumber(arg)) and arg ~= "off" then
-			CM.PrintMessage(format(CM.L.Other.CurrentFade, CM_SavedDB.Music.FadeOut))
+			CM.PrintMessage(format(CM.L.Other.CurrentFade, CombatMusic_SavedDB.Music.FadeOut))
 		else
 			if arg == "off" then
-				CM_SavedDB.Music.FadeOut = 0
+				CombatMusic_SavedDB.Music.FadeOut = 0
 				CM.PrintMessage(CM.L.Other.FadingDisable)
 			elseif tonumber(arg) <= 0 then
 				CM.PrintMessage(CM.L.Errors.BiggerThan0, true)
 			else
-				CM_SavedDB.Music.FadeOut = tonumber(arg)
+				CombatMusic_SavedDB.Music.FadeOut = tonumber(arg)
 				CM.PrintMessage(format(CM.L.Other.FadingSet, arg))
 			end
 		end
@@ -360,7 +360,7 @@ function CM.SlashCommandHandler(args)
 				}
 			end
 		elseif arg == "remove" then
-			local dlg = StaticPopup_Show("CM_BOSSLISTREMOVE")
+			local dlg = StaticPopup_Show("CombatMusic_BossListREMOVE")
 		else
 			CM.PrintMessage(CM.L.Other.UseDump)
 			CM.DumpBossList()
@@ -370,10 +370,10 @@ function CM.SlashCommandHandler(args)
 	----------
 	elseif command == CM.SlashArgs.Comm then
 		if arg == "off" then	
-			CM_SavedDB.AllowComm = false
+			CombatMusic_SavedDB.AllowComm = false
 			CM.PrintMessage(CM.L.Other.AddonCommOff)
 		elseif arg == "on" then
-			CM_SavedDB.AllowComm = true
+			CombatMusic_SavedDB.AllowComm = true
 			CM.PrintMessage(CM.L.Other.AddonCommOn)
 		else
 			CM.PrintMessage(CM.L.Errors.OnOrOff, true)
@@ -404,7 +404,7 @@ local function CM_CheckBossList(self, dialogNo, data, data2)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
 		self:Hide()
-		local dlg2 = StaticPopup_Show("CM_BOSSLISTADD2")
+		local dlg2 = StaticPopup_Show("CombatMusic_BossListADD2")
 		if dlg2 then
 			dlg2.data = {
 				Name = UnitName
@@ -412,7 +412,7 @@ local function CM_CheckBossList(self, dialogNo, data, data2)
 		end
 	elseif dialogNo == 2 then
 		local SongPath = self.editBox:GetText()
-		CM_BossList[data.Name] = SongPath
+		CombatMusic_BossList[data.Name] = SongPath
 		CM.PrintMessage(format(CM.L.Other.BossListAdded, data.Name, SongPath))
 		self:Hide()
 	end
@@ -423,8 +423,8 @@ local function CM_RemoveBossList(self)
 	CM.PrintMessage(CM.Colours.var .. "RemoveBossList()", false, true)
 	local unit = self.editBox:GetText()
 	-- Check the bosslist
-	if CM_BossList[unit] then
-		CM_BossList[unit] = nil
+	if CombatMusic_BossList[unit] then
+		CombatMusic_BossList[unit] = nil
 		CM.PrintMessage(format(CM.L.Other.BosslistRemoved, unit))
 		self:Hide()
 	else
@@ -435,7 +435,7 @@ end
 -- BossList dumper
 function CM.DumpBossList()
 	CM.PrintMessage(CM.Colours.var .. "DumpBossList()", false, true)
-	for k,v in pairs(CM_BossList) do
+	for k,v in pairs(CombatMusic_BossList) do
 		CM.PrintMessage(format(CM.L.Other.BossListDump, k,v))
 	end
 end
@@ -517,7 +517,7 @@ function CM_OnLoad(self)
 		timeout = 0,
 	}
 	
-	StaticPopupDialogs["CM_BOSSLISTADD2"] = {
+	StaticPopupDialogs["CombatMusic_BossListADD2"] = {
 		text= CM.L.Other.BossListAdd2,
 		button1 = OKAY,
 		button2 = CANCEL,
@@ -555,7 +555,7 @@ function CM_OnLoad(self)
 		timeout = 0,
 	}
 	
-	StaticPopupDialogs["CM_BOSSLISTREMOVE"] = {
+	StaticPopupDialogs["CombatMusic_BossListREMOVE"] = {
 		text = CM.L.Other.BossListRemove,
 		button1 = OKAY,
 		button2 = CANCEL,
