@@ -5,7 +5,7 @@
 ## Author: Vandesdelca32
 ## X-EMail: Vandesdelca32@gmail.com
 
-## SavedVariables: CM_SavedDB, CM_BossList
+## SavedVariables: CombatMusic_SavedDB, CombatMusic_BossList
 
 locale-enUS.lua
 
