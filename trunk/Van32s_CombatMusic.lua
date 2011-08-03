@@ -186,24 +186,14 @@ function CombatMusic.SetDefaults(outOfDate)
 	end
 end
 
-
-
 -- Event Handling function
 function CombatMusic_OnEvent(self, event, ...)
 	-- Debug Messages
 	--CombatMusic.PrintMessage(format("Event. %s", event or "nil"), false, true)
 	--CombatMusic.PrintMessage(..., false, true)
 	local arg1 = ...
-	-- The addon was loaded:
-	if event == "ADDON_LOADED" and arg1 == addonName then
-		-- The addon was loaded.
-		-- CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
-		-- CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
-		-- Do a settings Check
-		-- CombatMusic.CheckSettingsLoaded()
-		-- return
 	-- Player enters the world
-	elseif event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
+	if event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
 		-- This is to set up a delay, so the player will see the loading messages after everything else
 		CombatMusic.SetTimer(3, function()		
 				-- The addon was loaded.
@@ -465,7 +455,7 @@ end
 function CombatMusic_OnLoad(self)
 
 	-- AddonEvents
-	self:RegisterEvent("ADDON_LOADED")
+	--self:RegisterEvent("ADDON_LOADED")
 	-- Trigger events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_LEVEL_UP")
