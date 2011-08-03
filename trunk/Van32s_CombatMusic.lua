@@ -204,7 +204,7 @@ function CombatMusic_OnEvent(self, event, ...)
 		-- return
 	-- Player enters the world
 	elseif event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
-		-- This is to set up a delay, so the player will see the loading messages:
+		-- This is to set up a delay, so the player will see the loading messages after everything else
 		CombatMusic.SetTimer(3, function()		
 				-- The addon was loaded.
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
