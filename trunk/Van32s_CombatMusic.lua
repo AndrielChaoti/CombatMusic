@@ -197,11 +197,23 @@ function CombatMusic_OnEvent(self, event, ...)
 	-- The addon was loaded:
 	if event == "ADDON_LOADED" and arg1 == addonName then
 		-- The addon was loaded.
-		CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
-		CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
+		-- CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
+		-- CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
 		-- Do a settings Check
-		CombatMusic.CheckSettingsLoaded()
-		return
+		-- CombatMusic.CheckSettingsLoaded()
+		-- return
+	-- Player enters the world
+	elseif event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
+		-- This is to set up a delay, so the player will see the loading messages:
+		CombatMusic.SetTimer(3, function()		
+				-- The addon was loaded.
+				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
+				CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
+				CombatMusic.SetTimer(2, function()
+					CombatMusic.CheckSettingsLoaded()
+					CombatMusic["Info"]["Loaded"] = true
+				end )
+			end )
 	-- The player leveled up:
 	elseif event == "PLAYER_LEVEL_UP" then
 		CombatMusic.LevelUp()
@@ -455,6 +467,7 @@ function CombatMusic_OnLoad(self)
 	-- AddonEvents
 	self:RegisterEvent("ADDON_LOADED")
 	-- Trigger events
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_LEVEL_UP")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
