@@ -32,9 +32,10 @@ CombatMusic["Info"]= {}
 -- Entering Combat
 function CombatMusic.enterCombat()
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "enterCombat()", false, true)
-	--Check that CombatMusic is turned on
+	--Check that CombatMusic is turned on and "initialized"
 	if not CombatMusic_SavedDB.Enabled then return end
-	
+	if not CombatMusic.Info.Loaded then return end
+
 	-- Make sure we're not in combat before trying to enter it again
 	if CombatMusic.Info.InCombat then
 		CombatMusic.RestoreSavedStates()
@@ -104,7 +105,9 @@ end
 -- 3 = No_Target_Error
 function CombatMusic.TargetChanged(unit)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "TargetChanged(".. CombatMusic.ns(unit) ..")", false, true)
-	if not CombatMusic_SavedDB.Enabled then return 1 end
+	
+	if not CombatMusic_SavedDB.Enabled then return -1 end
+	if not CombatMusic.Info.Loaded then return -1 end
 	
 	-- There's no need to do this again if we already have a boss.
 	if CombatMusic.Info.BossFight then return 0 end
@@ -157,6 +160,7 @@ function CombatMusic.leaveCombat(isDisabling)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "leaveCombat("..CombatMusic.ns(isDisabling)..")", false, true)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic.Info.Loaded then return end
 	if not CombatMusic.Info.InCombat then return end
 	
 	-- OhNoes! The player's dead, don't want no fanfares playing...
@@ -190,6 +194,7 @@ function CombatMusic.GameOver()
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "GameOver()", false, true)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic.Info.Loaded then return end
 	
 	StopMusic()
 	if CombatMusic.Info.InCombat then
@@ -217,6 +222,7 @@ function CombatMusic.LevelUp()
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "LevelUp()", false, true)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic.Info.Loaded then return end
 	
 	-- Yay, play the fanfare.. if it's not on cooldown, and the user wants to hear it.
 	-- We have two options here, Check to see if they want to use their victory fanfare, or the new
@@ -585,7 +591,9 @@ end
 ]=]
 function CombatMusic.CheckComm(prefix, message, channel, sender)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CheckComm(" .. CombatMusic.ns(prefix) .. "," ..  CombatMusic.ns(message) .. "," ..  CombatMusic.ns(channel) .. "," .. CombatMusic.ns(sender) .. ")", false, true)
-	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.AllowComm then return end
+	if not CombatMusic.Info.Loaded then return end
 	if prefix ~= "CombatMusic3" then return end
 	if message ~= "SETTINGS" then return end
 	CombatMusic.CommSettings(channel, sender)
@@ -593,7 +601,9 @@ end
 
 function CombatMusic.CommSettings(channel, target)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "CommSettings(" .. CombatMusic.ns(channel) .. ", " .. CombatMusic.ns(target) .. ")", false, true)
-	if not CombatMusic_SavedDB.AllowComm or not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic_SavedDB.AllowComm then return end
+	if not CombatMusic_SavedDB.Enabled then return end
+	if not CombatMusic.Info.Loaded then return end
 	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CombatMusic3", AddonMsg, channel)
