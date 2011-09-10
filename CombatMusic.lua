@@ -256,8 +256,8 @@ end
 -- Slash command function
 function CombatMusic.SlashCommandHandler(args)
 	CombatMusic.PrintMessage(CombatMusic_Colors.var .. "SlashCommandHandler(" .. CombatMusic.ns(args) .. ")", false, true)
-	local command, arg = args:match("^(%S*)%s*(.-)$");
-
+	local command, arg = string.lower(args:match("^(%S*)%s*(.-)$"));
+	
 	-- /cm help
 	-----------
 	if command == "" or command == CombatMusic_SlashArgs.Help then
