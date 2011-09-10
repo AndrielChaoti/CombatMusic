@@ -9,6 +9,6 @@
 
 locale-enUS.lua
 
-Van32s_CombatMusic.lua
-Van32s_CombatMusic.xml
-CombatMusic_Operation.lua
+Van32sCombatMusic.lua
+Van32sCombatMusic.xml
+Core.lua
