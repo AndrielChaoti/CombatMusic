@@ -594,7 +594,7 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic.Info.Loaded then return end
-	if prefix ~= "CombatMusic3" then return end
+	if prefix ~= "CM3" then return end
 	if message ~= "SETTINGS" then return end
 	CombatMusic.CommSettings(channel, sender)
 end
@@ -606,9 +606,9 @@ function CombatMusic.CommSettings(channel, target)
 	if not CombatMusic.Info.Loaded then return end
 	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
-		SendAddonMessage("CombatMusic3", AddonMsg, channel)
+		SendAddonMessage("CM3", AddonMsg, channel)
 	else
-		SendAddonMessage("CombatMusic3", AddonMsg, channel, target)
+		SendAddonMessage("CM3", AddonMsg, channel, target)
 	end
 end
 
