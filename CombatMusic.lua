@@ -1,8 +1,8 @@
 ﻿--[[
 ------------------------------------------------------------------------
 	Project: Van32sCombatMusic
-	File: Reusable Functions, revision @file-revision@
-	Date: @project-date-iso@
+	File: Reusable Functions, revision 252
+	Date: 2011-09-10T19:25:49Z
 	Purpose: The reusable, essential functions that any addon needs.
 	Credits: Code written by Vandesdelca32
 

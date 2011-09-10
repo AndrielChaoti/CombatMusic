@@ -1,8 +1,8 @@
 ﻿--[[
 ------------------------------------------------------------------------
 	Project: Van32sCombatMusic
-	File: English Localization, revision @file-revision@
-	Date: @project-date-iso@
+	File: English Localization, revision 243
+	Date: 2011-09-10T19:25:49Z
 	Purpose: The English string localization for CombatMusic.
 	Credits: Code written by Vandesdelca32
 	
@@ -28,7 +28,7 @@ local addonName, _ = ...
 
 CombatMusic_AddonTitle = "CombatMusic"
 CombatMusic_VerStr = GetAddOnMetadata(addonName, "Version")
-CombatMusic_Rev = tonumber("@project-revision@") or "DEV"
+CombatMusic_Rev = tonumber("252") or "DEV"
 
 -- This shouldn't ever need to be localized, it's color strings.
 CombatMusic_Colors = {
