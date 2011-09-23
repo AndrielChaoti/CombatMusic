@@ -27,7 +27,7 @@
 
 CombatMusic["Info"]= {}
 
-
+local timerLib = LibStub:GetLibrary("Van32TimerLib-1.0",true)
 
 -- Entering Combat
 function CombatMusic.enterCombat()
@@ -373,7 +373,7 @@ function CombatMusic.CheckTarget(unit)
 		if not targetInfo.inCombat then
 			isBoss = false
 			if not isBoss then
-				local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+				local t = timerLib:SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
 				if t ~= -1 then
 					CombatMusic.Info["updateTimer"] = t
 				end
@@ -443,7 +443,7 @@ function CombatMusic.CheckTarget(unit)
 		isBoss = false
 		CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 		-- Recurse this function every half a second if there is no boss.
-		CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+		timerLib:SetTimer(0.5, CombatMusic.TargetChanged)
 		return isBoss
 	elseif targetInfo.level.raw() == -2 then
 		-- Why are we still here? This means there was no target
@@ -474,7 +474,7 @@ function CombatMusic.CheckTarget(unit)
 			isBoss = false
 			CombatMusic.PrintMessage("FALSE! STOPPING CHECK!", false, true)
 			-- Recurse this function every half a second if there is no boss.
-			CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged)
+			timerLib:SetTimer(0.5, CombatMusic.TargetChanged)
 			return isBoss or false
 		end
 	end
@@ -484,7 +484,7 @@ function CombatMusic.CheckTarget(unit)
 	CombatMusic.PrintMessage("Final Result: ".. CombatMusic.ns(isBoss), false, true)
 	-- Recurse this function every half a second if there is no boss.
 	if not isBoss then
-		local t = CombatMusic.SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
+		local t = timerLib:SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
 		if t ~= -1 then
 			CombatMusic.Info["updateTimer"] = t
 		end
@@ -531,7 +531,7 @@ function CombatMusic.FadeOutStart()
 	local interval = FadeTime / 20
 	local volStep = CombatMusic_SavedDB.Music.Volume / 20
 	CombatMusic.Info["FadeTimerVars"] = {
-		FadeTimer = CombatMusic.SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
+		FadeTimer = timerLib:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
 		MaxVol = CombatMusic_SavedDB.Music.Volume,
 		VolStep = volStep,
 	}
@@ -568,7 +568,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		CombatMusic.Info.FadeTimerVars = nil
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
-		CombatMusic.Info["RestoreTimer"] = CombatMusic.SetTimer(2, CombatMusic.RestoreSavedStates)
+		CombatMusic.Info["RestoreTimer"] = timerLib:SetTimer(2, CombatMusic.RestoreSavedStates)
 		CombatMusic.Info.IsFading = nil
 		return true
 	end
@@ -611,62 +611,3 @@ function CombatMusic.CommSettings(channel, target)
 		SendAddonMessage("CM3", AddonMsg, channel, target)
 	end
 end
-
--- Timer lib functions:
-
--- The code below was brought to you in part by the author of Hack.
-
-
-if CombatMusic.SetTimer then return end
-local timers = {}
-
--- SetTimer(interval, callback, [recur], [id], [parameters...])
-function CombatMusic.SetTimer(interval, callback, recur, id, ...)
-   local timer = {
-      interval = interval,
-		ID = (id or nil),
-      callback = callback,
-      recur = recur,
-      update = 0,
-      ...
-   }
-	if id then
-		-- they want a unique timer:
-		for k,_ in pairs(timers) do
-			if k.ID == id then
-				CombatMusic.PrintMessage("Timer creation failed. ID already used!", true, true)
-				return -1
-			end
-		end
-	end
-	timers[timer] = timer
-   return timer
-end
-
-function CombatMusic.KillTimer(timer)
-   timers[timer] = nil
-end
-
--- How often to check timers. Lower values are more CPU intensive.
-local granularity = 0.1
-
-local totalElapsed = 0
-local function OnUpdate(self, elapsed)
-   totalElapsed = totalElapsed + elapsed
-   if totalElapsed > granularity then
-      for k,t in pairs(timers) do
-         t.update = t.update + totalElapsed
-         if t.update > t.interval then
-            local success, rv = pcall(t.callback, unpack(t))
-            if not rv and t.recur then
-               t.update = 0
-            else
-               timers[t] = nil
-               if not success then CombatMusic.PrintMessage("Timer Callback failed:" .. rv , true, true) end
-            end
-         end
-      end
-      totalElapsed = 0
-   end
-end
-CreateFrame("Frame"):SetScript("OnUpdate", OnUpdate)
