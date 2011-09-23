@@ -23,6 +23,7 @@
 ------------------------------------------------------------------------
 ]]
 
+local timerLib = LibStub:GetLibrary("Van32TimerLib-1.0")
 local addonName, _ = ...
 
 CombatMusic = {}
@@ -195,11 +196,11 @@ function CombatMusic_OnEvent(self, event, ...)
 	-- Player enters the world
 	if event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
 		-- This is to set up a delay, so the player will see the loading messages after everything else
-		CombatMusic.SetTimer(3, function()		
+		timerLib:SetTimer(3, function()		
 				-- The addon was loaded.
 				CombatMusic.PrintMessage(CombatMusic_Messages.OtherMessages.AddonLoaded)
 				CombatMusic.PrintMessage(CombatMusic_Messages.DebugMessages.DebugLoaded, false, true)
-				CombatMusic.SetTimer(2, function()
+				timerLib:SetTimer(2, function()
 					CombatMusic.CheckSettingsLoaded()
 					CombatMusic["Info"]["Loaded"] = true
 				end )
