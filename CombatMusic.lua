@@ -23,10 +23,11 @@
 ------------------------------------------------------------------------
 ]]
 
-local timerLib = LibStub:GetLibrary("Van32TimerLib-1.0")
-local addonName, _ = ...
 
+local addonName, _ = ...
 CombatMusic = {}
+
+local timerLib = LibStub:GetLibrary("Van32TimerLib-1.0")
 --@alpha@ 
 CombatMusic_DebugMode = true
 --@end-alpha@

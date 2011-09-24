@@ -44,7 +44,7 @@ function CombatMusic.enterCombat()
 	-- Cancel the music fade-out if it's fading.
 	if CombatMusic.Info.FadeTimerVars then
 		if CombatMusic.Info.FadeTimerVars.FadeTimer then
-			CombatMusic.KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
+			timerLib:KillTimer(CombatMusic.Info.FadeTimerVars.FadeTimer)
 		end
 		-- Restore the saved states, so they can be saved again.
 		CombatMusic.RestoreSavedStates()
@@ -52,7 +52,7 @@ function CombatMusic.enterCombat()
 	
 	--Cancel restoring saved states if it's trying to.
 	if CombatMusic.Info.RestoreTimer then
-		CombatMusic.KillTimer(CombatMusic.Info.RestoreTimer)
+		timerLib:KillTimer(CombatMusic.Info.RestoreTimer)
 		CombatMusic.RestoreSavedStates()
 	end
 	-- Save the CVar's last states, before continuing
