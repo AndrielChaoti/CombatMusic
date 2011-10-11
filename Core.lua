@@ -182,6 +182,7 @@ end
 
 
 -- CM_CheckBossList: Adds an NPC to the BossList
+/
 local function CM_CheckBossList(self, dialogNo, data, data2)
 	cmPrint("CheckBossList()", false, true)
 	if dialogNo == 1 then

@@ -70,6 +70,7 @@ CM_STRINGS = {
 		-- Settings names
 		Battles = "Battle songs",
 		Bosses = "Boss songs", 
+		Volume = "In-combat volume",
 		Fade = "Combat FadeOut time",
 		CDGameOver = "Game over cooldown",
 		CDVictory = "Victory cooldown",
