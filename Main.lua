@@ -26,6 +26,7 @@
 
 
 CombatMusic["Info"]= {}
+local L = CM_STRINGS
 
 --debugNils: Returns literal "nil" or the tostring of all of the arguments passed to it.
 local function debugNils(...)
@@ -162,9 +163,8 @@ function CombatMusic.StartTargetChecks()
 	
 	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
 	
-	local fResult, fStartTimer = CombatMusic.CheckTarget()
-	local tResult, tStartTimer = CombatMusic.CheckTarget()
-	
+	local fResult, fStartTimer = CombatMusic.CheckTarget("focustarget")
+	local tResult, tStartTimer = CombatMusic.CheckTarget("target")
 	
 	-- Use the results to play set bossfights or not!
 	if focusFirst then
@@ -202,7 +202,7 @@ function CombatMusic.CheckTarget(unit)
 	end
 	
 	-- If the target doesn't exist, return false
-	if UnitExists(unit) then
+	if not UnitExists(unit) then
 		return false, false
 	end
 	
@@ -211,7 +211,7 @@ function CombatMusic.CheckTarget(unit)
 		level = {
 			raw = UnitLevel(unit)
 		},
-		isPvP = UnitIsPvP(unit),
+		isPvP = UnitIsPVP(unit),
 		isPlayer = UnitIsPlayer(unit),
 		inCombat = UnitAffectingCombat(unit),
 		mobType = function()
@@ -220,10 +220,10 @@ function CombatMusic.CheckTarget(unit)
 				return enumC[C]
 			end,
 		inGroup = (UnitInParty(unit) or UnitInRaid(unit)),
-		isTrivial = UnitIsTrival(unit)
+		isTrivial = UnitIsTrivial(unit)
 	}
 	
-	local PlayerInfo = {
+	local playerInfo = {
 		level = UnitLevel('player'),
 		instanceType = select(2, GetInstanceInfo('player'))
 	}
@@ -231,7 +231,7 @@ function CombatMusic.CheckTarget(unit)
 	-- If the target's not in combat, then don't play boss musunitInfo.inCombat
 	-- In debug mode, the addon will skip checking this
 	cmPrint("inCombat = " .. debugNils(unitInfo.inCombat), false, true)
-	if not CombatMusunitInfo.inCombat.DebugMode then
+	if not CombatMusic.DebugMode then
 		if not unitInfo.inCombat then
 			return false, true
 		end
@@ -279,7 +279,7 @@ function CombatMusic.CheckTarget(unit)
 	cmPrint("level.raw, level.adj, playerLevel = " .. debugNils(unitInfo.level.raw, unitInfo.level.adj, playerInfo.level), false, true)
 	-- Check if we're in a raid instance. General raid mobs can, and have triggered boss fights
 	if playerInfo.instanceType ~= "raid" then
-		if unitInfo.level.adj >= 5 + playerinfo.Level then
+		if unitInfo.level.adj >= 5 + playerInfo.level then
 			isBoss = true
 		-- If the unit's level is -1 then it means they're more than 10 levels higer than the player or a worldboss:
 		elseif unitInfo.level.raw == -1 then
@@ -363,8 +363,8 @@ function CombatMusic.leaveCombat(isDisabling)
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 			PlaySoundFile("Interface\\Music\\Victory.mp3")
-			CombatMusic.RestoreSavedStates()
 		end
+		CombatMusic.RestoreSavedStates()
 	elseif isDisabling then
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
@@ -534,7 +534,7 @@ end
 ]=]
 
 function CombatMusic.CheckComm(prefix, message, channel, sender)
-	cmPrint(CombatMusic_Colors.var .. "CheckComm(" .. CombatMusic.ns(prefix) .. "," ..  CombatMusic.ns(message) .. "," ..  CombatMusic.ns(channel) .. "," .. CombatMusic.ns(sender) .. ")", false, true)
+	cmPrint("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")", false, true)
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic.Info.Loaded then return end
@@ -544,11 +544,11 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 end
 
 function CombatMusic.CommSettings(channel, target)
-	cmPrint(CombatMusic_Colors.var .. "CommSettings(" .. CombatMusic.ns(channel) .. ", " .. CombatMusic.ns(target) .. ")", false, true)
+	cmPrint("CommSettings(" .. debugNils(channel, target) .. ")", false, true)
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
-	local AddonMsg = format("%s,%d,%d", CombatMusic_VerStr .. " r" .. CombatMusic_Rev, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
+	local AddonMsg = format(L.OTHER.CommString, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
 	if channel ~= "WHISPER" then
 		SendAddonMessage("CM3", AddonMsg, channel)
 	else

@@ -1,8 +1,8 @@
 ﻿--[[
 ------------------------------------------------------------------------
 	Project: LibVan32
-	File: Core, revision @file-revision@
-	Date: @project-date-iso@
+	File: Core, revision 3
+	Date: 11-Oct-2011
 	Purpose: Library for common addon functions
 	Credits: Code written by Vandesdelca32
 
@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------
 ]]
 
-local MAJOR, MINOR = "LibVan32-1.0", 2
+local MAJOR, MINOR = "LibVan32-1.0", 3
 
 local LibVan32, OLDMINOR = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -60,6 +60,14 @@ local function parseMessage(message)
 		str = newStr
 	end
 	return str
+end
+
+--- Parses a color-coded message for use with localization tables
+--@usage ParseColorCodedString("string")
+--@param str The string to parse.
+--@return The string, with the color codes replaced with client escape sequences.
+function LibVan32:ParseColorCodedString(str)
+	return parseMessage(str)
 end
 
 --- Prints a color-coded message to the default chat frame
@@ -114,7 +122,7 @@ function LibVan32:PrintMessage(title, message, isError, isDebug)
 end
 
 
--- Timers LibVan32rary
+-- Timers Library
 LibVan32.timers = {}
 
 --- Creates a timer that will call a function after a specific amount of time
@@ -183,3 +191,25 @@ local function OnUpdate(self, elapsed)
    end
 end
 CreateFrame("Frame"):SetScript("OnUpdate", OnUpdate)
+
+LibVan32.mixinTargets = LibVan32.mixinTargets or {}
+local mixins = {
+	"KillTimer",
+	"SetTimer",
+	"PrintMessage",
+	"ParseColorCodedString",
+	"EnableDebugMode",
+	"DisableDebugMode"
+}
+--- Embeds the library in the specified addon
+--@param target The table you want to embed the library into
+function LibVan32:Embed(target)
+	for _, name in pairs(mixins) do
+		target[name] = LibVan32[name]
+	end
+	LibVan32.mixinTargets[target] = true
+end
+
+for target, _ in pairs(LibVan32.mixinTargets) do
+	LibVan32:Embed(target)
+end
