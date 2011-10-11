@@ -326,18 +326,35 @@ end
 function CombatMusic.CheckBossList()
 	cmPrint("CheckBossList()", false, true)
 	if CombatMusic_BossList then
-		if CombatMusic_BossList[UnitName("target")] then
-			PlayMusic(CombatMusic_BossList[UnitName("target")])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			cmPrint("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
-			return true
-		elseif CombatMusic_BossList[UnitName("focustarget")] then
-			PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
-			CombatMusic.Info.BossFight = true
-			CombatMusic.Info.InCombat = true
-			cmPrint("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
-			return true
+		local pFocus = CombatMusic_SavedDBPerChar.PreferFocusTarget
+		if pFocus then
+			if CombatMusic_Bosslist[UnitName("focustarget")] then
+				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
+				CombatMusic.Info.BossFight = true
+				CombatMusic.Info.InCombat = true
+				cmPrint("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
+				return true
+			elseif CombatMusic_BossList[UnitName("target")] then
+				PlayMusic(CombatMusic_BossList[UnitName("target")])
+				CombatMusic.Info.BossFight = true
+				CombatMusic.Info.InCombat = true
+				cmPrint("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
+				return true
+			end
+		else
+			if CombatMusic_BossList[UnitName("target")] then
+				PlayMusic(CombatMusic_BossList[UnitName("target")])
+				CombatMusic.Info.BossFight = true
+				CombatMusic.Info.InCombat = true
+				cmPrint("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
+				return true
+			elseif CombatMusic_BossList[UnitName("focustarget")] then
+				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
+				CombatMusic.Info.BossFight = true
+				CombatMusic.Info.InCombat = true
+				cmPrint("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
+				return true
+			end
 		end
 		cmPrint("Target not on BossList.", false, true)
 	end
