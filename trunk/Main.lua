@@ -211,7 +211,7 @@ function CombatMusic.CheckTarget(unit)
 		level = {
 			raw = UnitLevel(unit)
 		},
-		isPvP = UnitIsPVP(unit),
+		isPvP = UnitIsPVP(unit) or UnitIsPVPFreeForAll(unit),
 		isPlayer = UnitIsPlayer(unit),
 		inCombat = UnitAffectingCombat(unit),
 		mobType = function()
