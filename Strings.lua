@@ -49,8 +49,8 @@ CM_STRINGS = {
 		BossListReset = "BossList not found; setting default...",
 		SettingsReset = "Configuration not found; setting default...",
 		SettingsUpdate = "Configuration updated!",
-		SettingChange = "$V%s$C has been set to $V%d$C.",
-		SettingShow = "$V%s$C is currently set to $V%d$C.",
+		SettingChange = "$V%s$C has been set to $V%s$C.",
+		SettingShow = "$V%s$C is currently set to $V%s$C.",
 		BossListAdd = "$V%s$C was added to the BossList with \"$V%s$C\"",
 		BossListRemoved = "$V%s$C was removed from the BossList.",
 		-- Dialogs
