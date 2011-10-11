@@ -77,7 +77,7 @@ function CombatMusic.enterCombat()
 	CombatMusic.GetSavedStates()
 	
 	-- Check the player's target
-	CombatMusic.Info["BossFight"] = CombatMusic.CheckTarget("_EC")
+	CombatMusic.Info["BossFight"] = CombatMusic.StartTargetChecks()
 
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
@@ -162,6 +162,163 @@ function CombatMusic.StartTargetChecks()
 	
 	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
 	
+	local fResult, fStartTimer = CombatMusic.CheckTarget()
+	local tResult, tStartTimer = CombatMusic.CheckTarget()
+	
+	
+	-- Use the results to play set bossfights or not!
+	if focusFirst then
+		if fStartTimer or tStartTimer then
+			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
+			if t ~= -1 then
+				CombatMusic.Info["UpdateTimer"] = t
+			end
+		end
+		return fResult or tResult
+	else
+		if tStartTimer or fStartTimer then
+			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
+			if t ~= -1 then
+				CombatMusic.Info["UpdateTimer"] = t
+			end
+		end
+		return tResult or fResult
+	end
+end
+
+-- CheckTarget: Check the unit passed to the function
+-- Returns: isBoss, startTimer
+function CombatMusic.CheckTarget(unit)
+	cmPrint("CheckTarget(" .. debugNils(unit) .. ")", false, true)
+	-- Define our return value's default state
+	local isBoss = nil
+	
+	-- They didn't send a unit declaration
+	assert(unit, "Usage: CheckTarget(\"unit\")")
+	
+	-- If it's already a boss, we're not changing anything
+	if CombatMusic.Info.BossFight then
+		return true, false
+	end
+	
+	-- If the target doesn't exist, return false
+	if UnitExists(unit) then
+		return false, false
+	end
+	
+	-- Get the info we need
+	local unitInfo = {
+		level = {
+			raw = UnitLevel(unit)
+		},
+		isPvP = UnitIsPvP(unit),
+		isPlayer = UnitIsPlayer(unit),
+		inCombat = UnitAffectingCombat(unit),
+		mobType = function()
+				local enumC = {normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5}
+				local C = UnitClassification(unit)
+				return enumC[C]
+			end,
+		inGroup = (UnitInParty(unit) or UnitInRaid(unit)),
+		isTrivial = UnitIsTrival(unit)
+	}
+	
+	local PlayerInfo = {
+		level = UnitLevel('player'),
+		instanceType = select(2, GetInstanceInfo('player'))
+	}
+	
+	-- If the target's not in combat, then don't play boss musunitInfo.inCombat
+	-- In debug mode, the addon will skip checking this
+	cmPrint("inCombat = " .. debugNils(unitInfo.inCombat), false, true)
+	if not CombatMusunitInfo.inCombat.DebugMode then
+		if not unitInfo.inCombat then
+			return false, true
+		end
+	end
+	
+	-- Check the monster's type, and if we're in an instance:
+	cmPrint("mobType, intanceType = " .. debugNils(unitInfo.mobType(), playerInfo.instanceType), false, true)
+	if unitInfo.mobType() ~= 1 then
+		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell whunitInfo.inCombath NPCs are bosses in instances
+		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
+			unitInfo.level.adj = unitInfo.level.adj + 3
+		end
+		
+		-- Instance check
+		if playerInfo.instanceType == "party" or playerInfo.instanceType == "raid" then
+			-- Check the mobtype again here.
+			-- Instances are populated with elites, so playing boss music all the time is bad
+			if unitInfo.mobType() == 3 then	
+				isBoss = false
+			else
+				isBoss = true
+			end
+		else
+			isBoss = true
+		end
+	end
+	cmPrint("isBoss = " .. debugNils(isBoss), false, true)
+	
+	--[[ The sections of code below are a bit tricky to understand, so I'll explain it
+			Each path of code seperated by the horizontal lines can both be run, but if one
+			is set to false, then the other cannot set a true.
+		]]
+		
+	
+	------------------------------------
+	--[[ Checking the levels of our units, this is how we can find out if a mob is a boss in an instance.
+			This has the added bonus that it also affects world NPCs.
+			* Anything with an adjusted level of > 5 will play boss music
+				- This does not apply to raid instance mobs, because they frequently are 2 to 3 levels above the raid's 'par level'
+			* A 'trivial' (grey) NPC will never play boss music
+	]]
+	-- Set the adjusted level to be the raw level if it hasn't been set yet.
+	if not unitInfo.level.adj then unitInfo.level.adj = unitInfo.level.raw end
+	
+	cmPrint("level.raw, level.adj, playerLevel = " .. debugNils(unitInfo.level.raw, unitInfo.level.adj, playerInfo.level), false, true)
+	-- Check if we're in a raid instance. General raid mobs can, and have triggered boss fights
+	if playerInfo.instanceType ~= "raid" then
+		if unitInfo.level.adj >= 5 + playerinfo.Level then
+			isBoss = true
+		-- If the unit's level is -1 then it means they're more than 10 levels higer than the player or a worldboss:
+		elseif unitInfo.level.raw == -1 then
+			isBoss = true
+		end
+	end
+	-- Check to see if the unit is trivial or not
+	if unitInfo.isTrival then
+		isBoss = false
+		cmPrint("Stopping Check: Trival", false, true)
+		return isBoss, true
+	end
+	cmPrint("isBoss = " .. debugNils(isBoss), false, true)
+	------------------------------------
+	
+	
+	------------------------------------
+	--[[ Checking to see if a player is targetted
+			A player that is flagged for PvP will play boss music if:
+			* They are not considered 'trival'.
+			* They are not in your group.
+		]]
+	cmPrint("isPlayer, isPvP, inGroup = " .. debugNils(unitInfo.isPlayer, unitInfo.isPvP, unitInfo.inGroup), false, true)
+	if unitInfo.isPlayer then
+		if unitInfo.isPvP then
+			isBoss = true
+		else
+			isBoss = false
+		end
+		if unitInfo.inGroup then
+			isBoss = false
+			cmPrint("Stopping Check: Player in group", false, true)
+			return isBoss, true
+		end
+	end
+	cmPrint("isBoss = " .. debugNils(isBoss), false, true)
+	------------------------------------
+	-- Return if the target's a boss or not, and if we should check again
+	return isBoss or false, (not isBoss)
 end
 
 
@@ -274,270 +431,6 @@ function CombatMusic.LevelUp()
 		end
 	end
 end
-
--- Re-do this section
-
--- CheckTarget: Check the unit passed to the function
--- Returns 1 if the target's a boss, otherwise it returns nil
-function CombatMusic.CheckTarget(unit)
-	cmPrint("CheckTarget(" .. debugNils(unit) .. ")", false, true)
-	
-	return 1
-	return nil
-end
---[=[
--- Target Checking.
--- Checks combat -> mobType/instance -> level -> player/inGroup
-function CombatMusic.CheckTarget(unit)
-	cmPrint("CheckTarget(".. debugNils(unit) ..")", false, true)
-	
-	-- If it's a boss fight, I don't need to check anything.
-	if CombatMusic.Info.BossFight then
-		return true
-	end
-	
-	-- Why am I checking targets if they don't exist?
-	if not (UnitExists("focustarget") or UnitExists("target")) then 
-		cmPrint("No targets selected!", true, true)
-		return false
-	end
-	
-	-- Prepare a table full of values we need.
-	local targetInfo = {
-		level = {
-			-- Check for the greater of the two. -1 is forced as the biggest value:
-			raw = function()
-				-- Get the values
-				local t, ft = UnitLevel('target'), UnitLevel('focustarget')
-				local te, fte = UnitExists('target'), UnitExists('focusTarget')
-				-- If they both exist:
-				if te and fte then
-					if t == -1 or ft == -1 then
-						return -1
-					else
-						return math.max(t, ft)
-					end
-				-- Only target exists
-				elseif te then
-					return t
-				-- Only focustarget exists
-				elseif fte then
-					return ft
-				end
-			end,
-		},
-		-- Get if they"re flagged:
-		isPvP = UnitIsPVP("focustarget") or UnitIsPVP("target"),
-		-- Get if they"re a player:
-		isPlayer = UnitIsPlayer("focustarget") or UnitIsPlayer("target"),
-		inCombat = UnitAffectingCombat("target") or UnitAffectingCombat("focustarget"),
-		-- Get the unit"s classification:
-		mobType = function()
-			-- Get the types
-			-- Get the values
-			local t, ft = UnitClassification('target'), UnitClassification('focustarget')
-			local te, fte = UnitExists('target'), UnitExists('focusTarget')
-			local enumC = {normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5}
-			t, ft = enumC[t], enumC[ft]
-			-- If they both exist:
-			if te and fte then
-				return math.max(t, ft)
-			-- Only target exists
-			elseif te then
-				return t
-			-- Only focustarget exists
-			elseif fte then
-				return ft
-			end
-		end,
-		-- Get if the unit's in my group:
-		inGroup = function()
-			-- Get the values
-			local t, ft = (UnitInParty('target') or UnitInRaid('target')), (UnitInParty('focustarget') or UnitInRaid('focustarget'))
-			local te, fte = UnitExists('target'), UnitExists('focusTarget')
-			-- If they both exist, and both are in my group:
-			if te and fte then
-				if t and ft then
-					return true
-				else 
-					return false
-				end
-			-- Only target exists
-			elseif te then
-				return t
-			-- Only focustarget exists
-			elseif fte then
-				return ft
-			end
-		end,
-		-- Get if the unit is grey:
-		isTrival = function()
-			-- Get the values
-			local t, ft = UnitIsTrivial('target'), UnitIsTrivial('focustarget')
-			local te, fte = UnitExists('target'), UnitExists('focusTarget')
-			-- If they both exist, and both are trival:
-			if te and fte then
-				if t and ft then
-					return true
-				else 
-					return false
-				end
-			-- Only target exists
-			elseif te then
-				return t
-			-- Only focustarget exists
-			elseif fte then
-				return ft
-			end
-		end,
-	}
-	
-	-- Get some info about the player:
-	local playerInfo = {
-		["level"] = UnitLevel("player"),
-		["factionGroup"] = UnitFactionGroup("player"),
-		["instanceType"] = select(2, GetInstanceInfo()),
-	}
-	
-	-- Prepare a local var
-	-- When this is set to true at the end,
-	-- the unit is determined to be a boss;
-	-- otherwise it's nil.
-	local isBoss
-	
-	-- Set the adjusted level:
-	targetInfo.level.adj = targetInfo.level.raw()
-	
-	-- The actual target check logic starts here:
-	
-	--[[ Check to see if I'm in combat with one of my targets:
-		This is disabled while in debug mode!
-		Debug text below to tell me if it would have passed an inCombat check
-	]]
-	cmPrint("inCombat: " .. CombatMusic.ns(targetInfo.inCombat), false, true)
-	if not CombatMusic_DebugMode then
-		if not targetInfo.inCombat then
-			isBoss = false
-			if not isBoss then
-				local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
-				if t ~= -1 then
-					CombatMusic.Info["updateTimer"] = t
-				end
-			end
-			return isBoss
-		end
-	end
-	
-	--[[ Check the monser's classificaton:
-			* A 'normal' will never play boss music
-			* An 'elite' will never play boss music while inside an instance
-			* Anything else, will always play boss music
-	]]
-	cmPrint("mobType: " .. CombatMusic.ns(targetInfo.mobType()) .. " / instanceType: " .. CombatMusic.ns(playerInfo.instanceType), false, true)
-	if targetInfo.mobType() ~= 1 then
-		-- We're giving something that's flagged as an elite a 3 level bonus.
-		-- This is how we're going to tell if the monster's a boss in an instance.
-		if targetInfo.mobType() == 3 or targetInfo.mobType() == 4 then
-			targetInfo.level.adj = targetInfo.level.adj + 3
-		end
-		
-		-- Check to see if I'm in an instance
-		if (playerInfo.instanceType == "party" or playerInfo.instanceType == "raid") then
-			--[[ Check that the mob is a non-elite.
-				WoW instances are populated solely by elites and rareelites, so
-				we don't want to always have boss music.]]
-			if targetInfo.mobType() == 3 then
-				isBoss = false
-				cmPrint("FALSE!", false, true)
-			else
-				cmPrint("TRUE!", false, true)
-				isBoss = true
-			end
-		else
-			isBoss = true
-			cmPrint("TRUE!", false, true)
-		end
-	elseif targetInfo.mobType() == -2 then
-		-- Why are we still here? This means there was no target
-		cmPrint("No targets selected!", true, true)
-		return false
-	end
-	
-
-	--[[ This section of code is a bit iffy, I"m not quite sure how to implement it.
-			If EITHER codepath returns false, the other MAY NOT provide a TRUE. But if the
-			EITHER codepath remains unchanged, it can continue to execute the next.
-			In essence, it needs to change the order operators are preferred in:
-				- false (stop the code)
-				- nil (This is where code would normally stop)
-				- true
-	]]
-	
-	
-	------------------------------------
-	--[[ Checking the levels of our units, this is how we can find out if a mob is a boss in an instance.
-			This has the added bonus that it also affects world NPCs.
-			* Anything with an adjusted level of > 5 will play boss music
-			* A 'trivial' (grey) NPC will never play boss music
-	]]
-	cmPrint("level.raw: " .. CombatMusic.ns(targetInfo.level.raw()) .. " / level.adj: " .. CombatMusic.ns(targetInfo.level.adj) .. " / isTrivial: " .. CombatMusic.ns(targetInfo.isTrival()) , false, true)
-	if targetInfo.level.raw() == -1 or targetInfo.level.adj >= (5 + playerInfo.level) then 
-		isBoss = true
-		cmPrint("TRUE!", false, true)
-	-- If the target is grey to me, do NOT under any circumstances allow the code to continue
-	elseif targetInfo.isTrival() then
-		isBoss = false
-		cmPrint("FALSE! STOPPING CHECK!", false, true)
-		-- Recurse this function every half a second if there is no boss.
-		CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged)
-		return isBoss
-	elseif targetInfo.level.raw() == -2 then
-		-- Why are we still here? This means there was no target
-		cmPrint("No targets selected!", true, true)
-		return false
-	end
-	------------------------------------
-	
-	
-	------------------------------------
-	--[[ Checking to see if a player is targetted
-			A player that is flagged for PvP will play boss music if:
-			* They are not considered 'trival'.
-			* They are not in your group.
-		]]
-	cmPrint("isPlayer: " .. CombatMusic.ns(targetInfo.isPlayer) .. " / isPvP: " .. CombatMusic.ns(targetInfo.isPvP) .. " / inGroup: " .. CombatMusic.ns(targetInfo.inGroup()), false, true)
-	if targetInfo.isPlayer then
-		-- Is the player flagged?
-		if targetInfo.isPvP then
-			isBoss = true
-			cmPrint("TRUE!", false, true)
-		else
-			isBoss = false
-			cmPrint("FALSE!", false, true)
-		end
-		-- They're in my group?
-		if targetInfo.inGroup() then
-			isBoss = false
-			cmPrint("FALSE! STOPPING CHECK!", false, true)
-			-- Recurse this function every half a second if there is no boss.
-			CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged)
-			return isBoss or false
-		end
-	end
-	------------------------------------
-	
-	-- All right, return what we got, if we made it that far.
-	cmPrint("Final Result: ".. CombatMusic.ns(isBoss), false, true)
-	-- Recurse this function every half a second if there is no boss.
-	if not isBoss then
-		local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, 0, unit)
-		if t ~= -1 then
-			CombatMusic.Info["updateTimer"] = t
-		end
-	end
-	return isBoss or false
-end
-]=]
 
 
 -- Saves music state so we can restore it out of combat

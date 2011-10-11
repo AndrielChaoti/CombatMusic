@@ -5,6 +5,7 @@
 ## Author: Vandesdelca32
 ## X-EMail: Vandesdelca32@gmail.com
 ## SavedVariables: CombatMusic_SavedDB, CombatMusic_BossList
+## SavedVariablesPerCharacter: CombatMusic_SavedDBPerChar
 
 embeds.xml
 
