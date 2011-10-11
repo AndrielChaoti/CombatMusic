@@ -187,7 +187,7 @@ local function CM_CheckBossList(self, dialogNo, data, data2)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
 		self:Hide()
-		local dlg2 = StaticPopup_Show("COMBATMUSIC_BossListADD2")
+		local dlg2 = StaticPopup_Show("COMBATMUSIC_BOSSLISTADD2")
 		if dlg2 then
 			dlg2.data = {
 				Name = UnitName
