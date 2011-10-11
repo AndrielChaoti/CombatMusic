@@ -391,7 +391,7 @@ local function CM_SlashHandler(args)
 			cmPrint(format(L.OTHER.SettingChange, L.OTHER.NewDing, L.OTHER.On))
 			CombatMusic_SavedDB.LevelUp.NewFanfare = true
 		elseif arg1 == "off" then
-			cmPrint(format(L.OTHER.SettingChange, L.OTHER.NewDing, L.Other.Off))
+			cmPrint(format(L.OTHER.SettingChange, L.OTHER.NewDing, L.OTHER.Off))
 			CombatMusic_SavedDB.LevelUp.NewFanfare = false
 		else
 			cmPrint(L.ERRORS.OnOrOff, true)
