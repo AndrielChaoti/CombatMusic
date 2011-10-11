@@ -586,7 +586,7 @@ function CombatMusic_OnLoad(self)
 	}
 	
 	-- Popups for BossList add
-	StaticPopupDialogs["COMBATMUIC_BOSSLISTADD"] = {
+	StaticPopupDialogs["COMBATMUSIC_BOSSLISTADD"] = {
 		text = L.OTHER.BossListDialog1,
 		button1 = OKAY,
 		button2 = CANCEL,
