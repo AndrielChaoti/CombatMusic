@@ -3,5 +3,5 @@
 	<!-- Embedded Libraries -->
 	
 	<Script file="libs\LibStub\LibStub.lua" />
-	<Script file="libs\Van32TimerLib-1.0\Van32TimerLib-1.0.lua" />
+	<Script file="libs\LibVan32-1.0\LibVan32.lua" />
 </Ui>

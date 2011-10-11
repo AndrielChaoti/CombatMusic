@@ -26,7 +26,7 @@
 
 local addonName, _ = ...
 
-local CombatMusic = LibStub:GetLibrary("LibVan32-1.0")
+CombatMusic = LibStub:GetLibrary("LibVan32-1.0")
 
 --@alpha@ 
 CombatMusic:EnableDebugMode()
@@ -104,7 +104,7 @@ local function CM_SetDefaults(outOfDate, restoreMode)
 	cmPrint("SetDefaults($V" .. debugNils(outOfDate) .. "$C)", false, true)
 	-- For an old settings reference, see 'settingsHistory.lua'
 	
-	if restoreMode = "global" then
+	if restoreMode == "global" then
 		-- Try to restore the user's settings, or set defaults for missing ones:
 		if outOfDate and CombatMusic_SavedDB.SVVersion == "1" then
 			local tempDB = {
@@ -163,7 +163,7 @@ local function CM_SetDefaults(outOfDate, restoreMode)
 			}
 			cmPrint(L.OTHER.SettingsReset)
 		end
-	elseif restoreMode = "perchar" then
+	elseif restoreMode == "perchar" then
 		CombatMusic_SavedDBPerChar = {
 			["SVVersion"] = currentSVVersion,
 			["PreferFocusTarget"] = false
@@ -520,7 +520,7 @@ function CombatMusic_OnEvent(self, event, ...)
 		return
 		
 	-- UNIT_TARGET: FocusTarget changed
-	elseif event == "UNIT_TARGET" and arg1 = "focus" then
+	elseif event == "UNIT_TARGET" and arg1 == "focus" then
 		CombatMusic.TargetChanged("focus")
 		return
 	
