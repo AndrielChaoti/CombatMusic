@@ -26,7 +26,9 @@
 
 local addonName, _ = ...
 
-CombatMusic = LibStub:GetLibrary("LibVan32-1.0")
+CombatMusic = {}
+
+LibStub:GetLibrary("LibVan32-1.0"):Embed(CombatMusic)
 
 --@alpha@ 
 CombatMusic:EnableDebugMode()
@@ -66,10 +68,11 @@ local function CM_CheckSettingsLoaded()
 	
 	-- Check the settings table
 	if not CombatMusic_SavedDB then
-		CM_SetDefaults(nil, "global")
+		CombatMusic.SetDefaults(nil, "global")
+		cmPrint(L.OTHER.SettingsReset)
 		main = nil
 	elseif CombatMusic_SavedDB.SVVersion ~= currentSVVersion then 
-		CM_SetDefaults(true, "global")
+		CombatMusic.SetDefaults(true, "global")
 		main = nil
 	end
 	
@@ -82,10 +85,10 @@ local function CM_CheckSettingsLoaded()
 	
 	-- Check the per-character
 	if not CombatMusic_SavedDBPerChar then
-		CM_SetDefaults(nil, "perchar")
+		CombatMusic.SetDefaults(nil, "perchar")
 		char = nil
-	elseif CombatMusic_SavedDBPerChar ~= currentSVVersion then
-		CM_SetDefaults(true, "perchar")
+	elseif CombatMusic_SavedDBPerChar.SVVersion ~= currentSVVersion then
+		CombatMusic.SetDefaults(true, "perchar")
 		char = nil
 	end
 	
@@ -99,9 +102,9 @@ local function CM_CheckSettingsLoaded()
 end
 
 
--- CM_SetDefaults: Load the default settings
-local function CM_SetDefaults(outOfDate, restoreMode)
-	cmPrint("SetDefaults($V" .. debugNils(outOfDate) .. "$C)", false, true)
+-- CombatMusic.SetDefaults: Load the default settings
+function CombatMusic.SetDefaults(outOfDate, restoreMode)
+	cmPrint("SetDefaults(" .. debugNils(outOfDate, restoreMode) .. ")", false, true)
 	-- For an old settings reference, see 'settingsHistory.lua'
 	
 	if restoreMode == "global" then
@@ -160,6 +163,10 @@ local function CM_SetDefaults(outOfDate, restoreMode)
 					["NewFanfare"] = false,
 				},
 				["AllowComm"] = true,
+			}
+			CombatMusic_SavedDBPerChar = {
+				["SVVersion"] = currentSVVersion,
+				["PreferFocusTarget"] = false
 			}
 			cmPrint(L.OTHER.SettingsReset)
 		end
@@ -222,20 +229,21 @@ end
 local function CM_PrintHelp()
 	cmPrint(L.OTHER.HelpHead)
 	for k, v in pairs(L.HELP) do
-		cmPrint(format("$V%s%C - %s", k, v))
+		cmPrint(format("$V%s$C - %s", k, v))
 	end
 end
 
 
 -- CM_SlashHandler: Handles the console commands
 local function CM_SlashHandler(args)
-	cmPrint("SlashHandler($V" .. debugNils(args) .. "$C)", false, true)
+	--cmPrint("SlashHandler(" .. debugNils(args) .. ")", false, true)
 	--We don't want to throw errors because of case-sensitive commands
 	--so make the arguments string all lowercase to match!
 	args = args:lower()
 
 	-- Split it up into the arguments.
-	local command, arg1, arg2 = args:split(" ", 3);
+	local command, arg1, arg2 = strsplit(" ", args, 3);
+	cmPrint("Args = " .. debugNils(command, arg1, arg2), false, true)
 
 	-- /cm {?/help}
 	---------------
@@ -448,16 +456,16 @@ local function CM_SlashHandler(args)
 		elseif arg1 == "remove" then
 			local dlg = StaticPopup_Show("COMBATMUSIC_BOSSLISTREMOVE")
 		else
-			DumpBossList()
+			CM_DumpBossList()
 		end
 
 	-- /cm debug [on|off]
 	---------------------
 	elseif command == "debug" then
-		if arg == "on" then
-			cmPrint(format(L.OTHERS.SettingChange, L.OTHER.Debug, L.OTHER.On))
+		if arg1 == "on" then
+			cmPrint(format(L.OTHER.SettingChange, L.OTHER.Debug, L.OTHER.On))
 			CombatMusic:EnableDebugMode()
-		elseif arg == "off" then
+		elseif arg1 == "off" then
 			cmPrint(format(L.OTHER.SettingChange, L.OTHER.Debug, L.OTHER.Off))
 			CombatMusic:DisableDebugMode()
 		else
@@ -488,7 +496,7 @@ function CombatMusic_OnEvent(self, event, ...)
 		cmPrint(L.OTHER.Loaded)
 		cmPrint(L.OTHER.DebugLoaded, false, true)
 		CombatMusic:SetTimer(2, function()
-				CheckSettingsLoaded()
+				CM_CheckSettingsLoaded()
 				CombatMusic["Info"]["Loaded"] = true
 			end
 		)
@@ -531,7 +539,7 @@ function CombatMusic_OnEvent(self, event, ...)
 	
 	-- CHAT_MSG_ADDON: Settings Suvey Comm
 	elseif event == "CHAT_MSG_ADDON" then
-		CombatMusic.CheckComm()
+		CombatMusic.CheckComm(...)
 		return
 	end
 end
@@ -568,7 +576,7 @@ function CombatMusic_OnLoad(self)
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function()
-			CM_SetDefaults()
+			CombatMusic.SetDefaults()
 			ReloadUI()
 		end,
 		whileDead = true,

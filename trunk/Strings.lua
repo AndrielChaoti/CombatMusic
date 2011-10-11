@@ -61,6 +61,9 @@ CM_STRINGS = {
 		-- Misc
 		Enable = "CombatMusic is $V%s$C",
 		HelpHead = "CombatMusic $V" .. verString() .. "$C - Command Help:",
+		Loaded = "CombatMusic $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
+		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
+		CommString = verString() ..",%s,%s",
 		-- Constants
 		On = "enabled",
 		Off = "disabled",
