@@ -182,7 +182,6 @@ end
 
 
 -- CM_CheckBossList: Adds an NPC to the BossList
-/
 local function CM_CheckBossList(self, dialogNo, data, data2)
 	cmPrint("CheckBossList()", false, true)
 	if dialogNo == 1 then
@@ -436,13 +435,13 @@ local function CM_SlashHandler(args)
 			cmPrint(format(L.OTHER.SettingShow, L.OTHER.Fade, CombatMusic_SavedDB.Music.FadeOut))
 		else
 			if arg1 == "off" then
-				cmPrint(format(L.OTHER.SettingsChange, L.OTHER.Fade, L.OTHER.Off))
+				cmPrint(format(L.OTHER.SettingChange, L.OTHER.Fade, L.OTHER.Off))
 				CombatMusic_SavedDB.Music.FadeOut = 0
-			elseif arg1 <= 0 then
+			elseif tonumber(arg1) <= 0 then
 				cmPrint(L.ERRORS.BiggerThan0, true)
 			else
+				cmPrint(format(L.OTHER.SettingChange, L.OTHER.Fade, tonumber(arg1)))
 				CombatMusic_SavedDB.Music.FadeOut = tonumber(arg1)
-				cmPrint(format(L.OTHER.SettingsChange, L.OTHER.Fade, arg1))
 			end
 		end
 		
@@ -476,12 +475,14 @@ local function CM_SlashHandler(args)
 	-- /cm comm [on|off]
 	--------------------
 	elseif command == "comm" then
-		if arg == "on" then
-			cmPrint(foramt(L.OTHER.SettingChange, L.OTHER.Comm, L.OTHER.On))
+		if arg1 == "on" then
+			cmPrint(format(L.OTHER.SettingChange, L.OTHER.Comm, L.OTHER.On))
 			CombatMusic_SavedDB.AllowComm = true
-		elseif arg == "off" then
-			cmPrint(foramt(L.OTHER.SettingChange, L.OTHER.Comm, L.OTHER.Off))
+		elseif arg1 == "off" then
+			cmPrint(format(L.OTHER.SettingChange, L.OTHER.Comm, L.OTHER.Off))
 			CombatMusic_SavedDB.AllowComm = false
+		else
+			cmPrint(format(L.ERRORS.OnOrOff, true))
 		end
 	else
 		cmPrint(L.ERRORS.InvalidCommand, true)	
