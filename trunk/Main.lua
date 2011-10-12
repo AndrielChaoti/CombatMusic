@@ -209,7 +209,7 @@ function CombatMusic.CheckTarget(unit)
 	-- Get the info we need
 	local unitInfo = {
 		level = {
-			raw = UnitLevel(unit)
+			raw = UnitLevel(unit),
 			adj = UnitLevel(unit)
 		},
 		isPvP = UnitIsPVP(unit) or UnitIsPVPFreeForAll(unit),
