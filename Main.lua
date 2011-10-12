@@ -210,6 +210,7 @@ function CombatMusic.CheckTarget(unit)
 	local unitInfo = {
 		level = {
 			raw = UnitLevel(unit)
+			adj = UnitLevel(unit)
 		},
 		isPvP = UnitIsPVP(unit) or UnitIsPVPFreeForAll(unit),
 		isPlayer = UnitIsPlayer(unit),
@@ -242,7 +243,7 @@ function CombatMusic.CheckTarget(unit)
 	if unitInfo.mobType() ~= 1 then
 		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell whunitInfo.inCombath NPCs are bosses in instances
 		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
-			unitInfo.level.adj = unitInfo.level.adj + 3
+			unitInfo.level.adj = unitInfo.level.raw + 3
 		end
 		
 		-- Instance check
@@ -273,8 +274,6 @@ function CombatMusic.CheckTarget(unit)
 				- This does not apply to raid instance mobs, because they frequently are 2 to 3 levels above the raid's 'par level'
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
-	-- Set the adjusted level to be the raw level if it hasn't been set yet.
-	if not unitInfo.level.adj then unitInfo.level.adj = unitInfo.level.raw end
 	
 	cmPrint("level.raw, level.adj, playerLevel = " .. debugNils(unitInfo.level.raw, unitInfo.level.adj, playerInfo.level), false, true)
 	-- Check if we're in a raid instance. General raid mobs can, and have triggered boss fights
