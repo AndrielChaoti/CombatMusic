@@ -327,7 +327,7 @@ function CombatMusic.CheckBossList()
 	if CombatMusic_BossList then
 		local pFocus = CombatMusic_SavedDBPerChar.PreferFocusTarget
 		if pFocus then
-			if CombatMusic_Bosslist[UnitName("focustarget")] then
+			if CombatMusic_BossList[UnitName("focustarget")] then
 				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
 				CombatMusic.Info.BossFight = true
 				CombatMusic.Info.InCombat = true
