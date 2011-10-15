@@ -43,37 +43,50 @@ CM_STRINGS = {
 		InvalidArgumentE = "That can only be \"$Vgameover$C\", \"$Vvictory$C\", or \"$Vding$C\"",
 	},
 	OTHER = {
-		-- Settings messages
-		SettingsLoaded = "Configuration loaded successfully.",
+		-- Startup messages
+		GlobalConfigLoaded = "Configuration loaded successfully.",
 		BossListLoaded = "BossList loaded successfully.",
 		BossListReset = "BossList not found; setting default...",
-		SettingsReset = "Configuration not found; setting default...",
-		SettingsUpdate = "Configuration updated!",
-		SettingChange = "$V%s$C has been set to $V%s$C.",
-		SettingShow = "$V%s$C is currently set to $V%s$C.",
+		GlobalConfigReset = "Configuration not found; setting default...",
+		GlobalConfigUpdate = "Configuration updated!",
+		Loaded = "CombatMusic $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
+		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
+		
+		-- Command strings
+		ToggleState = "$V%s$C is now $V%s$C.",
+		ShowState = "$V%s$C is currently $V%s$C",
+		PrintSetting = "$V%s$C is currently set to $V%s$C.",
+		ChangeSetting = "$V%s$C has been set to $V%s$C.",
 		BossListAdd = "$V%s$C was added to the BossList with \"$V%s$C\"",
 		BossListRemoved = "$V%s$C was removed from the BossList.",
+		
 		-- Dialogs
 		ResetDialog = "$EWARNING!$C\nResetting CombatMusic will destroy all of your custom settings and your BossList!\nAre you sure you want to do this?\n\nThis can't be undone! $V(Clicking " .. YES .. " will reload your UI.)$C",
 		BossListDialog1 = "Enter the name of the NPC you want to add to the BossList",
 		BossListDialog2 = "Enter the path to the song you want CombatMusic to play every time you are in combat with this NPC",
+		BossListDialog2_Existing = "$V%s$C is already on your BossList and set to play $V%s$C.\nEnter the path to the song you want to update this entry with.",
 		BossListDialogRemove = "Enter the name of the NPC you want to remove from the BossList",
+		
 		-- Misc
-		Enable = "CombatMusic is $V%s$C",
 		HelpHead = "CombatMusic $V" .. verString() .. "$C - Command Help:",
-		Loaded = "CombatMusic $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
-		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
-		CommString = verString() ..",%s,%s",
+		CommString = verString() ..",%s,%s", -- DO NOT LOCALIZE
+		
 		-- Constants
-		On = "enabled",
-		Off = "disabled",
-		-- Settings names
-		Battles = "Battle songs",
-		Bosses = "Boss songs", 
-		Volume = "In-combat volume",
-		Fade = "Music Fadeout time",
-		CDGameOver = "Game over cooldown",
-		CDVictory = "Victory cooldown",
+		Enable = "enabled",
+		Disable = "disabled",
+		On = "on",
+		Off = "off",
+		
+		-- Settings display names
+		Addon = "CombatMusic",
+		Battles = "Number of battle songs",
+		UsingBattles = "Using battle songs",
+		Bosses = "Number of boss songs",
+		UsingBosses = "Using boss songs",
+		Volume = "In-combat music volume",
+		Fade = "After-combat fadeout time",
+		CDGameOver = "'Game Over' cooldown",
+		CDVictory = "'Victory' cooldown",
 		ExtrasGameOver = "Game over",
 		ExtrasVictory = "Victory",
 		ExtrasDing = "Level Up",
@@ -81,7 +94,6 @@ CM_STRINGS = {
 		UseFocus = "Prefer focus",
 		Debug = "Debug mode",
 		Comm = "Addon comm", 
-		NewDing = "Alternate Level up fanfare",
 	},
 	HELP = {
 		["on|off"] = "Enables, or disables CombatMusic.",
