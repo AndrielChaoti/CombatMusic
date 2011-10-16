@@ -280,11 +280,14 @@ function CombatMusic.CheckTarget(unit)
 	if playerInfo.instanceType ~= "raid" then
 		if unitInfo.level.adj >= 5 + playerInfo.level then
 			isBoss = true
-		-- If the unit's level is -1 then it means they're more than 10 levels higer than the player or a worldboss:
-		elseif unitInfo.level.raw == -1 then
-			isBoss = true
 		end
 	end
+	
+	-- If the unit's level is -1 then it means they're more than 10 levels higer than the player or a worldboss
+	if unitInfo.level.raw == -1 then
+		isBoss = true
+	end
+	
 	-- Check to see if the unit is trivial or not
 	if unitInfo.isTrival then
 		isBoss = false
