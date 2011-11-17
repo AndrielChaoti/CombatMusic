@@ -27,7 +27,7 @@
 local addonName, _ = ...
 
 local verString = function()
-	local str = "version $V" .. (GetAddOnMetadata(addonName, "VERSION") or "??")
+	local str = "$V" .. (GetAddOnMetadata(addonName, "VERSION") or "??")
 	str = str .. " r".. (tonumber('@project-revision@') or "DEV")
 	return str
 end
@@ -49,7 +49,7 @@ CM_STRINGS = {
 		BossListReset = "BossList not found; setting default...",
 		GlobalConfigReset = "Configuration not found; setting default...",
 		GlobalConfigUpdate = "Configuration updated!",
-		Loaded = "CombatMusic $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
+		Loaded = "CombatMusic version $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
 		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
 		
 		-- Command strings
@@ -68,7 +68,7 @@ CM_STRINGS = {
 		BossListDialogRemove = "Enter the name of the NPC you want to remove from the BossList",
 		
 		-- Misc
-		HelpHead = "CombatMusic $V" .. verString() .. "$C - Command Help:",
+		HelpHead = "CombatMusic version $V" .. verString() .. "$C - Command Help:",
 		CommString = verString() ..",%s,%s", -- DO NOT LOCALIZE
 		
 		-- Constants
