@@ -381,7 +381,7 @@ function CombatMusic.leaveCombat(isDisabling)
 		--Boss Only?
 		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
-			PlaySoundFile("Interface\\Music\\Victory.mp3")
+			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
 		end
 		CombatMusic.RestoreSavedStates()
 	elseif isDisabling then
