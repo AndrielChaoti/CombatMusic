@@ -28,7 +28,7 @@ local addonName, _ = ...
 
 CombatMusic = {}
 
-LibStub:GetLibrary("LibVan32-1.0"):Embed(CombatMusic)
+LibStub:GetLibrary("LibVan32-1.0"):Embed(CombatMusic, "CombatMusic")
 
 --@alpha@ 
 CombatMusic:EnableDebugMode()
@@ -52,8 +52,8 @@ local function debugNils(...)
 end
 
 
--- cmPrint: A call into my library PrintMessage method
-local function cmPrint(message, isError, isDebug)
+-- CombatMusic:PrintMessage: A call into my library PrintMessage method
+local function CombatMusic:PrintMessage(message, isError, isDebug)
 	CombatMusic:PrintMessage("CombatMusic", message, isError, isDebug)
 end
 
@@ -61,7 +61,7 @@ end
 
 -- CM_CheckSettingsLoaded: Check to make sure the settings loaded properly
 local function CM_CheckSettingsLoaded()
-	cmPrint("CheckSettingsLoaded()", false, true)
+	CombatMusic:PrintMessage("CheckSettingsLoaded()", false, true)
 	
 	-- Set a couple of flags
 	local main, list, char = true, true, true
@@ -69,7 +69,7 @@ local function CM_CheckSettingsLoaded()
 	-- Check the settings table
 	if not CombatMusic_SavedDB then
 		CombatMusic.SetDefaults( "global", nil)
-		cmPrint(L.OTHER.GlobalConfigReset)
+		CombatMusic:PrintMessage(L.OTHER.GlobalConfigReset)
 		main = nil
 	elseif CombatMusic_SavedDB.SVVersion ~= currentSVVersion then 
 		CombatMusic.SetDefaults( "global", true)
@@ -79,7 +79,7 @@ local function CM_CheckSettingsLoaded()
 	-- Check the BossList
 	if not CombatMusic_BossList then
 		CombatMusic_BossList = {}
-		cmPrint(L.OTHER.BossListReset)
+		CombatMusic:PrintMessage(L.OTHER.BossListReset)
 		list = nil
 	end
 	
@@ -94,17 +94,17 @@ local function CM_CheckSettingsLoaded()
 	
 	-- Check the flags, and let the user know:
 	if main and char then	
-		cmPrint(L.OTHER.GlobalConfigLoaded)
+		CombatMusic:PrintMessage(L.OTHER.GlobalConfigLoaded)
 	end
 	if list then
-		cmPrint(L.OTHER.BossListLoaded)
+		CombatMusic:PrintMessage(L.OTHER.BossListLoaded)
 	end
 end
 
 
 -- CombatMusic.SetDefaults: Load the default settings
 function CombatMusic.SetDefaults(restoreMode, outOfDate)
-	cmPrint("SetDefaults(" .. debugNils(restoreMode, outOfDate) .. ")", false, true)
+	CombatMusic:PrintMessage("SetDefaults(" .. debugNils(restoreMode, outOfDate) .. ")", false, true)
 	-- For an old settings reference, see 'settingsHistory.lua'
 	
 	if restoreMode == "global" then
@@ -135,7 +135,7 @@ function CombatMusic.SetDefaults(restoreMode, outOfDate)
 			}
 
 			CombatMusic_SavedDB = tempDB
-			cmPrint(L.OTHER.GlobalConfigUpdate)
+			CombatMusic:PrintMessage(L.OTHER.GlobalConfigUpdate)
 		else
 			-- Load the default settings
 			CombatMusic_SavedDB = {
@@ -168,7 +168,7 @@ function CombatMusic.SetDefaults(restoreMode, outOfDate)
 				["SVVersion"] = currentSVVersion,
 				["PreferFocusTarget"] = false
 			}
-			cmPrint(L.OTHER.GlobalConfigReset)
+			CombatMusic:PrintMessage(L.OTHER.GlobalConfigReset)
 		end
 	elseif restoreMode == "perchar" then
 		CombatMusic_SavedDBPerChar = {
@@ -186,7 +186,7 @@ end
 
 -- CM_CheckBossList: Adds an NPC to the BossList
 local function CM_CheckBossList(self, dialogNo, data, data2)
-	cmPrint("CheckBossList()", false, true)
+	CombatMusic:PrintMessage("CheckBossList()", false, true)
 	if dialogNo == 1 then
 		local UnitName = self.editBox:GetText()
 		self:Hide()
@@ -205,7 +205,7 @@ local function CM_CheckBossList(self, dialogNo, data, data2)
 	elseif dialogNo == 2 then
 		local SongPath = self.editBox:GetText()
 		CombatMusic_BossList[data.Name] = SongPath
-		cmPrint(format(L.OTHER.BossListAdd, data.Name, SongPath))
+		CombatMusic:PrintMessage(format(L.OTHER.BossListAdd, data.Name, SongPath))
 		self:Hide()
 	end
 end
@@ -213,15 +213,15 @@ end
 
 -- CM_RemoveBossList: Removes an NPC from the BossList
 local function CM_RemoveBossList(self)
-	cmPrint("RemoveBossList()", false, true)
+	CombatMusic:PrintMessage("RemoveBossList()", false, true)
 	local unit = self.editBox:GetText()
 	-- Check the BossList
 	if CombatMusic_BossList[unit] then
 		CombatMusic_BossList[unit] = nil
-		cmPrint(format(L.OTHER.BossListRemoved, unit))
+		CombatMusic:PrintMessage(format(L.OTHER.BossListRemoved, unit))
 		self:Hide()
 	else
-		cmPrint(format(L.ERRORS.BossListNotFound, unit), true)
+		CombatMusic:PrintMessage(format(L.ERRORS.BossListNotFound, unit), true)
 	end
 end
 
@@ -229,30 +229,30 @@ end
 -- CM_DumpBossList: Prints all of the BossList entries
 local function CM_DumpBossList()
 	for k, v in pairs(CombatMusic_BossList) do
-		cmPrint(format("$V%s$C will play \"$V%s$C\"", k, v))
+		CombatMusic:PrintMessage(format("$V%s$C will play \"$V%s$C\"", k, v))
 	end
 end
 
 
 -- CM_PrintHelp: Prints the Help text
 local function CM_PrintHelp()
-	cmPrint(L.OTHER.HelpHead)
+	CombatMusic:PrintMessage(L.OTHER.HelpHead)
 	for k, v in pairs(L.HELP) do
-		cmPrint(format("$V%s$C - %s", k, v))
+		CombatMusic:PrintMessage(format("$V%s$C - %s", k, v))
 	end
 end
 
 
 -- CM_SlashHandler: Handles the console commands
 local function CM_SlashHandler(args)
-	--cmPrint("SlashHandler(" .. debugNils(args) .. ")", false, true)
+	--CombatMusic:PrintMessage("SlashHandler(" .. debugNils(args) .. ")", false, true)
 	--We don't want to throw errors because of case-sensitive commands
 	--so make the arguments string all lowercase to match!
 	args = args:lower()
 
 	-- Split it up into the arguments.
 	local command, arg1, arg2 = strsplit(" ", args, 3);
-	cmPrint("Args = " .. debugNils(command, arg1, arg2), false, true)
+	CombatMusic:PrintMessage("Args = " .. debugNils(command, arg1, arg2), false, true)
 
 	-- /cm {?/help}
 	---------------
@@ -264,7 +264,7 @@ local function CM_SlashHandler(args)
 	elseif command == "on" then
 		-- Turn on CombatMusic
 		CombatMusic_SavedDB.Enabled = true
-		cmPrint(format(L.OTHER.ToggleState, L.OTHER.Addon, L.OTHER.Enable))
+		CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Addon, L.OTHER.Enable))
 		
 	-- /cm off
 	----------
@@ -272,7 +272,7 @@ local function CM_SlashHandler(args)
 		-- Turn off CombatMusic
 		CombatMusic.leaveCombat(true)
 		CombatMusic_SavedDB.Enabled = false
-		cmPrint(format(L.OTHER.ToggleState, L.OTHER.Addon, L.OTHER.Disable))
+		CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Addon, L.OTHER.Disable))
 	
 	-- /cm reset
 	------------
@@ -287,21 +287,21 @@ local function CM_SlashHandler(args)
 		if not tonumber(arg1) and arg1 ~= "off" then
 			-- Check to see if the user has the setting turned off, that way we can show them a different message
 			if CombatMusic_SavedDB.Music.numSongs.Battles ~= -1 then
-				cmPrint(format(L.OTHER.PrintSetting, L.OTHER.Battles, CombatMusic_SavedDB.Music.numSongs.Battles))
+				CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.Battles, CombatMusic_SavedDB.Music.numSongs.Battles))
 			else
-				cmPrint(format(L.OTHER.ShowState, L.OTHER.UsingBattles, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ShowState, L.OTHER.UsingBattles, L.OTHER.Off))
 			end
 		else
 			if arg1 == "off" then
 				-- Turn off this feature
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.UsingBattles, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UsingBattles, L.OTHER.Off))
 				CombatMusic_SavedDB.Music.numSongs.Battles = -1
 			elseif tonumber(arg1) <= 0 then
 				-- Print an error
-				cmPrint(L.ERRORS.BiggerThan0, true)
+				CombatMusic:PrintMessage(L.ERRORS.BiggerThan0, true)
 			else
 				-- Set it to what the user passed
-				cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.Battles, tonumber(arg1)))
+				CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.Battles, tonumber(arg1)))
 				CombatMusic_SavedDB.Music.numSongs.Battles = tonumber(arg1)
 			end
 		end
@@ -313,21 +313,21 @@ local function CM_SlashHandler(args)
 		if not tonumber(arg1) and arg1 ~= "off" then
 			-- Check to see if the user has the setting turned off, that way we can show them a different message
 			if CombatMusic_SavedDB.Music.numSongs.Bosses ~= -1 then
-				cmPrint(format(L.OTHER.PrintSetting, L.OTHER.Bosses, CombatMusic_SavedDB.Music.numSongs.Bosses))
+				CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.Bosses, CombatMusic_SavedDB.Music.numSongs.Bosses))
 			else
-				cmPrint(format(L.OTHER.ShowState, L.OTHER.UsingBosses, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ShowState, L.OTHER.UsingBosses, L.OTHER.Off))
 			end
 		else
 			if arg1 == "off" then
 				-- Turn off this feature
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.UsingBosses, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UsingBosses, L.OTHER.Off))
 				CombatMusic_SavedDB.Music.numSongs.Bosses = -1
 			elseif tonumber(arg1) <= 0 then
 				-- Print an error
-				cmPrint(L.ERRORS.BiggerThan0, true)
+				CombatMusic:PrintMessage(L.ERRORS.BiggerThan0, true)
 			else
 				-- Set it to what the user passed
-				cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.Bosses, tonumber(arg1)))
+				CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.Bosses, tonumber(arg1)))
 				CombatMusic_SavedDB.Music.numSongs.Bosses = tonumber(arg1)
 			end
 		end
@@ -341,21 +341,21 @@ local function CM_SlashHandler(args)
 			if not tonumber(arg2) and arg2 ~= "off" then
 				-- Check to see if the user has the setting turned off, that way we can show them a different message
 				if CombatMusic_SavedDB.GameOver.Cooldown ~= 0 then
-					cmPrint(format(L.OTHER.PrintSetting, L.OTHER.CDGameOver, CombatMusic_SavedDB.GameOver.Cooldown))
+					CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.CDGameOver, CombatMusic_SavedDB.GameOver.Cooldown))
 				else
-					cmPrint(format(L.OTHER.ShowState, L.OTHER.CDGameOver, L.OTHER.Off))
+					CombatMusic:PrintMessage(format(L.OTHER.ShowState, L.OTHER.CDGameOver, L.OTHER.Off))
 				end
 			else
 				if arg2 == "off" then
 					-- Turn off this feature
-					cmPrint(format(L.OTHER.ToggleState, L.OTHER.CDGameOver, L.OTHER.Off))
+					CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.CDGameOver, L.OTHER.Off))
 					CombatMusic_SavedDB.GameOver.Cooldown = 0
 				elseif tonumber(arg2) <= 0 then
 					-- Print an error
-					cmPrint(L.ERRORS.BiggerThan0, true)
+					CombatMusic:PrintMessage(L.ERRORS.BiggerThan0, true)
 				else
 					-- Set it to what the user passed
-					cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.CDGameOver, tonumber(arg2)))
+					CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.CDGameOver, tonumber(arg2)))
 					CombatMusic_SavedDB.GameOver.Cooldown = tonumber(arg2)
 				end
 			end
@@ -365,27 +365,27 @@ local function CM_SlashHandler(args)
 			if not tonumber(arg2) and arg2 ~= "off" then
 				-- Check to see if the user has the setting turned off, that way we can show them a different message
 				if CombatMusic_SavedDB.Victory.Cooldown ~= -1 then
-					cmPrint(format(L.OTHER.PrintSetting, L.OTHER.CDVictory, CombatMusic_SavedDB.Victory.Cooldown))
+					CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.CDVictory, CombatMusic_SavedDB.Victory.Cooldown))
 				else
-					cmPrint(format(L.OTHER.ShowState, L.OTHER.CDVictory, L.OTHER.Off))
+					CombatMusic:PrintMessage(format(L.OTHER.ShowState, L.OTHER.CDVictory, L.OTHER.Off))
 				end
 			else
 				if arg2 == "off" then
 					-- Turn off this feature
-					cmPrint(format(L.OTHER.ToggleState, L.OTHER.CDVictory, L.OTHER.Off))
+					CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.CDVictory, L.OTHER.Off))
 					CombatMusic_SavedDB.Victory.Cooldown = -1
 				elseif tonumber(arg2) <= 0 then
 					-- Print an error
-					cmPrint(L.ERRORS.BiggerThan0, true)
+					CombatMusic:PrintMessage(L.ERRORS.BiggerThan0, true)
 				else
 					-- Set it to what the user passed
-					cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.CDVictory, tonumber(arg2)))
+					CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.CDVictory, tonumber(arg2)))
 					CombatMusic_SavedDB.Victory.Cooldown = tonumber(arg2)
 				end
 			end
 		else
 			-- Eeeoooops, wrong argument #1
-			cmPrint(L.ERRORS.InvalidArgumentCD, true)
+			CombatMusic:PrintMessage(L.ERRORS.InvalidArgumentCD, true)
 		end
 	
 	-- /cm extras [gameover|victory|ding] [on|off]
@@ -395,45 +395,45 @@ local function CM_SlashHandler(args)
 		if arg1 == "gameover" or arg1 == "go" then
 			if arg2 == "on" then
 				-- Turning it on
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasGameOver, L.OTHER.On))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasGameOver, L.OTHER.On))
 				CombatMusic_SavedDB.GameOver.Enabled = true
 			elseif arg2 == "off" then
 				-- Turning it off
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasGameOver, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasGameOver, L.OTHER.Off))
 				CombatMusic_SavedDB.GameOver.Enabled = false
 			else
-				cmPrint(L.ERRORS.OnOrOff, true)
+				CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 			end
 			
 		-- /cm extras victory [on|off]
 		elseif arg1 == "victory" or arg1 == "vic" then
 			if arg2 == "on" then
 				-- Turning it on
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasVictory, L.OTHER.On))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasVictory, L.OTHER.On))
 				CombatMusic_SavedDB.Victory.Enabled = true
 			elseif arg2 == "off" then
 				-- Turning it off
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasVictory, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasVictory, L.OTHER.Off))
 				CombatMusic_SavedDB.Victory.Enabled = false
 			else
-				cmPrint(L.ERRORS.OnOrOff, true)
+				CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 			end
 		-- /cm extras ding [on|off]
 		elseif arg1 == "ding" then
 			if arg2 == "on" then
 				-- Turning it on
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasDing, L.OTHER.On))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasDing, L.OTHER.On))
 				CombatMusic_SavedDB.LevelUp.Enabled = true
 			elseif arg2 == "off" then
 				-- Turning it off
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.ExtrasDing, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.ExtrasDing, L.OTHER.Off))
 				CombatMusic_SavedDB.LevelUp.Enabled = false
 			else
-				cmPrint(L.ERRORS.OnOrOff, true)
+				CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 			end
 		else
 			-- Oops, Arg #1 error
-			cmPrint(L.ERRORS.InvalidArgumentE, true)
+			CombatMusic:PrintMessage(L.ERRORS.InvalidArgumentE, true)
 		end
 	
 	-- /cm useding [on|off]
@@ -441,14 +441,14 @@ local function CM_SlashHandler(args)
 	elseif command == "useding" then
 		if arg1 == "on" then
 			-- Turning it on
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.NewDing, L.OTHER.On))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.NewDing, L.OTHER.On))
 			CombatMusic_SavedDB.LevelUp.NewFanfare = true
 		elseif arg1 == "off" then
 			-- Turning it off
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.NewDing, L.OTHER.Off))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.NewDing, L.OTHER.Off))
 			CombatMusic_SavedDB.LevelUp.NewFanfare = false
 		else
-			cmPrint(L.ERRORS.OnOrOff, true)
+			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
 	
 	
@@ -457,14 +457,14 @@ local function CM_SlashHandler(args)
 	elseif command == "usefocus" then
 		if arg1 == "on" then
 			-- Turning it on
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.UseFocus, L.OTHER.On))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UseFocus, L.OTHER.On))
 			CombatMusic_SavedDBPerChar.PreferFocusTarget = true
 		elseif arg1 == "off" then
 			-- Turning it off
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.UseFocus, L.OTHER.Off))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UseFocus, L.OTHER.Off))
 			CombatMusic_SavedDBPerChar.PreferFocusTarget = false
 		else
-			cmPrint(L.ERRORS.OnOrOff, true)
+			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
 	
 	-- /cm volume [#]
@@ -473,12 +473,12 @@ local function CM_SlashHandler(args)
 		-- Change the in-combat volume settings:
 		if not tonumber(arg1) then
 			-- Output the current setting
-			cmPrint(format(L.OTHER.PrintSetting, L.OTHER.Volume, CombatMusic_SavedDB.Music.Volume))
+			CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.Volume, CombatMusic_SavedDB.Music.Volume))
 		else
 			if tonumber(arg1) <= 0 or tonumber(arg1) > 1 then
-				cmPrint(L.ERRORS.Between0And1, true)
+				CombatMusic:PrintMessage(L.ERRORS.Between0And1, true)
 			else
-				cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.Volume, tonumber(arg1)))
+				CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.Volume, tonumber(arg1)))
 				CombatMusic_SavedDB.Music.Volume = tonumber(arg1)
 			end
 		end
@@ -490,21 +490,21 @@ local function CM_SlashHandler(args)
 		if not tonumber(arg1) and arg1 ~= "off" then
 			-- Check to see if the user has the setting turned off, that way we can show them a different message
 			if CombatMusic_SavedDB.Music.FadeOut ~= 0 then
-				cmPrint(format(L.OTHER.PrintSetting, L.OTHER.Fade, CombatMusic_SavedDB.Music.FadeOut))
+				CombatMusic:PrintMessage(format(L.OTHER.PrintSetting, L.OTHER.Fade, CombatMusic_SavedDB.Music.FadeOut))
 			else
-				cmPrint(format(L.OTHER.ShowState, L.OTHER.Fade, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ShowState, L.OTHER.Fade, L.OTHER.Off))
 			end
 		else
 			if arg1 == "off" then
 				-- Turn off this feature
-				cmPrint(format(L.OTHER.ToggleState, L.OTHER.Fade, L.OTHER.Off))
+				CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Fade, L.OTHER.Off))
 				CombatMusic_SavedDB.Music.FadeOut = 0
 			elseif tonumber(arg1) <= 0 then
 				-- Print an error
-				cmPrint(L.ERRORS.BiggerThan0, true)
+				CombatMusic:PrintMessage(L.ERRORS.BiggerThan0, true)
 			else
 				-- Set it to what the user passed
-				cmPrint(format(L.OTHER.ChangeSetting, L.OTHER.Fade, tonumber(arg1)))
+				CombatMusic:PrintMessage(format(L.OTHER.ChangeSetting, L.OTHER.Fade, tonumber(arg1)))
 				CombatMusic_SavedDB.Music.FadeOut = tonumber(arg1)
 			end
 		end
@@ -528,14 +528,14 @@ local function CM_SlashHandler(args)
 	elseif command == "debug" then
 		if arg1 == "on" then
 			-- Turning it on
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.On))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.On))
 			CombatMusic:EnableDebugMode()
 		elseif arg1 == "off" then
 			-- Turning it off
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.Off))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.Off))
 			CombatMusic:DisableDebugMode()
 		else
-			cmPrint(L.ERRORS.OnOrOff, true)
+			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
 		
 	-- /cm comm [on|off]
@@ -543,18 +543,18 @@ local function CM_SlashHandler(args)
 	elseif command == "comm" then
 		if arg1 == "on" then
 			-- Turning it on
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.Comm, L.OTHER.On))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Comm, L.OTHER.On))
 			CombatMusic_SavedDB.AllowComm = true
 		elseif arg1 == "off" then
 			-- Turning it off
-			cmPrint(format(L.OTHER.ToggleState, L.OTHER.Comm, L.OTHER.Off))
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Comm, L.OTHER.Off))
 			CombatMusic_SavedDB.AllowComm = false
 		else
-			cmPrint(L.ERRORS.OnOrOff, true)
+			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
 	else
 		-- Whoops, someone made a booboo if we got here.
-		cmPrint(L.ERRORS.InvalidCommand, true)	
+		CombatMusic:PrintMessage(L.ERRORS.InvalidCommand, true)	
 	end
 end
 
@@ -564,8 +564,8 @@ function CombatMusic_OnEvent(self, event, ...)
 	local arg1, arg2 = ...
 	-- PLAYER_ENTERING_WORLD: Finishing the loading sequence
 	if event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
-		cmPrint(L.OTHER.Loaded)
-		cmPrint(L.OTHER.DebugLoaded, false, true)
+		CombatMusic:PrintMessage(L.OTHER.Loaded)
+		CombatMusic:PrintMessage(L.OTHER.DebugLoaded, false, true)
 		CombatMusic:SetTimer(2, function()
 				CM_CheckSettingsLoaded()
 				CombatMusic["Info"]["Loaded"] = true
