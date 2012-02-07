@@ -37,12 +37,6 @@ local function debugNils(...)
 	return table.concat(tmp, ", ")
 end
 
-
--- CombatMusic:PrintMessage: A call into my library PrintMessage method
-local function CombatMusic:PrintMessage(message, isError, isDebug)
-	CombatMusic:PrintMessage("CombatMusic", message, isError, isDebug)
-end
-
 -- This file contains the addon itself, this is how everything works
 
 
