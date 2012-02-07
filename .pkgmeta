@@ -6,5 +6,6 @@ externals:
       tag: latest
    libs/LibVan32-1.0:
       url: svn://svn.curseforge.net/wow/libvan32/mainline/trunk
+      tag: latest
       
 enable-nolib-creation: no

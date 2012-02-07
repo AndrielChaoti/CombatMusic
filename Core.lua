@@ -51,13 +51,7 @@ local function debugNils(...)
 	return table.concat(tmp, ", ")
 end
 
-
--- CombatMusic:PrintMessage: A call into my library PrintMessage method
-local function CombatMusic:PrintMessage(message, isError, isDebug)
-	CombatMusic:PrintMessage("CombatMusic", message, isError, isDebug)
-end
-
--------------------------]]
+-----------------------]]
 
 -- CM_CheckSettingsLoaded: Check to make sure the settings loaded properly
 local function CM_CheckSettingsLoaded()
