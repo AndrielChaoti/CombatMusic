@@ -160,14 +160,16 @@ function CombatMusic.SetDefaults(restoreMode, outOfDate)
 			}
 			CombatMusic_SavedDBPerChar = {
 				["SVVersion"] = currentSVVersion,
-				["PreferFocusTarget"] = false
+				["PreferFocusTarget"] = false,
+				["CheckBossTargets"] = false
 			}
 			CombatMusic:PrintMessage(L.OTHER.GlobalConfigReset)
 		end
 	elseif restoreMode == "perchar" then
 		CombatMusic_SavedDBPerChar = {
 			["SVVersion"] = currentSVVersion,
-			["PreferFocusTarget"] = false
+			["PreferFocusTarget"] = false,
+			["CheckBossTargets"] = false
 		}
 	elseif restoreMode == "fullreset" then
 		CombatMusic.SetDefaults("global")
@@ -457,6 +459,20 @@ local function CM_SlashHandler(args)
 			-- Turning it off
 			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UseFocus, L.OTHER.Off))
 			CombatMusic_SavedDBPerChar.PreferFocusTarget = false
+		else
+			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
+		end
+		
+	-- /cm usebosstargets [on|off]
+	elseif command == "usebosstargets" or command == "useboss" then
+			if arg1 == "on" then
+			-- Turning it on
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UseBossTargets, L.OTHER.On))
+			CombatMusic_SavedDBPerChar.CheckBossTargets = true
+		elseif arg1 == "off" then
+			-- Turning it off
+			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.UseBossTargets, L.OTHER.Off))
+			CombatMusic_SavedDBPerChar.CheckBossTargets = false
 		else
 			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
@@ -764,4 +780,30 @@ function CombatMusic_OnLoad(self)
 		hideOnEscape = true,
 		timeout = 0,
 	}
+	
+	--@do-not-package@ 
+	-- A bit of extra debug code. Please do not uncomment this section if you know what's good for you.
+	-- This is a quick and dirty timer to update me on memory usage.
+	do
+		local oldcg = collectgarbage
+		collectgarbage = function(...)
+			ChatFrame10:AddMessage(CombatMusic:ParseColorCodedString("$Vcollectgarbage"))
+			oldcg(...)
+		end
+	end
+	
+	local t = CombatMusic:SetTimer(0.3, function()
+			UpdateAddOnMemoryUsage()
+			local s
+			local mem = GetAddOnMemoryUsage("CombatMusic")
+			if mem >= 2^10 then
+				s = format("$TCombatMusic$C: Using $E%0.3f MB$C", mem)
+			elseif mem >= 2^8 then
+				s = format("$TCombatMusic$C: Using $V%0.3f kB$C", mem)
+			else
+				s = format("$TCombatMusic$C: Using $G%0.3f kB$C", mem)
+			end
+			ChatFrame10:AddMessage(CombatMusic:ParseColorCodedString(s))
+		end, true, "CMDEBUGMEMUSAGE")
+	--@end-do-not-package@
 end
