@@ -157,27 +157,64 @@ function CombatMusic.StartTargetChecks()
 	
 	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
 	
-	local fResult, fStartTimer = CombatMusic.CheckTarget("focustarget")
-	local tResult, tStartTimer = CombatMusic.CheckTarget("target")
-	
-	-- Use the results to play set bossfights or not!
-	if focusFirst then
-		if fStartTimer or tStartTimer then
-			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
-			if t ~= -1 then
-				CombatMusic.Info["UpdateTimer"] = t
-			end
+	-- Generate our list of targets to check
+	local tList = { "focustarget", "target" }
+	local rList = {}
+	if CombatMusic_SavedDBPerChar.CheckBossTargets then
+		for i = 1, 4 do
+			tList[#tList + 1] = "boss" .. i
 		end
-		return fResult or tResult
-	else
-		if tStartTimer or fStartTimer then
-			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
-			if t ~= -1 then
-				CombatMusic.Info["UpdateTimer"] = t
-			end
-		end
-		return tResult or fResult
 	end
+	
+	-- Generate our results lists based off of all of the targets.
+	for _, v in pairs(tList) do
+		rList[v] = {}
+		rList[v].isBoss, rList[v].startTimer = CombatMusic.CheckTarget(v)
+	end
+	
+	
+	local haveBoss
+	-- Use the results to play set bossfights or not!
+	-- if at any point haveboss is true, then we need to return excecution immediately.
+	if focusFirst then
+		if rList["focustarget"].startTimer or rList["target"].startTimer then
+			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
+			if t ~= -1 then
+				CombatMusic.Info["UpdateTimer"] = t
+			end
+		end
+		haveBoss = rList["focustarget"].isBoss or rList["target"].isBoss
+		if haveBoss then return haveBoss end
+	else
+		if rList["target"].startTimer or rList["focustarget"].startTimer then
+			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
+			if t ~= -1 then
+				CombatMusic.Info["UpdateTimer"] = t
+			end
+		end
+		haveBoss = rList["target"].isBoss or rList["focustarget"].isBoss
+		if haveBoss then return haveBoss end
+	end
+	
+	rList["focustarget"] = nil
+	rList["target"] = nil
+	
+	-- If there's anything left, run the same checks on what's left.
+	if #rList >= 1 then
+		for k, v in pairs(rList) do
+			if v.startTimer then
+				local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
+				if t ~= -1 then
+					CombatMusic.Info["UpdateTimer"] = t
+				end
+			end
+			haveBoss = v.isBoss
+			if haveBoss then return haveBoss end
+		end
+	end
+	
+	-- If we made it this far, then none of them are valid bosses...
+	return haveBoss
 end
 
 -- CheckTarget: Check the unit passed to the function
@@ -314,6 +351,7 @@ function CombatMusic.CheckTarget(unit)
 	CombatMusic:PrintMessage("isBoss = " .. debugNils(isBoss), false, true)
 	------------------------------------
 	-- Return if the target's a boss or not, and if we should check again
+	unitInfo, playerInfo = nil, nil
 	return isBoss or false, (not isBoss)
 end
 
@@ -323,6 +361,15 @@ function CombatMusic.CheckBossList()
 	CombatMusic:PrintMessage("CheckBossList()", false, true)
 	if CombatMusic_BossList then
 		local pFocus = CombatMusic_SavedDBPerChar.PreferFocusTarget
+		-- Generate our list of targets to check
+		local tList = {}
+		if CombatMusic_SavedDBPerChar.CheckBossTargets then
+			for i = 1, 4 do
+				tList[#tList + 1] = "boss" .. i
+			end
+		end
+		
+		-- run focus/target checks
 		if pFocus then
 			if CombatMusic_BossList[UnitName("focustarget")] then
 				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
@@ -350,6 +397,19 @@ function CombatMusic.CheckBossList()
 				CombatMusic.Info.InCombat = true
 				CombatMusic:PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
 				return true
+			end
+		end
+		
+		--run boss checks
+		if #tList >= 1 then
+			for _,v in pairs(tList) do
+				if CombatMusic_BossList[UnitName(v)] then
+					PlayMusic(CombatMusic_BossList[UnitName(v)])
+					CombatMusic.Info.BossFight = true
+					CombatMusic.Info.InCombat = true
+					CombatMusic:PrintMessage(debugNils(v) .. " on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName(v)]), false, true)
+					return true
+				end
 			end
 		end
 		CombatMusic:PrintMessage("Target not on BossList.", false, true)

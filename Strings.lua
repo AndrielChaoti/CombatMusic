@@ -26,10 +26,15 @@
 
 local addonName, _ = ...
 
-local verString = function()
-	local str = "$V" .. (GetAddOnMetadata(addonName, "VERSION") or "??")
-	str = str .. " r".. (tonumber('@project-revision@') or "DEV")
-	return str
+local function GetVerString()
+	local rv = (GetAddOnMetadata(addonName, "VERSION") or "???")
+	--@debug@
+	if rv == "@project-version@" then
+		rv = "???"
+	end
+	--@end-debug@
+	rv = rv .. " r" .. (tonumber('@project-revision@') or "DEV")
+	return rv
 end
 
 CM_STRINGS = {
@@ -49,7 +54,7 @@ CM_STRINGS = {
 		BossListReset = "BossList not found; setting default...",
 		GlobalConfigReset = "Configuration not found; setting default...",
 		GlobalConfigUpdate = "Configuration updated!",
-		Loaded = "CombatMusic version $V" .. verString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
+		Loaded = "CombatMusic version $V" .. GetVerString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
 		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
 		
 		-- Command strings
@@ -68,8 +73,8 @@ CM_STRINGS = {
 		BossListDialogRemove = "Enter the name of the NPC you want to remove from the BossList",
 		
 		-- Misc
-		HelpHead = "CombatMusic version $V" .. verString() .. "$C - Command Help:",
-		CommString = verString() ..",%s,%s", -- DO NOT LOCALIZE
+		HelpHead = "CombatMusic version $V" .. GetVerString() .. "$C - Command Help:",
+		CommString = GetVerString() ..",%s,%s", -- DO NOT LOCALIZE
 		
 		-- Constants
 		Enable = "enabled",
@@ -92,6 +97,7 @@ CM_STRINGS = {
 		ExtrasDing = "Level Up",
 		NewDing = "Seperate level up fanfare",
 		UseFocus = "Prefer focus",
+		UseBossTargets = "Using boss targets",
 		Debug = "Debug mode",
 		Comm = "Addon comm", 
 	},
