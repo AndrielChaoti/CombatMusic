@@ -781,29 +781,4 @@ function CombatMusic_OnLoad(self)
 		timeout = 0,
 	}
 	
-	--@do-not-package@ 
-	-- A bit of extra debug code. Please do not uncomment this section if you know what's good for you.
-	-- This is a quick and dirty timer to update me on memory usage.
-	do
-		local oldcg = collectgarbage
-		collectgarbage = function(...)
-			ChatFrame10:AddMessage(CombatMusic:ParseColorCodedString("$Vcollectgarbage"))
-			oldcg(...)
-		end
-	end
-	
-	local t = CombatMusic:SetTimer(0.3, function()
-			UpdateAddOnMemoryUsage()
-			local s
-			local mem = GetAddOnMemoryUsage("CombatMusic")
-			if mem >= 2^10 then
-				s = format("$TCombatMusic$C: Using $E%0.3f MB$C", mem)
-			elseif mem >= 2^8 then
-				s = format("$TCombatMusic$C: Using $V%0.3f kB$C", mem)
-			else
-				s = format("$TCombatMusic$C: Using $G%0.3f kB$C", mem)
-			end
-			ChatFrame10:AddMessage(CombatMusic:ParseColorCodedString(s))
-		end, true, "CMDEBUGMEMUSAGE")
-	--@end-do-not-package@
 end

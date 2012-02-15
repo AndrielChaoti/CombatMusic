@@ -38,11 +38,18 @@ local function debugNils(...)
 end
 
 -- This file contains the addon itself, this is how everything works
+do
+	local oldPM = PlayMusic
+	PlayMusic = function(...)
+		CombatMusic:PrintDebug("PlayMusic($V" .. debugNils(...) .. "$C)")
+		return oldPM(...)
+	end
+end
 
 
 -- EnterCombat: We just dropped into combat
 function CombatMusic.enterCombat()
-	CombatMusic:PrintMessage("enterCombat()", false, true)
+	CombatMusic:PrintDebug("$GenterCombat()", false)
 	
 	--Check that CombatMusic is turned on and "initialized"
 	if not CombatMusic_SavedDB.Enabled then return end
@@ -71,20 +78,20 @@ function CombatMusic.enterCombat()
 	-- Save the CVar's last states, before continuing
 	CombatMusic.GetSavedStates()
 	
+	
+	-- Check the BossList.
+	local BossList = CombatMusic.CheckBossList()
 	-- Check the player's target
 	CombatMusic.Info["BossFight"] = CombatMusic.StartTargetChecks()
 
+	
 	-- Change the CVars to what they need to be
 	SetCVar("Sound_EnableMusic", "1")
 	SetCVar("Sound_MusicVolume", CombatMusic_SavedDB.Music.Volume)
 	
-	
-	-- Check the BossList.
-	local BossList = CombatMusic.CheckBossList()
-	
 	-- Check to see if music is already fading, stop here, if so.
 	if CombatMusic.Info.IsFading then
-		CombatMusic:PrintMessage("IsFading!", false, true)
+		CombatMusic:PrintDebug("   IsFading!", false)
 		CombatMusic.Info.IsFading = nil
 		CombatMusic.Info.InCombat = true
 		if CombatMusic.Info.EnabledMusic ~= "0" then return end
@@ -119,7 +126,7 @@ end
 	3 = No_Target_Error
 ]]
 function CombatMusic.TargetChanged(unit)
-	CombatMusic:PrintMessage("TargetChanged(".. debugNils(unit) ..")", false, true)
+	CombatMusic:PrintDebug("TargetChanged(".. debugNils(unit) ..")", false)
 	
 	if not CombatMusic_SavedDB.Enabled then return -1 end
 	if not CombatMusic.Info.Loaded then return -1 end
@@ -131,12 +138,6 @@ function CombatMusic.TargetChanged(unit)
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
 	if BossList then return 0 end
-	
-	-- Why am I checking targets if they don't exist?
-	if not (UnitExists("focustarget") or UnitExists("target")) then 
-		CombatMusic:PrintMessage("No targets selected!", true, true)
-		return 3
-	end
 	
 	CombatMusic.Info["BossFight"] = CombatMusic.StartTargetChecks()
 	
@@ -151,76 +152,55 @@ end
 
 -- StartTargetChecks: Starts the target checks, and acts as a wrapper for CheckTarget
 function CombatMusic.StartTargetChecks()
-	CombatMusic:PrintMessage("StartTargetChecks()", false, true)
+	CombatMusic:PrintDebug("StartTargetChecks()", false)
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
 	
 	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
 	
 	-- Generate our list of targets to check
-	local tList = { "focustarget", "target" }
+	local tList = {}
+	if focusFirst then
+		tList = {"focustarget", "target"}
+	else
+		tList = {"target", "focusTarget"}
+	end
+	
 	local rList = {}
 	if CombatMusic_SavedDBPerChar.CheckBossTargets then
 		for i = 1, 4 do
 			tList[#tList + 1] = "boss" .. i
 		end
 	end
+	CombatMusic:PrintDebug("   tList = {" .. table.concat(tList, ", ") .. "}")
 	
 	-- Generate our results lists based off of all of the targets.
-	for _, v in pairs(tList) do
-		rList[v] = {}
-		rList[v].isBoss, rList[v].startTimer = CombatMusic.CheckTarget(v)
-	end
-	
-	
-	local haveBoss
-	-- Use the results to play set bossfights or not!
-	-- if at any point haveboss is true, then we need to return excecution immediately.
-	if focusFirst then
-		if rList["focustarget"].startTimer or rList["target"].startTimer then
+	for _, v in ipairs(tList) do
+		isBoss, startTimer = CombatMusic.CheckTarget(v)
+		CombatMusic:PrintDebug(format("  $E===$C" .. v .. ": isBoss = $V%s$C, startTimer = $V%s$C", tostring(isBoss), tostring(startTimer)))
+		
+		-- Check the list
+		if startTimer then
 			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
 			if t ~= -1 then
 				CombatMusic.Info["UpdateTimer"] = t
 			end
 		end
-		haveBoss = rList["focustarget"].isBoss or rList["target"].isBoss
-		if haveBoss then return haveBoss end
-	else
-		if rList["target"].startTimer or rList["focustarget"].startTimer then
-			local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
-			if t ~= -1 then
-				CombatMusic.Info["UpdateTimer"] = t
-			end
+		
+		if isBoss then
+			return true
 		end
-		haveBoss = rList["target"].isBoss or rList["focustarget"].isBoss
-		if haveBoss then return haveBoss end
+		
 	end
-	
-	rList["focustarget"] = nil
-	rList["target"] = nil
-	
-	-- If there's anything left, run the same checks on what's left.
-	if #rList >= 1 then
-		for k, v in pairs(rList) do
-			if v.startTimer then
-				local t = CombatMusic:SetTimer(0.5, CombatMusic.TargetChanged, true, "CMUpdateTimer")
-				if t ~= -1 then
-					CombatMusic.Info["UpdateTimer"] = t
-				end
-			end
-			haveBoss = v.isBoss
-			if haveBoss then return haveBoss end
-		end
-	end
-	
+		
 	-- If we made it this far, then none of them are valid bosses...
-	return haveBoss
+	return false
 end
 
 -- CheckTarget: Check the unit passed to the function
 -- Returns: isBoss, startTimer
 function CombatMusic.CheckTarget(unit)
-	CombatMusic:PrintMessage("CheckTarget(" .. debugNils(unit) .. ")", false, true)
+	CombatMusic:PrintDebug("CheckTarget(" .. debugNils(unit) .. ")", false)
 	-- Define our return value's default state
 	local isBoss = nil
 	
@@ -234,6 +214,7 @@ function CombatMusic.CheckTarget(unit)
 	
 	-- If the target doesn't exist, return false
 	if not UnitExists(unit) then
+		CombatMusic:PrintDebug("$V" .. tostring(unit) .. "$C doesn't exist.", true)
 		return false, false
 	end
 	
@@ -245,7 +226,15 @@ function CombatMusic.CheckTarget(unit)
 		},
 		isPvP = UnitIsPVP(unit) or UnitIsPVPFreeForAll(unit),
 		isPlayer = UnitIsPlayer(unit),
-		inCombat = UnitAffectingCombat(unit),
+		inCombat = function()		
+				if UnitAffectingCombat(unit) then
+					return true
+				elseif not UnitAffectingCombat(unit) and CombatMusic.DebugMode then
+					return true
+				else 
+					return false
+				end
+			end,
 		mobType = function()
 				local enumC = {normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5}
 				local C = UnitClassification(unit)
@@ -260,23 +249,23 @@ function CombatMusic.CheckTarget(unit)
 		instanceType = select(2, GetInstanceInfo('player'))
 	}
 	
-	-- If the target's not in combat, then don't play boss musunitInfo.inCombat
-	-- In debug mode, the addon will skip checking this
-	CombatMusic:PrintMessage("inCombat = " .. debugNils(unitInfo.inCombat), false, true)
-	if not CombatMusic.DebugMode then
-		if not unitInfo.inCombat then
-			return false, true
-		end
-	end
 	
+	
+	-- If the target's not in combat, then don't play boss music
+	-- In debug mode, the addon will skip checking this
+	if not unitInfo.inCombat() then
+		CombatMusic:PrintDebug(format("   inCombat = $V%s$C", tostring(unitInfo.inCombat())))
+		return false, true
+	end
+
 	-- Check the monster's type, and if we're in an instance:
-	CombatMusic:PrintMessage("mobType, intanceType = " .. debugNils(unitInfo.mobType(), playerInfo.instanceType), false, true)
+	CombatMusic:PrintDebug(format("   mobType = $V%s$C, instanceType = $V%s$C", tostring(unitInfo.mobType()), tostring(playerInfo.instanceType)))
 	if unitInfo.mobType() ~= 1 then
-		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell whunitInfo.inCombath NPCs are bosses in instances
+		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell what NPCs are bosses in 5-mans
 		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
 			unitInfo.level.adj = unitInfo.level.raw + 3
 		end
-		
+	
 		-- Instance check
 		if playerInfo.instanceType == "party" or playerInfo.instanceType == "raid" then
 			-- Check the mobtype again here.
@@ -289,8 +278,13 @@ function CombatMusic.CheckTarget(unit)
 		else
 			isBoss = true
 		end
+
+		-- WorldBoss check
+		if unitInfo.mobType() == 5 then
+			isBoss = true
+		end
 	end
-	CombatMusic:PrintMessage("isBoss = " .. debugNils(isBoss), false, true)
+	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
 	
 	--[[ The sections of code below are a bit tricky to understand, so I'll explain it
 			Each path of code seperated by the horizontal lines can both be run, but if one
@@ -306,7 +300,7 @@ function CombatMusic.CheckTarget(unit)
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
 	
-	CombatMusic:PrintMessage("level.raw, level.adj, playerLevel = " .. debugNils(unitInfo.level.raw, unitInfo.level.adj, playerInfo.level), false, true)
+	CombatMusic:PrintDebug(format("   raw = $V%s$C, adj = $V%s$C, playerLevel = $V%s$C", tostring(unitInfo.level.raw), tostring(unitInfo.level.adj), tostring(playerInfo.level)))
 	-- Check if we're in a raid instance. General raid mobs can, and have triggered boss fights
 	if playerInfo.instanceType ~= "raid" then
 		if unitInfo.level.adj >= 5 + playerInfo.level then
@@ -322,10 +316,10 @@ function CombatMusic.CheckTarget(unit)
 	-- Check to see if the unit is trivial or not
 	if unitInfo.isTrival then
 		isBoss = false
-		CombatMusic:PrintMessage("Stopping Check: Trival", false, true)
+		CombatMusic:PrintDebug("TRIVAL", true)
 		return isBoss, true
 	end
-	CombatMusic:PrintMessage("isBoss = " .. debugNils(isBoss), false, true)
+	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
 	------------------------------------
 	
 	
@@ -335,7 +329,7 @@ function CombatMusic.CheckTarget(unit)
 			* They are not considered 'trival'.
 			* They are not in your group.
 		]]
-	CombatMusic:PrintMessage("isPlayer, isPvP, inGroup = " .. debugNils(unitInfo.isPlayer, unitInfo.isPvP, unitInfo.inGroup), false, true)
+	CombatMusic:PrintDebug(format("   isPlayer = $V%s$C, isPvP = $V%s$C, inGroup = $V%s$C", tostring(unitInfo.isPlayer), tostring(unitInfo.isPvP), tostring(unitInfo.inGroup)))
 	if unitInfo.isPlayer then
 		if unitInfo.isPvP then
 			isBoss = true
@@ -344,75 +338,42 @@ function CombatMusic.CheckTarget(unit)
 		end
 		if unitInfo.inGroup then
 			isBoss = false
-			CombatMusic:PrintMessage("Stopping Check: Player in group", false, true)
+			CombatMusic:PrintDebug("IN GROUP", true)
 			return isBoss, true
 		end
 	end
-	CombatMusic:PrintMessage("isBoss = " .. debugNils(isBoss), false, true)
+	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
 	------------------------------------
-	-- Return if the target's a boss or not, and if we should check again
-	unitInfo, playerInfo = nil, nil
-	return isBoss or false, (not isBoss)
+	-- Return if the target's a boss or not, and if we should check again. We only really need to check again if the target's not in combat.
+	return isBoss or false, not unitInfo.inCombat()
 end
 
 
 -- CheckBossList: Check, and get the songpath for units on the bosslist
 function CombatMusic.CheckBossList()
-	CombatMusic:PrintMessage("CheckBossList()", false, true)
+	CombatMusic:PrintDebug("CheckBossList()", false)
 	if CombatMusic_BossList then
-		local pFocus = CombatMusic_SavedDBPerChar.PreferFocusTarget
+		local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
 		-- Generate our list of targets to check
 		local tList = {}
-		if CombatMusic_SavedDBPerChar.CheckBossTargets then
-			for i = 1, 4 do
-				tList[#tList + 1] = "boss" .. i
-			end
-		end
-		
-		-- run focus/target checks
-		if pFocus then
-			if CombatMusic_BossList[UnitName("focustarget")] then
-				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
-				CombatMusic.Info.BossFight = true
-				CombatMusic.Info.InCombat = true
-				CombatMusic:PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
-				return true
-			elseif CombatMusic_BossList[UnitName("target")] then
-				PlayMusic(CombatMusic_BossList[UnitName("target")])
-				CombatMusic.Info.BossFight = true
-				CombatMusic.Info.InCombat = true
-				CombatMusic:PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
-				return true
-			end
+		if focusFirst then
+			tList = {"focustarget", "target"}
 		else
-			if CombatMusic_BossList[UnitName("target")] then
-				PlayMusic(CombatMusic_BossList[UnitName("target")])
+			tList = {"target", "focusTarget"}
+		end
+		
+		-- use ipairs to do the focus/target checks.
+		for k, v in ipairs(tList) do
+			if CombatMusic_BossList[UnitName(v)] then
+				PlayMusic(CombatMusic_BossList[UnitName(v)])
 				CombatMusic.Info.BossFight = true
 				CombatMusic.Info.InCombat = true
-				CombatMusic:PrintMessage("Target on BossList. Playing ".. tostring(CombatMusic_BossList[UnitName("target")]), false, true)
-				return true
-			elseif CombatMusic_BossList[UnitName("focustarget")] then
-				PlayMusic(CombatMusic_BossList[UnitName("focustarget")])
-				CombatMusic.Info.BossFight = true
-				CombatMusic.Info.InCombat = true
-				CombatMusic:PrintMessage("FocusTarget on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName("focustarget")]), false, true)
+				CombatMusic:PrintDebug("   " .. v .. " found.. playing " .. CombatMusic_BossList[UnitName(v)])
 				return true
 			end
 		end
 		
-		--run boss checks
-		if #tList >= 1 then
-			for _,v in pairs(tList) do
-				if CombatMusic_BossList[UnitName(v)] then
-					PlayMusic(CombatMusic_BossList[UnitName(v)])
-					CombatMusic.Info.BossFight = true
-					CombatMusic.Info.InCombat = true
-					CombatMusic:PrintMessage(debugNils(v) .. " on BossList. Playing " .. tostring(CombatMusic_BossList[UnitName(v)]), false, true)
-					return true
-				end
-			end
-		end
-		CombatMusic:PrintMessage("Target not on BossList.", false, true)
+		CombatMusic:PrintDebug("Target not on BossList.", false)
 	end
 end
 
@@ -420,7 +381,7 @@ end
 -- leaveCombat: Stop the music playing, and reset all our variables
 -- If isDisabling, then don't play a victory fanfare when the music stops.
 function CombatMusic.leaveCombat(isDisabling)
-	CombatMusic:PrintMessage("leaveCombat(" .. debugNils(isDisabling) .. ")", false, true)
+CombatMusic:PrintDebug("$GleaveCombat(" .. debugNils(isDisabling) .. ")", false)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
@@ -455,7 +416,7 @@ end
 -- GameOver: Play a little... jingle... when they player dies
 -- Aww, I died, play some game over music for me
 function CombatMusic.GameOver()
-	CombatMusic:PrintMessage("GameOver()", false, true)
+	CombatMusic:PrintDebug("GameOver()", false)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
@@ -484,7 +445,7 @@ end
 -- LevelUp: Play a jingle when the player levels up.
 -- This plays the jingle on top of the rest of the sounds.
 function CombatMusic.LevelUp()	
-	CombatMusic:PrintMessage("LevelUp()", false, true)
+	CombatMusic:PrintDebug("LevelUp()", false)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
@@ -508,7 +469,7 @@ end
 
 -- Saves music state so we can restore it out of combat
 function CombatMusic.GetSavedStates()
-	CombatMusic:PrintMessage("GetSavedStates()", false, true)
+	CombatMusic:PrintDebug("GetSavedStates()", false)
 	-- Music was turned on?
 	CombatMusic.Info["EnabledMusic"] = GetCVar("Sound_EnableMusic") or "0"
 	-- Music Volume?
@@ -518,7 +479,7 @@ end
 
 -- Restore the settings that were changed by CombatMusic
 function CombatMusic.RestoreSavedStates()
-	CombatMusic:PrintMessage("RestoreSavedStates()", false, true)
+	CombatMusic:PrintDebug("RestoreSavedStates()", false)
 	CombatMusic.Info.FadeTimerVars = nil
 	CombatMusic.Info.RestoreTimer = nil
 	if not CombatMusic.Info.EnabledMusic then return end
@@ -530,7 +491,7 @@ end
 
 -- Fading start
 function CombatMusic.FadeOutStart()
-	CombatMusic:PrintMessage("FadeOutStart()", false, true)
+	CombatMusic:PrintDebug("FadeOutStart()", false)
 	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
 	if FadeTime == 0 then 
 		StopMusic()
@@ -555,7 +516,7 @@ end
 
 -- Fading function
 function CombatMusic.FadeOutPlayingMusic()
-	CombatMusic:PrintMessage("FadeOutPlayingMusic()", false, true)
+	CombatMusic:PrintDebug("FadeOutPlayingMusic()", false)
 	-- Set some args
 	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
 	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
@@ -575,7 +536,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
-	CombatMusic:PrintMessage("FadeVolume: " .. CurVol * 100, false, true)
+	CombatMusic:PrintDebug("   FadeVolume: " .. CurVol * 100, false)
 		
 	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
@@ -607,7 +568,7 @@ end
 ]=]
 
 function CombatMusic.CheckComm(prefix, message, channel, sender)
-	CombatMusic:PrintMessage("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")", false, true)
+	CombatMusic:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")", false)
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic.Info.Loaded then return end
@@ -617,7 +578,7 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 end
 
 function CombatMusic.CommSettings(channel, target)
-	CombatMusic:PrintMessage("CommSettings(" .. debugNils(channel, target) .. ")", false, true)
+	CombatMusic:PrintDebug("CommSettings(" .. debugNils(channel, target) .. ")", false)
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
