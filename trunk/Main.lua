@@ -165,7 +165,7 @@ function CombatMusic.TargetChanged(unit)
 		if UnitExists(v) then notargets = false end
 	end	
 	
-	if notargets then return end
+	if notargets then return 3; end
 	
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
