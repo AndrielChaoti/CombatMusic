@@ -118,6 +118,27 @@ function CombatMusic.enterCombat()
 end
 
 
+
+-- GetTargetList: generates a target list for the functions that require it.
+local function GetTargetList()
+	-- Generate our list of targets to check
+	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
+	local tList = {}
+	if focusFirst then
+		tList = {"focustarget", "target"}
+	else
+		tList = {"target", "focusTarget"}
+	end
+	
+	if CombatMusic_SavedDBPerChar.CheckBossTargets then
+		for i = 1, 4 do
+			tList[#tList + 1] = "boss" .. i
+		end
+	end
+	CombatMusic:PrintDebug("   tList = {" .. table.concat(tList, ", ") .. "}")
+	return tList
+end
+
 --[[ TargetChanged: The player's target changed.
 	This function is linked to a timer, and thus returns a value when the timer should stop
 	The value returned depends on why the timer needed to stop:
@@ -138,21 +159,10 @@ function CombatMusic.TargetChanged(unit)
 	local notargets = true
 	-- No need to check if there are no valid targets
 	-- Generate our list of targets to check
-	local tList = {}
-	if focusFirst then
-		tList = {"focustarget", "target"}
-	else
-		tList = {"target", "focusTarget"}
-	end
-	
-	if CombatMusic_SavedDBPerChar.CheckBossTargets then
-		for i = 1, 4 do
-			tList[#tList + 1] = "boss" .. i
-		end
-	end
+	local tList = GetTargetList()
 	
 	for _, v in ipairs(tList) do
-		if UnitExists(v) then notargets = false
+		if UnitExists(v) then notargets = false end
 	end	
 	
 	if notargets then return end
@@ -178,22 +188,8 @@ function CombatMusic.StartTargetChecks()
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
 	
-	local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
-	
 	-- Generate our list of targets to check
-	local tList = {}
-	if focusFirst then
-		tList = {"focustarget", "target"}
-	else
-		tList = {"target", "focusTarget"}
-	end
-	
-	if CombatMusic_SavedDBPerChar.CheckBossTargets then
-		for i = 1, 4 do
-			tList[#tList + 1] = "boss" .. i
-		end
-	end
-	CombatMusic:PrintDebug("   tList = {" .. table.concat(tList, ", ") .. "}")
+	local tList = GetTargetList()
 	
 	-- Generate our results lists based off of all of the targets.
 	for _, v in ipairs(tList) do
@@ -374,15 +370,8 @@ end
 function CombatMusic.CheckBossList()
 	CombatMusic:PrintDebug("CheckBossList()", false)
 	if CombatMusic_BossList then
-		local focusFirst = CombatMusic_SavedDBPerChar.PreferFocusTarget
-		-- Generate our list of targets to check
-		local tList = {}
-		if focusFirst then
-			tList = {"focustarget", "target"}
-		else
-			tList = {"target", "focusTarget"}
-		end
-		
+
+		local tList = GetTargetList()
 		-- use ipairs to do the focus/target checks.
 		for k, v in ipairs(tList) do
 			if CombatMusic_BossList[UnitName(v)] then
