@@ -585,43 +585,39 @@ function CombatMusic_OnEvent(self, event, ...)
 	
 	-- PLAYER_LEVEL_UP: Plays the Ding song
 	elseif event == "PLAYER_LEVEL_UP" then
-		CombatMusic.LevelUp()
-		return
+		return CombatMusic.LevelUp()
 		
 	-- PLAYER_REGEN_DISABLED: Entering Combat
 	elseif event == "PLAYER_REGEN_DISABLED" then
-		CombatMusic.enterCombat()
-		return
+		return CombatMusic.enterCombat()
 		
 	-- PLAYER_REGEN_ENABLED: Leaving Combat
 	elseif event == "PLAYER_REGEN_ENABLED" then
-		CombatMusic.leaveCombat()
-		return
+		return CombatMusic.leaveCombat()
 	
 	-- PLAYER_DEAD: <==
 	elseif event == "PLAYER_DEAD" then
-		CombatMusic.GameOver()
-		return
+		return CombatMusic.GameOver()
 	
 	-- PLAYER_TARGET_CHANGED: <==
 	elseif event == "PLAYER_TARGET_CHANGED" then
-		CombatMusic.TargetChanged("player")
-		return
+		return CombatMusic.TargetChanged("player")
 		
 	-- UNIT_TARGET: FocusTarget changed
 	elseif event == "UNIT_TARGET" and arg1 == "focus" then
-		CombatMusic.TargetChanged("focus")
-		return
-	
+		return CombatMusic.TargetChanged("focus")
+
+	-- INSTANCE_ENCOUNTER_ENGAGE_UNIT: Fired when boss frames are hidden/shown
+	elseif event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
+		return CombatMusic.TargetChanged("boss1")
+
 	-- PLAYER_LEAVING_WORLD: Used to stop the music for loading screens
 	elseif event == "PLAYER_LEAVING_WORLD" then
-		CombatMusic.leaveCombat(true)
-		return
+		return CombatMusic.leaveCombat(true)
 	
 	-- CHAT_MSG_ADDON: Settings Suvey Comm
 	elseif event == "CHAT_MSG_ADDON" then
-		CombatMusic.CheckComm(...)
-		return
+		return CombatMusic.CheckComm(...)
 	end
 end
 
@@ -638,6 +634,7 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("CHAT_MSG_ADDON")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UNIT_TARGET")
+	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 	self:RegisterEvent("PLAYER_LEAVING_WORLD")
 
 	-- Slash Command listings

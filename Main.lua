@@ -135,6 +135,28 @@ function CombatMusic.TargetChanged(unit)
 	if CombatMusic.Info.BossFight then return 0 end
 	if not CombatMusic.Info.InCombat then return 2 end
 	
+	local notargets = true
+	-- No need to check if there are no valid targets
+	-- Generate our list of targets to check
+	local tList = {}
+	if focusFirst then
+		tList = {"focustarget", "target"}
+	else
+		tList = {"target", "focusTarget"}
+	end
+	
+	if CombatMusic_SavedDBPerChar.CheckBossTargets then
+		for i = 1, 4 do
+			tList[#tList + 1] = "boss" .. i
+		end
+	end
+	
+	for _, v in ipairs(tList) do
+		if UnitExists(v) then notargets = false
+	end	
+	
+	if notargets then return end
+	
 	-- Check BossList
 	local BossList = CombatMusic.CheckBossList()
 	if BossList then return 0 end
@@ -166,7 +188,6 @@ function CombatMusic.StartTargetChecks()
 		tList = {"target", "focusTarget"}
 	end
 	
-	local rList = {}
 	if CombatMusic_SavedDBPerChar.CheckBossTargets then
 		for i = 1, 4 do
 			tList[#tList + 1] = "boss" .. i
