@@ -1,12 +1,4 @@
-﻿if not CombatMusic_SavedDB.metrics then
-	CombatMusic_SavedDB.metcrics = {
-		UniqueGUIDList = {},
-		UniqueCount = 0,
-	}
-end
-
-
-local OldSV = CombatMusic.SendVersion
+﻿local OldSV = CombatMusic.SendVersion
 CombatMusic.SendVersion = function()
 	OldSV()
 	-- Is this a raid group?
@@ -29,6 +21,12 @@ end
 
 local OldCCM = CombatMusic.CheckComm
 CombatMusic.CheckComm = function(...)
+	if not CombatMusic_SavedDB.metrics then
+		CombatMusic_SavedDB.metrics = {
+			UniqueGUIDList = {},
+			UniqueCount = 0,
+		}
+	end
 	OldCCM(...)
 	local prefix, msg, channel, sender = ...
 	local senderGUID = UnitGUID(sender)
