@@ -1,7 +1,10 @@
 ﻿if not CombatMusic_SavedDB.metrics then
 	CombatMusic_SavedDB.metcrics = {
-		UniqueGUIDList = {}
-		UniqueCount = 0
+		UniqueGUIDList = {},
+		UniqueCount = 0,
+	}
+end
+
 
 local OldSV = CombatMusic.SendVersion
 CombatMusic.SendVersion = function()
