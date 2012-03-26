@@ -26,15 +26,25 @@
 
 local addonName, _ = ...
 
-local function GetVerString()
-	local rv = (GetAddOnMetadata(addonName, "VERSION") or "???")
+local function GetVerString(short)
+	local v, rev = (GetAddOnMetadata(addonName, "VERSION") or "???"), (tonumber('@project-revision@') or "???")
+	
 	--@debug@
-	if rv == "@project-version@" then
-		rv = "???"
-	end
+	-- If this code is run, it's an unpackaged version, show this:
+	if v == "@project-version@" then v = "DEV_VERSION"; end
 	--@end-debug@
-	rv = rv .. " r" .. (tonumber('@project-revision@') or "DEV")
-	return rv
+	
+	if short then
+		-- Try to discern what release stage:
+		if strfind(v, "release") then	
+			return "r" .. rev
+		elseif strfind(v, "beta") then
+			return "b" .. rev
+		else
+			return "a" .. rev
+		end
+	end
+	return v .. " r" .. rev
 end
 
 CM_STRINGS = {
@@ -73,8 +83,10 @@ CM_STRINGS = {
 		BossListDialogRemove = "Enter the name of the NPC you want to remove from the BossList",
 		
 		-- Misc
+		OutOfDate = "You're using an out-of-date version of CombatMusic! You can find an update at your favorite addon-hosting website.\nSo you're not constantly annoyed by this message, this will be the only time you see it this session.",
 		HelpHead = "CombatMusic version $V" .. GetVerString() .. "$C - Command Help:",
-		CommString = GetVerString() ..",%s,%s", -- DO NOT LOCALIZE
+		CommString = "S:" .. GetVerString() ..",%s,%s", -- DO NOT LOCALIZE
+		VerString = "V:" .. GetVerString(1),
 		
 		-- Constants
 		Enable = "enabled",

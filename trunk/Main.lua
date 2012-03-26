@@ -583,8 +583,8 @@ function CombatMusic.CheckComm(prefix, message, channel, sender)
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic.Info.Loaded then return end
 	if prefix ~= "CM3" then return end
-	if message ~= "SETTINGS" then return end
-	CombatMusic.CommSettings(channel, sender)
+	if strfind(message, "^V:[rba]%d+") then CombatMusic.CheckOutOfDate(message) end
+	if message == "\001" then CombatMusic.CommSettings(channel, sender); end
 end
 
 function CombatMusic.CommSettings(channel, target)

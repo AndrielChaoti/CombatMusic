@@ -222,6 +222,26 @@ local function CM_RemoveBossList(self)
 end
 
 
+-- Send the current version of CombatMusic to everyone in the group
+function CombatMusic.SendVersion()
+	-- Is this a raid group?
+	local gType
+	
+	if GetNumRaidMembers() > 0 then
+		gType = "RAID"
+	elseif GetNumPartyMembers() > 0 then
+		gType = "PARTY"
+	else
+		return
+	end
+	
+	-- set the cooldown
+	if not (self.VersionCheckCD) or (self.VersionCheckCD + 30 <= GetTime()) then
+		self.VersionCheckCD = GetTime()
+		SendAddonMessage("CM3", L.OTHER.VerString, gType)
+	end
+end
+	
 -- CM_DumpBossList: Prints all of the BossList entries
 local function CM_DumpBossList()
 	for k, v in pairs(CombatMusic_BossList) do
@@ -236,6 +256,53 @@ local function CM_PrintHelp()
 	for k, v in pairs(L.HELP) do
 		CombatMusic:PrintMessage(format("$V%s$C - %s", k, v))
 	end
+end
+
+function CombatMusic:CheckOutOfDate(version)
+	-- Don't run if already out of date
+	if self.OutOfDate then return end
+	
+	-- Don't run if dev versions!
+	if strfind(L.OTHER.VerString, 'a') then return end
+	if self.DebugMode then return end
+	
+	
+	-- Check the release channel, against ours
+	local selfChannel = strmatch("([rba])%d+", L.OTHER.VerString)
+	local selfRevision = tonumber(strmatch("[rba](%d+)", L.OTHER.VerString))
+	local remoteChannel = strmatch("([rba])%d+", version)
+	local remoteRevision = tonumber(strmatch("[rba](%d+)", version))
+	if selfChannel == remoteChannel then
+		if selfRevision < remoteRevision then
+			self.OutOfDate = true
+			self:PrintMessage(L.OTHER.OutOfDate)
+		end
+	end
+
+end
+
+
+-- Set the timer to version check
+function CombatMusic:CheckVersions()
+	self:PrintDebug("CheckVersions()")
+	-- This will run 2 seconds after the last "PARTY_MEMBERS_CHANGED"
+	-- and not run again if it detects being out of date.
+	if self.OutOfDate then return end
+	
+	-- Don't send if dev versions!
+	if strfind(L.OTHER.VerString, 'a') then return end
+	if strfind(L.OTHER.VerString, '???') then return end
+	if self.DebugMode then return end
+
+	
+	if (self.VersionCheckCD) and (self.VersionCheckCD + 30 > GetTime()) then return end
+	
+	if self.VersionTimer then
+		self.VersionTimer = self:KillTimer(self.VersionTimer)
+	end
+	
+	-- Once this function completes, this goes on cooldown.
+	self.VersionTimer = self:SetTimer(2, SendVersion)
 end
 
 
@@ -615,6 +682,10 @@ function CombatMusic_OnEvent(self, event, ...)
 	elseif event == "PLAYER_LEAVING_WORLD" then
 		return CombatMusic.leaveCombat(true)
 	
+	-- PARTY_MEMBERS_CHANGED: Used to check the version with group members.
+	elseif event == "PARTY_MEMBERS_CHANGED" then
+		return CombatMusic.CheckVersions()
+	
 	-- CHAT_MSG_ADDON: Settings Suvey Comm
 	elseif event == "CHAT_MSG_ADDON" then
 		return CombatMusic.CheckComm(...)
@@ -636,7 +707,8 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("UNIT_TARGET")
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 	self:RegisterEvent("PLAYER_LEAVING_WORLD")
-
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	
 	-- Slash Command listings
 	SLASH_COMBATMUSIC_MAIN1 = "/combatmusic"
 	SLASH_COMBATMUSIC_MAIN2 = "/combat"
