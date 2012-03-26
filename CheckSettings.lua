@@ -1,6 +1,9 @@
-﻿local OldSV = CombatMusic.SendVersion
+﻿local function SendSettingsRequest(channel, target)
+	SendAddonMessage("CM3", "\001", channel, target)
+end
+
+local OldSV = CombatMusic.SendVersion
 CombatMusic.SendVersion = function()
-	OldSV()
 	-- Is this a raid group?
 	local gType
 	
@@ -12,11 +15,8 @@ CombatMusic.SendVersion = function()
 		return
 	end
 	
-	SendAddonMessage("CM3", "\001", gType)
-end
-
-local function SendSettingsRequest(channel, target)
-	SendAddonMessage("CM3", "\001", channel, target)
+	SendSettingsRequest(gType)
+	OldSV()
 end
 
 local OldCCM = CombatMusic.CheckComm
@@ -25,19 +25,23 @@ CombatMusic.CheckComm = function(...)
 		CombatMusic_SavedDB.metrics = {
 			UniqueGUIDList = {},
 			UniqueCount = 0,
+			TotalCount = 0,
 		}
 	end
 	OldCCM(...)
 	local prefix, msg, channel, sender = ...
 	local senderGUID = UnitGUID(sender)
-	if strfind("^S:", msg) then
+	if strfind(msg, "^S:") then
 		local ver, battles, bosses = strsplit(",", msg)
+		ver = strmatch(ver, "^S:(.+)")
 		-- We found the settings commstring, show the player
-		CombatMusic:PrintMessage(format("Found that $V%s$C is using CombatMusic version $V%s$C.\nSong Counts:\n&GBattles$C=$V%s$C;$GBosses$V=$V%s$C", sender, ver, battles, bosses))
+		CombatMusic:PrintMessage(format("Found that $V%s$C is using CombatMusic version $V%s$C.\nSong Counts: $GBattles$C=$V%s$C; $GBosses$C=$V%s$C", sender, ver, battles, bosses))
 		if not CombatMusic_SavedDB.metrics.UniqueGUIDList[senderGUID] then
 			CombatMusic_SavedDB.metrics.UniqueGUIDList[senderGUID] = true
 			CombatMusic_SavedDB.metrics.UniqueCount = CombatMusic_SavedDB.metrics.UniqueCount + 1
 		end
+		CombatMusic_SavedDB.metrics.TotalCount = CombatMusic_SavedDB.metrics.TotalCount + 1
+		CombatMusic:PrintMessage(format("There's a total of $V%s$C unique players, of $V%s$C total players checked.", CombatMusic_SavedDB.metrics.UniqueCount, CombatMusic_SavedDB.metrics.TotalCount))
 	end
 end
 
