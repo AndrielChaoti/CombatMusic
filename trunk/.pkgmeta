@@ -1,5 +1,8 @@
 ﻿package-as: CombatMusic
 
+ignore:
+    - CheckSettings.lua
+
 externals:
    libs/LibStub:
       url: svn://svn.wowace.com/wow/libstub/mainline/trunk
