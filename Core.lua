@@ -240,8 +240,8 @@ function CombatMusic.SendVersion()
 	if strfind(L.OTHER.VerString, "???") then return end
 	
 	-- set the cooldown
-	if not (self.VersionCheckCD) or (self.VersionCheckCD + 30 <= GetTime()) then
-		self.VersionCheckCD = GetTime()
+	if not (CombatMusic.VersionCheckCD) or (CombatMusic.VersionCheckCD + 30 <= GetTime()) then
+		CombatMusic.VersionCheckCD = GetTime()
 		SendAddonMessage("CM3", L.OTHER.VerString, gType)
 	end
 end
