@@ -224,6 +224,7 @@ end
 
 -- Send the current version of CombatMusic to everyone in the group
 function CombatMusic.SendVersion()
+	
 	-- Is this a raid group?
 	local gType
 	
@@ -234,6 +235,9 @@ function CombatMusic.SendVersion()
 	else
 		return
 	end
+	
+	-- Don't SEND the version check if the revision can't be determined.
+	if strfind(L.OTHER.VerString, "???") then return end
 	
 	-- set the cooldown
 	if not (self.VersionCheckCD) or (self.VersionCheckCD + 30 <= GetTime()) then
@@ -259,13 +263,12 @@ local function CM_PrintHelp()
 end
 
 function CombatMusic:CheckOutOfDate(version)
+	self:PrintDebug("CheckOutOfDate(" .. debugNils(version), ")")
 	-- Don't run if already out of date
 	if self.OutOfDate then return end
 	
 	-- Don't run if dev versions!
-	if strfind(L.OTHER.VerString, 'a') then return end
-	if self.DebugMode then return end
-	
+	if strfind(L.OTHER.VerString, 'a') then return end	
 	
 	-- Check the release channel, against ours
 	local selfChannel = strmatch("([rba])%d+", L.OTHER.VerString)
@@ -289,12 +292,6 @@ function CombatMusic:CheckVersions()
 	-- and not run again if it detects being out of date.
 	if self.OutOfDate then return end
 	
-	-- Don't send if dev versions!
-	if strfind(L.OTHER.VerString, 'a') then return end
-	if strfind(L.OTHER.VerString, '???') then return end
-	if self.DebugMode then return end
-
-	
 	if (self.VersionCheckCD) and (self.VersionCheckCD + 30 > GetTime()) then return end
 	
 	if self.VersionTimer then
@@ -302,7 +299,7 @@ function CombatMusic:CheckVersions()
 	end
 	
 	-- Once this function completes, this goes on cooldown.
-	self.VersionTimer = self:SetTimer(2, SendVersion)
+	self.VersionTimer = self:SetTimer(2, CombatMusic.SendVersion)
 end
 
 
