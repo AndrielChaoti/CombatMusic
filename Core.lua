@@ -224,7 +224,7 @@ end
 
 -- Send the current version of CombatMusic to everyone in the group
 function CombatMusic.SendVersion()
-	
+	self:PrintDebug("SendVersion()")
 	-- Is this a raid group?
 	local gType
 	
