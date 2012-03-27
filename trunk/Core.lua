@@ -684,7 +684,7 @@ function CombatMusic_OnEvent(self, event, ...)
 	
 	-- PARTY_MEMBERS_CHANGED: Used to check the version with group members.
 	elseif event == "PARTY_MEMBERS_CHANGED" then
-		return CombatMusic.CheckVersions()
+		return CombatMusic:CheckVersions()
 	
 	-- CHAT_MSG_ADDON: Settings Suvey Comm
 	elseif event == "CHAT_MSG_ADDON" then
