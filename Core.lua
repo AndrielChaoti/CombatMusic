@@ -222,30 +222,6 @@ local function CM_RemoveBossList(self)
 end
 
 
--- Send the current version of CombatMusic to everyone in the group
-function CombatMusic.SendVersion()
-	self:PrintDebug("SendVersion()")
-	-- Is this a raid group?
-	local gType
-	
-	if GetNumRaidMembers() > 0 then
-		gType = "RAID"
-	elseif GetNumPartyMembers() > 0 then
-		gType = "PARTY"
-	else
-		return
-	end
-	
-	-- Don't SEND the version check if the revision can't be determined.
-	if strfind(L.OTHER.VerString, "???") then return end
-	
-	-- set the cooldown
-	if not (CombatMusic.VersionCheckCD) or (CombatMusic.VersionCheckCD + 30 <= GetTime()) then
-		CombatMusic.VersionCheckCD = GetTime()
-		SendAddonMessage("CM3", L.OTHER.VerString, gType)
-	end
-end
-	
 -- CM_DumpBossList: Prints all of the BossList entries
 local function CM_DumpBossList()
 	for k, v in pairs(CombatMusic_BossList) do
@@ -262,44 +238,74 @@ local function CM_PrintHelp()
 	end
 end
 
+
+-- SendVersion: Tell everyone in our group what version we're using
+function CombatMusic.SendVersion()
+	CombatMusic:PrintDebug("SendVersion()")
+	
+	-- Is this a raid group?
+	local gType
+	if GetNumRaidMembers() > 0 then gType = "RAID";
+	elseif GetNumPartyMembers() > 0 then gType = "PARTY";
+	else return;
+	end
+	
+	-- Don't SEND the version check if the revision can't be determined.
+	if strfind(L.OTHER.VerString, "???") then return end
+	
+	-- Check and set the cooldown appropriately
+	if not CombatMusic.VCooldown or GetTime() >= (CombatMusic.VCooldown + 30) then
+		CombatMusic.VCooldown = GetTime()
+		SendAddonMessage("CM3", L.OTHER.VerString, gType)
+		return gType
+	end
+end
+
+
+-- CheckOutOfDate: Parse the version sent by other players to see if ours is out of date.
 function CombatMusic:CheckOutOfDate(version)
 	self:PrintDebug("CheckOutOfDate(" .. debugNils(version), ")")
 	-- Don't run if already out of date
 	if self.OutOfDate then return end
 	
-	-- Don't run if dev versions!
-	if strfind(L.OTHER.VerString, 'a') then return end	
+	-- Define a couple of patterns and some extra info
+	local pattern = "V:([rba])(%d+)"
+	local sChannel, sRevision = strmatch(L.Other.VerString, pattern)
+	local rChannel, rRevision = strmatch(version, pattern)
 	
-	-- Check the release channel, against ours
-	local selfChannel = strmatch("([rba])%d+", L.OTHER.VerString)
-	local selfRevision = tonumber(strmatch("[rba](%d+)", L.OTHER.VerString))
-	local remoteChannel = strmatch("([rba])%d+", version)
-	local remoteRevision = tonumber(strmatch("[rba](%d+)", version))
-	if selfChannel == remoteChannel then
-		if selfRevision < remoteRevision then
+	sRevision, rRevision = tonumber(sRevision), tonumber(rRevision)
+	
+	-- if ANY of these variables are nil, then NO check
+	if (not sChannel and not sRevision) and (not rChannel and not rRevision) then return end
+	
+	-- Don't check if on or recieved alpha channel:
+	if sChannel == "a" or rChannel == "a" then return end
+
+	-- Compare channels and versions
+	if sChannel == rChannel then
+		if sRevision < rRevision then
+			-- My revision is less than theirs, the addon was updated!
 			self.OutOfDate = true
 			self:PrintMessage(L.OTHER.OutOfDate)
 		end
-	end
-
+	end	
 end
 
 
--- Set the timer to version check
+-- CheckVersion: Prepare to send version strings to the group
 function CombatMusic:CheckVersions()
 	self:PrintDebug("CheckVersions()")
-	-- This will run 2 seconds after the last "PARTY_MEMBERS_CHANGED"
-	-- and not run again if it detects being out of date.
+	-- If it's out of date, no need to send version strings to everyone else
 	if self.OutOfDate then return end
 	
-	if (self.VersionCheckCD) and (self.VersionCheckCD + 30 > GetTime()) then return end
+	-- If on a check cooldown, don't start the timer.	
+	if self.VCooldown and GetTime() < (self.VCooldown + 30) then return end
 	
-	if self.VersionTimer then
-		self.VersionTimer = self:KillTimer(self.VersionTimer)
+	-- Reset our 4s timer.
+	if self.VTimer then
+		self.VTimer = self:KillTimer(self.VTimer)
 	end
-	
-	-- Once this function completes, this goes on cooldown.
-	self.VersionTimer = self:SetTimer(2, CombatMusic.SendVersion)
+	self.VTimer = self:SetTimer(4, self.SendVersion)
 end
 
 

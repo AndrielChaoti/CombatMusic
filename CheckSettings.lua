@@ -4,19 +4,8 @@ end
 
 local OldSV = CombatMusic.SendVersion
 CombatMusic.SendVersion = function()
-	-- Is this a raid group?
-	local gType
-	
-	if GetNumRaidMembers() > 0 then
-		gType = "RAID"
-	elseif GetNumPartyMembers() > 0 then
-		gType = "PARTY"
-	else
-		return
-	end
-	
-	SendSettingsRequest(gType)
-	OldSV()
+	local gType = OldSV()
+	if gType then SendSettingsRequest(gType) end
 end
 
 local OldCCM = CombatMusic.CheckComm
