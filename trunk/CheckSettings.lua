@@ -60,7 +60,7 @@ function CombatMusic.CheckMetricsReply(message, sender)
 		CombatMusic_SavedDB._METRICS.UniqueCount = CombatMusic_SavedDB._METRICS.UniqueCount + 1
 	end
 	CombatMusic_SavedDB._METRICS.TotalCount = CombatMusic_SavedDB._METRICS.TotalCount + 1
-	CombatMusic:PrintMessage(format("$V%s$C unique players, of $V%s$C total players checked.", CombatMusic_SavedDB.metrics.UniqueCount, CombatMusic_SavedDB.metrics.TotalCount))
+	CombatMusic:PrintMessage(format("$V%s$C unique players, of $V%s$C total players checked.", CombatMusic_SavedDB._METRICS.UniqueCount, CombatMusic_SavedDB._METRICS.TotalCount))
 	
 end
 
