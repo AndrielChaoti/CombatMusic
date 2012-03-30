@@ -1,4 +1,5 @@
 ﻿local function SendSettingsRequest(channel, target)
+	CombatMusic:PrintDebug("SendSettingsRequest()")
 	SendAddonMessage("CM3", "\001", channel, target)
 end
 
@@ -8,6 +9,7 @@ local ReqCooldown = 120
 local ReqCooldownTime
 CombatMusic.SendVersion = function()
 	local gType = OldSV()
+	CombatMusic:PrintDebug("Metrics - SendVersion()")
 	local difParty
 	-- Check to see who's in the party, and stop asking if it hasn't changed
 	-- or if everyone here's already been asked.
@@ -28,36 +30,38 @@ CombatMusic.SendVersion = function()
 	end
 	if not difParty then return end
 	-- The cooldown is a lot longer for this one
-	if not ReqCooldownTime and (GetTime() >= ReqCooldownTime + ReqCooldown) then 
+	if not ReqCooldownTime or (GetTime() >= ReqCooldownTime + ReqCooldown) then 
 		if gType then SendSettingsRequest(gType) end
 		ReqCooldownTime = GetTime()
 	end
 end
 
-local OldCCM = CombatMusic.CheckComm
-CombatMusic.CheckComm = function(...)
-	if not CombatMusic_SavedDB.metrics then
-		CombatMusic_SavedDB.metrics = {
+function CombatMusic.CheckMetricsReply(message, sender)
+	CombatMusic:PrintDebug("CheckMetricsReply()")
+	-- Check to see if the metrics data table exists and create if it doesn't
+	if not CombatMusic_SavedDB._METRICS then
+		CombatMusic_SavedDB._METRICS = {
 			UniqueGUIDList = {},
 			UniqueCount = 0,
 			TotalCount = 0,
 		}
 	end
-	OldCCM(...)
-	local prefix, msg, channel, sender = ...
+	
+	-- Grab the GUID of the person sending the reply
 	local senderGUID = UnitGUID(sender)
-	if strfind(msg, "^S:") then
-		local ver, battles, bosses = strsplit(",", msg)
-		ver = strmatch(ver, "^S:(.+)")
-		-- We found the settings commstring, show the player
-		CombatMusic:PrintMessage(format("Found that $V%s$C is using CombatMusic version $V%s$C.\nSong Counts: $GBattles$C=$V%s$C; $GBosses$C=$V%s$C", sender, ver, battles, bosses))
-		if not CombatMusic_SavedDB.metrics.UniqueGUIDList[senderGUID] then
-			CombatMusic_SavedDB.metrics.UniqueGUIDList[senderGUID] = true
-			CombatMusic_SavedDB.metrics.UniqueCount = CombatMusic_SavedDB.metrics.UniqueCount + 1
-		end
-		CombatMusic_SavedDB.metrics.TotalCount = CombatMusic_SavedDB.metrics.TotalCount + 1
-		CombatMusic:PrintMessage(format("There's a total of $V%s$C unique players, of $V%s$C total players checked.", CombatMusic_SavedDB.metrics.UniqueCount, CombatMusic_SavedDB.metrics.TotalCount))
+	
+	-- Process the message
+	local ver, battles, bosses = strsplit(",", message)
+	ver = strmatch(ver, "^S:(.+)")
+	-- We found the settings commstring, show the player
+	CombatMusic:PrintMessage(format("$V%s$C - Version: $V%s$C. Song Counts: Battles=$V%s$C, Bosses=$V%s$C", sender, ver, battles, bosses))
+	if not CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] then
+		CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] = true
+		CombatMusic_SavedDB._METRICS.UniqueCount = CombatMusic_SavedDB._METRICS.UniqueCount + 1
 	end
+	CombatMusic_SavedDB._METRICS.TotalCount = CombatMusic_SavedDB._METRICS.TotalCount + 1
+	CombatMusic:PrintMessage(format("$V%s$C unique players, of $V%s$C total players checked.", CombatMusic_SavedDB.metrics.UniqueCount, CombatMusic_SavedDB.metrics.TotalCount))
+	
 end
 
 

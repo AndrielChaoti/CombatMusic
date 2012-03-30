@@ -565,8 +565,8 @@ end
 --[=[ DISCLAIMER: 
 		THIS CODE IS USED TO SEND INFORMATION ABOUT YOUR CURRENT COMBATMUSIC 
 		CONFIGURATION TO THE PLAYER WHO ASKS FOR IT. THE INFORMATION SENT IS AS FOLLOWS:
-		 -YOUR TOON'S NAME (THIS IS AVAILABLE TO THE DEFAULT API AND IS IN NO WAY USED
-				TO IDENTIFY YOU BEYOND SEPERATING REPLIES.)
+		 -YOUR TOON'S NAME AND GUID (PROVIDED BY THE DEFAULT API, THIS IS TO PREVENT
+			THE SYSTEM FROM ASKING YOU MORE THAN ONCE)
 		 -YOUR VERSION OF COMBATMUSIC
 		 -YOUR NUMBER OF BOSS AND BATTLE SONGS
 		 
@@ -579,19 +579,25 @@ end
 
 -- CheckComm: Check incoming addon messages for what we need.
 function CombatMusic:CheckComm(prefix, message, channel, sender)
-	self:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")")
 	-- This isn't supposed to run if combatmusic communications are disabled
 	if not CombatMusic_SavedDB.Enabled and not CombatMusic_SavedDB.AllowComm then return end
 	if not self.Info.Loaded then return end
 	
 	-- Check the prefix
 	if prefix ~= "CM3" then return end
+	self:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")")
 	
 	-- Version check?
-	if strfind(msg, "^V:[rba]%d+") then self:CheckOutOfDate(message); end
+	if strfind(message, "^V:[rba]%d+") then self:CheckOutOfDate(message); end
 	
 	-- Metrics?
-	if msg == "\001" then self:CommSettings("WHISPER", sender); end
+	if message == "\001" then self:CommSettings("WHISPER", sender); end
+	
+	-- Metrics Reply?
+	if self.CheckMetricsReply then
+		if strfind(message, "^S:") then self.CheckMetricsReply(message, sender) end
+	end
+
 end
 
 -- CommSettings: Broadcasts data for metrics back to the asking player.
@@ -605,6 +611,6 @@ function CombatMusic:CommSettings(channel, target)
 	if channel == "WHISPER" then
 		return SendAddonMessage("CM3", msg, channel, target)
 	end
-	--return SendAddonMessage("CM3", msg, channel)
+	return SendAddonMessage("CM3", msg, channel)
 end
 

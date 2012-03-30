@@ -251,7 +251,7 @@ function CombatMusic.SendVersion()
 	end
 	
 	-- Don't SEND the version check if the revision can't be determined.
-	if strfind(L.OTHER.VerString, "???") then return end
+	if strfind(L.OTHER.VerString, "???") then return gType end
 	
 	-- Check and set the cooldown appropriately
 	if not CombatMusic.VCooldown or GetTime() >= (CombatMusic.VCooldown + 30) then
