@@ -691,7 +691,7 @@ function CombatMusic_OnEvent(self, event, ...)
 	
 	-- CHAT_MSG_ADDON: Settings Suvey Comm
 	elseif event == "CHAT_MSG_ADDON" then
-		return CombatMusic.CheckComm(...)
+		return CombatMusic:CheckComm(...)
 	end
 end
 
