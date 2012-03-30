@@ -823,11 +823,10 @@ function CombatMusic_OnLoad(self)
 		maxLetters = 128, 
 		editBoxWidth = 250,
 		OnShow = function(self)
-
 			self.editBox:SetText(UnitName('target') or "")
 		end,
 		OnAccept = function(self)
-		if not self:GetParent().button1:IsEnabled() then
+		if not self.button1:IsEnabled() then
 				return
 			end
 			CM_RemoveBossList(self)
