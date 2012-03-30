@@ -9,7 +9,8 @@ local ReqCooldownTime
 CombatMusic.SendVersion = function()
 	local gType = OldSV()
 	local difParty
-	-- The cooldown is a lot longer for this one
+	-- Check to see who's in the party, and stop asking if it hasn't changed
+	-- or if everyone here's already been asked.
 	if gType == "PARTY" then
 		for i = 1, GetNumPartyMembers() do
 			if not askedThisSession[UnitGUID("party" .. i)] then
@@ -26,7 +27,7 @@ CombatMusic.SendVersion = function()
 		end
 	end
 	if not difParty then return end
-	
+	-- The cooldown is a lot longer for this one
 	if not ReqCooldownTime and (GetTime() >= ReqCooldownTime + ReqCooldown) then 
 		if gType then SendSettingsRequest(gType) end
 		ReqCooldownTime = GetTime()

@@ -591,18 +591,20 @@ function CombatMusic:CheckComm(prefix, message, channel, sender)
 	if strfind(msg, "^V:[rba]%d+") then self:CheckOutOfDate(message); end
 	
 	-- Metrics?
-	if msg == "\001" then self:CommSettings(channel, sender); end
+	if msg == "\001" then self:CommSettings("WHISPER", sender); end
 end
 
+-- CommSettings: Broadcasts data for metrics back to the asking player.
 function CombatMusic:CommSettings(channel, target)
-	CombatMusic:PrintDebug("CommSettings(" .. debugNils(channel, target) .. ")", false)
-	if not CombatMusic_SavedDB.AllowComm then return end
-	if not CombatMusic_SavedDB.Enabled then return end
-	if not CombatMusic.Info.Loaded then return end
-	local AddonMsg = format(L.OTHER.CommString, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
-	if channel ~= "WHISPER" then
-		SendAddonMessage("CM3", AddonMsg, channel)
-	else
-		SendAddonMessage("CM3", AddonMsg, channel, target)
+	self:PrintDebug("CommSettings(" .. debugNils(channel, target) .. ")")
+	-- This isn't supposed to run if combatmusic communications are disabled
+	if not CombatMusic_SavedDB.Enabled and not CombatMusic_SavedDB.AllowComm then return end
+	if not self.Info.Loaded then return end
+	
+	local msg = format(L.OTHER.CommString, CombatMusic_SavedDB.Music.numSongs.Battles, CombatMusic_SavedDB.Music.numSongs.Bosses)
+	if channel == "WHISPER" then
+		return SendAddonMessage("CM3", msg, channel, target)
 	end
+	--return SendAddonMessage("CM3", msg, channel)
 end
+
