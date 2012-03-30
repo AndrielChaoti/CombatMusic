@@ -270,7 +270,7 @@ function CombatMusic:CheckOutOfDate(version)
 	
 	-- Define a couple of patterns and some extra info
 	local pattern = "V:([rba])(%d+)"
-	local sChannel, sRevision = strmatch(L.Other.VerString, pattern)
+	local sChannel, sRevision = strmatch(L.OTHER.VerString, pattern)
 	local rChannel, rRevision = strmatch(version, pattern)
 	
 	sRevision, rRevision = tonumber(sRevision), tonumber(rRevision)
