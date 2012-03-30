@@ -3,9 +3,34 @@
 end
 
 local OldSV = CombatMusic.SendVersion
+local askedThisSession = {}
+local ReqCooldown = 120
+local ReqCooldownTime
 CombatMusic.SendVersion = function()
 	local gType = OldSV()
-	if gType then SendSettingsRequest(gType) end
+	local difParty
+	-- The cooldown is a lot longer for this one
+	if gType == "PARTY" then
+		for i = 1, GetNumPartyMembers() do
+			if not askedThisSession[UnitGUID("party" .. i)] then
+				difParty = true
+				askedThisSession[UnitGUID("party" .. i)] = true
+			end
+		end
+	elseif gType == "RAID" then
+		for i = 1, GetNumRaidMembers() do
+			if not askedThisSession[UnitGUID("raid" .. i)] then
+				difParty = true
+				askedThisSession[UnitGUID("raid" .. i)] = true
+			end
+		end
+	end
+	if not difParty then return end
+	
+	if not ReqCooldownTime and (GetTime() >= ReqCooldownTime + ReqCooldown) then 
+		if gType then SendSettingsRequest(gType) end
+		ReqCooldownTime = GetTime()
+	end
 end
 
 local OldCCM = CombatMusic.CheckComm

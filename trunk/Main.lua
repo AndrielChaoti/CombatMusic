@@ -577,17 +577,24 @@ end
 		IF YOU SHOULD CHANGE YOUR MIND, ENTER '/cm comm on' WITHOUT QUOTES TO RE-ENABLE.
 ]=]
 
-function CombatMusic.CheckComm(prefix, message, channel, sender)
-	CombatMusic:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")", false)
-	if not CombatMusic_SavedDB.Enabled then return end
-	if not CombatMusic_SavedDB.AllowComm then return end
-	if not CombatMusic.Info.Loaded then return end
+-- CheckComm: Check incoming addon messages for what we need.
+function CombatMusic:CheckComm(prefix, message, channel, sender)
+	self:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")")
+	-- This isn't supposed to run if combatmusic communications are disabled
+	if not CombatMusic_SavedDB.Enabled and not CombatMusic_SavedDB.AllowComm then return end
+	if not self.Info.Loaded then return end
+	
+	-- Check the prefix
 	if prefix ~= "CM3" then return end
-	if strfind(message, "^V:[rba]%d+") then CombatMusic.CheckOutOfDate(message) end
-	if message == "\001" then CombatMusic.CommSettings(channel, sender); end
+	
+	-- Version check?
+	if strfind(msg, "^V:[rba]%d+") then self:CheckOutOfDate(message); end
+	
+	-- Metrics?
+	if msg == "\001" then self:CommSettings(channel, sender); end
 end
 
-function CombatMusic.CommSettings(channel, target)
+function CombatMusic:CommSettings(channel, target)
 	CombatMusic:PrintDebug("CommSettings(" .. debugNils(channel, target) .. ")", false)
 	if not CombatMusic_SavedDB.AllowComm then return end
 	if not CombatMusic_SavedDB.Enabled then return end
