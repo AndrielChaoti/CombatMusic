@@ -31,12 +31,8 @@ CombatMusic = {}
 LibStub:GetLibrary("LibVan32-1.0"):Embed(CombatMusic, "CombatMusic")
 
 --@alpha@ 
-CombatMusic:EnableDebugMode()
+CombatMusic._DebugMode = true
 --@end-alpha@
-
---[===[@non-alpha@ 
-CombatMusic:DisableDebugMode()
---@end-non-alpha@]===]
 
 local currentSVVersion = "2"
 local L = CM_STRINGS
@@ -56,7 +52,7 @@ end
 -- CM_CheckSettingsLoaded: Check to make sure the settings loaded properly
 local function CM_CheckSettingsLoaded()
 	CombatMusic:PrintMessage("CheckSettingsLoaded()", false, true)
-	
+
 	-- Set a couple of flags
 	local main, list, char = true, true, true
 	
@@ -225,7 +221,7 @@ end
 -- CM_DumpBossList: Prints all of the BossList entries
 local function CM_DumpBossList()
 	for k, v in pairs(CombatMusic_BossList) do
-		CombatMusic:PrintMessage(format("$V%s$C will play \"$V%s$C\"", k, v))
+		CombatMusic:PrintMessage(format("§b%s§r will play \"§b%s§r\"", k, v))
 	end
 end
 
@@ -234,7 +230,7 @@ end
 local function CM_PrintHelp()
 	CombatMusic:PrintMessage(L.OTHER.HelpHead)
 	for k, v in pairs(L.HELP) do
-		CombatMusic:PrintMessage(format("$V%s$C - %s", k, v))
+		CombatMusic:PrintMessage(format("§b%s§r - %s", k, v))
 	end
 end
 
@@ -609,11 +605,11 @@ local function CM_SlashHandler(args)
 		if arg1 == "on" then
 			-- Turning it on
 			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.On))
-			CombatMusic:EnableDebugMode()
+			CombatMusic._DebugMode = true
 		elseif arg1 == "off" then
 			-- Turning it off
 			CombatMusic:PrintMessage(format(L.OTHER.ToggleState, L.OTHER.Debug, L.OTHER.Off))
-			CombatMusic:DisableDebugMode()
+			CombatMusic._DebugMode = false
 		else
 			CombatMusic:PrintMessage(L.ERRORS.OnOrOff, true)
 		end
