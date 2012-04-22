@@ -41,7 +41,7 @@ end
 do
 	local oldPM = PlayMusic
 	PlayMusic = function(...)
-		CombatMusic:PrintDebug("PlayMusic($V" .. debugNils(...) .. "$C)")
+		CombatMusic:PrintDebug("PlayMusic(§b" .. debugNils(...) .. "§r)")
 		return oldPM(...)
 	end
 end
@@ -49,7 +49,7 @@ end
 
 -- EnterCombat: We just dropped into combat
 function CombatMusic.enterCombat()
-	CombatMusic:PrintDebug("$GenterCombat()", false)
+	CombatMusic:PrintDebug("§aenterCombat()", false)
 	
 	--Check that CombatMusic is turned on and "initialized"
 	if not CombatMusic_SavedDB.Enabled then return end
@@ -194,7 +194,7 @@ function CombatMusic.StartTargetChecks()
 	-- Generate our results lists based off of all of the targets.
 	for _, v in ipairs(tList) do
 		isBoss, startTimer = CombatMusic.CheckTarget(v)
-		CombatMusic:PrintDebug(format("  $E===$C" .. v .. ": isBoss = $V%s$C, startTimer = $V%s$C", tostring(isBoss), tostring(startTimer)))
+		CombatMusic:PrintDebug(format("  $E===§r" .. v .. ": isBoss = §b%s§r, startTimer = §b%s§r", tostring(isBoss), tostring(startTimer)))
 		
 		-- Check the list
 		if startTimer then
@@ -231,7 +231,7 @@ function CombatMusic.CheckTarget(unit)
 	
 	-- If the target doesn't exist, return false
 	if not UnitExists(unit) then
-		CombatMusic:PrintDebug("$V" .. tostring(unit) .. "$C doesn't exist.", true)
+		CombatMusic:PrintDebug("§b" .. tostring(unit) .. "§r doesn't exist.", true)
 		return false, false
 	end
 	
@@ -271,12 +271,12 @@ function CombatMusic.CheckTarget(unit)
 	-- If the target's not in combat, then don't play boss music
 	-- In debug mode, the addon will skip checking this
 	if not unitInfo.inCombat() then
-		CombatMusic:PrintDebug(format("   inCombat = $V%s$C", tostring(unitInfo.inCombat())))
+		CombatMusic:PrintDebug(format("   inCombat = §b%s§r", tostring(unitInfo.inCombat())))
 		return false, true
 	end
 
 	-- Check the monster's type, and if we're in an instance:
-	CombatMusic:PrintDebug(format("   mobType = $V%s$C, instanceType = $V%s$C", tostring(unitInfo.mobType()), tostring(playerInfo.instanceType)))
+	CombatMusic:PrintDebug(format("   mobType = §b%s§r, instanceType = §b%s§r", tostring(unitInfo.mobType()), tostring(playerInfo.instanceType)))
 	if unitInfo.mobType() ~= 1 then
 		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell what NPCs are bosses in 5-mans
 		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
@@ -301,7 +301,7 @@ function CombatMusic.CheckTarget(unit)
 			isBoss = true
 		end
 	end
-	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
+	CombatMusic:PrintDebug(format("     isBoss = §b%s§r", tostring(isBoss)))
 	
 	--[[ The sections of code below are a bit tricky to understand, so I'll explain it
 			Each path of code seperated by the horizontal lines can both be run, but if one
@@ -317,7 +317,7 @@ function CombatMusic.CheckTarget(unit)
 			* A 'trivial' (grey) NPC will never play boss music
 	]]
 	
-	CombatMusic:PrintDebug(format("   raw = $V%s$C, adj = $V%s$C, playerLevel = $V%s$C", tostring(unitInfo.level.raw), tostring(unitInfo.level.adj), tostring(playerInfo.level)))
+	CombatMusic:PrintDebug(format("   raw = §b%s§r, adj = §b%s§r, playerLevel = §b%s§r", tostring(unitInfo.level.raw), tostring(unitInfo.level.adj), tostring(playerInfo.level)))
 	-- Check if we're in a raid instance. General raid mobs can, and have triggered boss fights
 	if playerInfo.instanceType ~= "raid" then
 		if unitInfo.level.adj >= 5 + playerInfo.level then
@@ -336,7 +336,7 @@ function CombatMusic.CheckTarget(unit)
 		CombatMusic:PrintDebug("TRIVAL", true)
 		return isBoss, true
 	end
-	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
+	CombatMusic:PrintDebug(format("     isBoss = §b%s§r", tostring(isBoss)))
 	------------------------------------
 	
 	
@@ -346,7 +346,7 @@ function CombatMusic.CheckTarget(unit)
 			* They are not considered 'trival'.
 			* They are not in your group.
 		]]
-	CombatMusic:PrintDebug(format("   isPlayer = $V%s$C, isPvP = $V%s$C, inGroup = $V%s$C", tostring(unitInfo.isPlayer), tostring(unitInfo.isPvP), tostring(unitInfo.inGroup)))
+	CombatMusic:PrintDebug(format("   isPlayer = §b%s§r, isPvP = §b%s§r, inGroup = §b%s§r", tostring(unitInfo.isPlayer), tostring(unitInfo.isPvP), tostring(unitInfo.inGroup)))
 	if unitInfo.isPlayer then
 		if unitInfo.isPvP then
 			isBoss = true
@@ -359,7 +359,7 @@ function CombatMusic.CheckTarget(unit)
 			return isBoss, true
 		end
 	end
-	CombatMusic:PrintDebug(format("     isBoss = $V%s$C", tostring(isBoss)))
+	CombatMusic:PrintDebug(format("     isBoss = §b%s§r", tostring(isBoss)))
 	------------------------------------
 	-- Return if the target's a boss or not, and if we should check again. We only really need to check again if the target's not in combat.
 	return isBoss or false, not unitInfo.inCombat()
@@ -391,7 +391,7 @@ end
 -- leaveCombat: Stop the music playing, and reset all our variables
 -- If isDisabling, then don't play a victory fanfare when the music stops.
 function CombatMusic.leaveCombat(isDisabling)
-CombatMusic:PrintDebug("$GleaveCombat(" .. debugNils(isDisabling) .. ")", false)
+CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false)
 	--Check that CombatMusic is turned on
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end

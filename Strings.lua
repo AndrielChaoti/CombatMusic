@@ -49,13 +49,13 @@ end
 
 CM_STRINGS = {
 	ERRORS = {
-		BiggerThan0 = "That needs to be a number bigger than $V0$C.",
-		Between0And1 = "That has to be bigger than $V0$C and no bigger than $V1$C.",
-		OnOrOff = "That can only be \"$Von$C\" or \"$Voff$C\"",
-		InvalidCommand = "I don't recognize that command. use $V/cm help$C for a list of commands!",
-		BossListNotFound = "Couldn't find $V%s$C on the BossList.",
-		InvalidArgumentCD = "That can only be \"$Vgameover$C\" or \"$Vvictory$C\"",
-		InvalidArgumentE = "That can only be \"$Vgameover$C\", \"$Vvictory$C\", or \"$Vding$C\"",
+		BiggerThan0 = "That needs to be a number bigger than §b0§r.",
+		Between0And1 = "That has to be bigger than §b0§r and no bigger than §b1§r.",
+		OnOrOff = "That can only be \"§bon§r\" or \"§boff§r\"",
+		InvalidCommand = "I don't recognize that command. use §b/cm help§r for a list of commands!",
+		BossListNotFound = "Couldn't find §b%s§r on the BossList.",
+		InvalidArgumentCD = "That can only be \"§bgameover§r\" or \"§bvictory§r\"",
+		InvalidArgumentE = "That can only be \"§bgameover§r\", \"§bvictory§r\", or \"§bding§r\"",
 	},
 	OTHER = {
 		-- Startup messages
@@ -64,27 +64,27 @@ CM_STRINGS = {
 		BossListReset = "BossList not found; setting default...",
 		GlobalConfigReset = "Configuration not found; setting default...",
 		GlobalConfigUpdate = "Configuration updated!",
-		Loaded = "CombatMusic version $V" .. GetVerString() .. "$C loaded successfuly. Use $V/cm help$C for command help.",
-		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use $V/cm debug off$C to turn it off.",
+		Loaded = "CombatMusic version §b" .. GetVerString() .. "§r loaded successfuly. Use §b/cm help§r for command help.",
+		DebugLoaded = "The addon has been loaded in debug mode.\nThis mode prints extra information to your chat window to help figure out where things aren't working. Use §b/cm debug off§r to turn it off.",
 		
 		-- Command strings
-		ToggleState = "$V%s$C is now $V%s$C.",
-		ShowState = "$V%s$C is currently $V%s$C",
-		PrintSetting = "$V%s$C is currently set to $V%s$C.",
-		ChangeSetting = "$V%s$C has been set to $V%s$C.",
-		BossListAdd = "$V%s$C was added to the BossList with \"$V%s$C\"",
-		BossListRemoved = "$V%s$C was removed from the BossList.",
+		ToggleState = "§b%s§r is now §b%s§r.",
+		ShowState = "§b%s§r is currently §b%s§r",
+		PrintSetting = "§b%s§r is currently set to §b%s§r.",
+		ChangeSetting = "§b%s§r has been set to §b%s§r.",
+		BossListAdd = "§b%s§r was added to the BossList with \"§b%s§r\"",
+		BossListRemoved = "§b%s§r was removed from the BossList.",
 		
 		-- Dialogs
-		ResetDialog = "$EWARNING!$C\nResetting CombatMusic will destroy all of your custom settings and your BossList!\nAre you sure you want to do this?\n\nThis can't be undone! $V(Clicking " .. YES .. " will reload your UI.)$C",
+		ResetDialog = "$EWARNING!§r\nResetting CombatMusic will destroy all of your custom settings and your BossList!\nAre you sure you want to do this?\n\nThis can't be undone! §b(Clicking " .. YES .. " will reload your UI.)§r",
 		BossListDialog1 = "Enter the name of the NPC you want to add to the BossList",
 		BossListDialog2 = "Enter the path to the song you want CombatMusic to play every time you are in combat with this NPC",
-		BossListDialog2_Existing = "$V%s$C is already on your BossList and set to play $V%s$C.\nEnter the path to the song you want to update this entry with.",
+		BossListDialog2_Existing = "§b%s§r is already on your BossList and set to play §b%s§r.\nEnter the path to the song you want to update this entry with.",
 		BossListDialogRemove = "Enter the name of the NPC you want to remove from the BossList",
 		
 		-- Misc
 		OutOfDate = "You're using an out-of-date version of CombatMusic! You can find an update at your favorite addon-hosting website.\nSo you're not constantly annoyed by this message, this will be the only time you see it this session.",
-		HelpHead = "CombatMusic version $V" .. GetVerString() .. "$C - Command Help:",
+		HelpHead = "CombatMusic version §b" .. GetVerString() .. "§r - Command Help:",
 		CommString = "S:" .. GetVerString() ..",%s,%s", -- DO NOT LOCALIZE
 		VerString = "V:" .. GetVerString(1),
 		
