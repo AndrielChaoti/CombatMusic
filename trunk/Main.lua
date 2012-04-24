@@ -194,7 +194,7 @@ function CombatMusic.StartTargetChecks()
 	-- Generate our results lists based off of all of the targets.
 	for _, v in ipairs(tList) do
 		isBoss, startTimer = CombatMusic.CheckTarget(v)
-		CombatMusic:PrintDebug(format("  $E===§r" .. v .. ": isBoss = §b%s§r, startTimer = §b%s§r", tostring(isBoss), tostring(startTimer)))
+		CombatMusic:PrintDebug(format("  §c===§r" .. v .. ": isBoss = §b%s§r, startTimer = §b%s§r", tostring(isBoss), tostring(startTimer)))
 		
 		-- Check the list
 		if startTimer then
@@ -402,13 +402,8 @@ CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false
 	
 	-- Check for boss fight, and if the user wants to hear it....
 	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CombatMusic.Info.BossFight then
-		StopMusic()
-		--Boss Only?
-		if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
-			CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
-			PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
-		end
-		CombatMusic.RestoreSavedStates()
+		-- Wait FadeOut time before playing Fanfare...
+		CombatMusic.FadeOutStart(true)
 	elseif isDisabling then
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
@@ -500,10 +495,17 @@ end
 
 
 -- Fading start
-function CombatMusic.FadeOutStart()
+function CombatMusic.FadeOutStart(isBoss)
 	CombatMusic:PrintDebug("FadeOutStart()", false)
 	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
-	if FadeTime == 0 then 
+	if FadeTime == 0 then
+		if isBoss then
+			--Boss Only?
+			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
+				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+				PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
+			end
+		end
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
 		return
@@ -520,6 +522,7 @@ function CombatMusic.FadeOutStart()
 		FadeTimer = CombatMusic:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
 		MaxVol = CombatMusic_SavedDB.Music.Volume,
 		VolStep = volStep,
+		isBoss = isBoss,
 	}
 	CombatMusic.Info["IsFading"] = true
 end
@@ -531,6 +534,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
 	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
 	local Step = CombatMusic.Info.FadeTimerVars.VolStep
+	local isBoss = CombatMusic.Info.FadeTimerVars.isBoss
 	local FadeFinished
 	
 	-- Check if CurVol is set
@@ -547,15 +551,25 @@ function CombatMusic.FadeOutPlayingMusic()
 	end
 	
 	CombatMusic:PrintDebug("   FadeVolume: " .. CurVol * 100, false)
-		
-	SetCVar("Sound_MusicVolume", tostring(CurVol))
+	if not isBoss then
+		SetCVar("Sound_MusicVolume", tostring(CurVol))
+	end
+	
 	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
 	if FadeFinished then
 		CombatMusic.Info.FadeTimerVars = nil
+		if isBoss then
+			--Boss Only?
+			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
+				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
+				PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
+			end
+		end
 		SetCVar("Sound_MusicVolume", "0")
 		StopMusic()
 		CombatMusic.Info["RestoreTimer"] = CombatMusic:SetTimer(2, CombatMusic.RestoreSavedStates)
 		CombatMusic.Info.IsFading = nil
+
 		return true
 	end
 end
