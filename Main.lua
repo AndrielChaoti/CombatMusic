@@ -558,8 +558,8 @@ function CombatMusic.FadeOutPlayingMusic()
 
 
 	-- Set the volume
-	CombatMusic:PrintDebug("   FadeVolume: " .. CurVol * 100, false)
-	SetCVar("Sound_MusicVolume", tostring(CurVol))
+	CombatMusic:PrintDebug("   FadeVolume: " .. v.CurVol * 100, false)
+	SetCVar("Sound_MusicVolume", tostring(v.CurVol))
 	
 	-- Restore/update the table
 	CombatMusic.Info.FadeTimerVars = v
