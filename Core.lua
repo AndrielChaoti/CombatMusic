@@ -265,7 +265,7 @@ end
 
 -- CheckOutOfDate: Parse the version sent by other players to see if ours is out of date.
 function CombatMusic:CheckOutOfDate(version)
-	self:PrintDebug("CheckOutOfDate(" .. debugNils(version), ")")
+	self:PrintDebug("CheckOutOfDate(" .. debugNils(version) .. ")")
 	-- Don't run if already out of date
 	if self.OutOfDate then return end
 	

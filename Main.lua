@@ -518,12 +518,12 @@ function CombatMusic.FadeOutStart(isBoss)
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
 	--local volStep = CombatMusic_SavedDB.Music.Volume / 20
-	local timer = CombatMusic:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
 	CombatMusic.Info["FadeTimerVars"] = {
 		MaxVol = CombatMusic_SavedDB.Music.Volume,
 		--VolStep = volStep,
 		isBoss = isBoss,
 	}
+	local timer = CombatMusic:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
 	CombatMusic.Info["IsFading"] = true
 end
 
