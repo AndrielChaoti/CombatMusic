@@ -517,11 +517,11 @@ function CombatMusic.FadeOutStart(isBoss)
 	
 	-- Divide the process up into 20 steps.
 	local interval = FadeTime / 20
-	local volStep = CombatMusic_SavedDB.Music.Volume / 20
+	--local volStep = CombatMusic_SavedDB.Music.Volume / 20
+	local timer = CombatMusic:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true)
 	CombatMusic.Info["FadeTimerVars"] = {
-		FadeTimer = CombatMusic:SetTimer(interval, CombatMusic.FadeOutPlayingMusic, true),
 		MaxVol = CombatMusic_SavedDB.Music.Volume,
-		VolStep = volStep,
+		--VolStep = volStep,
 		isBoss = isBoss,
 	}
 	CombatMusic.Info["IsFading"] = true
@@ -531,45 +531,53 @@ end
 function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic:PrintDebug("FadeOutPlayingMusic()", false)
 	-- Set some args
-	local MaxVol = CombatMusic.Info.FadeTimerVars.MaxVol
-	local CurVol = CombatMusic.Info.FadeTimerVars.CurVol
-	local Step = CombatMusic.Info.FadeTimerVars.VolStep
-	local isBoss = CombatMusic.Info.FadeTimerVars.isBoss
+	local v = CombatMusic.Info.FadeTimerVars
 	local FadeFinished
 	
-	-- Check if CurVol is set
-	if not CurVol then
-		CurVol = tonumber(MaxVol)
-	end
-	-- Subtract a step
-	CurVol = CurVol - Step
+	-- All music fades logrithmically, just to make it all complicated and shit
 	
-	-- Because of stupid floating point:
-	if CurVol <= 0 then
-		CurVol = 0
+	-- If the stepcounter's not set, set everything up
+	if not v.StepCounter then
+		v.StepCounter = 0
+		v.CurVol = tonumber(v.MaxVol)
+		v.Step = exp(v.MaxVol)
+		v.StepD = (1 - v.Step) / 19
+	end
+	
+	-- Figure out what the volume's changing to, and what the next step's data needs to be.
+	v.CurVol = log(v.Step)
+	v.Step = v.Step - v.StepD
+	v.StepCounter = v.StepCounter + 1
+	
+	-- Limit to twenty steps, or when it hits 0, whichever comes first.
+	if v.CurVol <= 0 or v.StepCounter >= 20 then
+		v.CurVol = 0
 		FadeFinished = true
 	end
 	
+
+
+	-- Set the volume
 	CombatMusic:PrintDebug("   FadeVolume: " .. CurVol * 100, false)
-	if not isBoss then
-		SetCVar("Sound_MusicVolume", tostring(CurVol))
-	end
+	SetCVar("Sound_MusicVolume", tostring(CurVol))
 	
-	CombatMusic.Info.FadeTimerVars.CurVol = CurVol
+	-- Restore/update the table
+	CombatMusic.Info.FadeTimerVars = v
+	
+	-- Fade finished?
 	if FadeFinished then
-		CombatMusic.Info.FadeTimerVars = nil
-		if isBoss then
-			--Boss Only?
+		if v.isBoss then
+			-- If boss, then we should play the fanfare when the music fades.
 			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
 				PlaySoundFile("Interface\\Music\\Victory.mp3", "Master")
 			end
 		end
-		SetCVar("Sound_MusicVolume", "0")
+		-- Reset the table, the music, and the player's settings.
+		CombatMusic.Info.FadeTimerVars = nil
 		StopMusic()
 		CombatMusic.Info["RestoreTimer"] = CombatMusic:SetTimer(2, CombatMusic.RestoreSavedStates)
 		CombatMusic.Info.IsFading = nil
-
 		return true
 	end
 end

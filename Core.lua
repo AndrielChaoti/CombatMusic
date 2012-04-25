@@ -82,6 +82,11 @@ local function CM_CheckSettingsLoaded()
 		char = nil
 	end
 	
+	-- Set the CVars that CombatMusic needs on...
+	SetCVar("Sound_EnableAllSound", "1")
+	SetCVar("Sound_EnableMusic", "1")
+	-- If you don't like the ingame music, set the music slider to 0!
+	
 	-- Check the flags, and let the user know:
 	if main and char then	
 		CombatMusic:PrintMessage(L.OTHER.GlobalConfigLoaded)
