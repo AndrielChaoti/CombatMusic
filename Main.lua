@@ -532,6 +532,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic:PrintDebug("FadeOutPlayingMusic()", false)
 	-- Set some args
 	local v = CombatMusic.Info.FadeTimerVars
+	if not v then return end
 	local FadeFinished
 	
 	-- All music fades logrithmically, just to make it all complicated and shit
