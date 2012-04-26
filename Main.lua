@@ -541,13 +541,16 @@ function CombatMusic.FadeOutPlayingMusic()
 		v.StepCounter = 0
 		v.CurVol = tonumber(v.MaxVol)
 		v.Step = exp(v.MaxVol)
-		v.StepD = (1 - v.Step) / 19
+		v.StepD = (v.Step - 1) / 19
+		CombatMusic:PrintDebug("   STEPD = " .. v.StepD)
 	end
 	
+	v.StepCounter = v.StepCounter + 1
 	-- Figure out what the volume's changing to, and what the next step's data needs to be.
 	v.CurVol = log(v.Step)
+	CombatMusic:PrintDebug("   STEP = " .. v.Step .. "  STEPCOUNT = " .. v.StepCounter)
 	v.Step = v.Step - v.StepD
-	v.StepCounter = v.StepCounter + 1
+	
 	
 	-- Limit to twenty steps, or when it hits 0, whichever comes first.
 	if v.CurVol <= 0 or v.StepCounter >= 20 then
@@ -555,8 +558,6 @@ function CombatMusic.FadeOutPlayingMusic()
 		FadeFinished = true
 	end
 	
-
-
 	-- Set the volume
 	CombatMusic:PrintDebug("   FadeVolume: " .. v.CurVol * 100, false)
 	SetCVar("Sound_MusicVolume", tostring(v.CurVol))
