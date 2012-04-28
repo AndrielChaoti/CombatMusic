@@ -30,10 +30,6 @@ CombatMusic = {}
 
 LibStub:GetLibrary("LibVan32-1.0"):Embed(CombatMusic, "CombatMusic")
 
---@alpha@ 
-CombatMusic._DebugMode = true
---@end-alpha@
-
 local currentSVVersion = "2"
 local L = CM_STRINGS
 
@@ -645,6 +641,9 @@ function CombatMusic_OnEvent(self, event, ...)
 	local arg1, arg2 = ...
 	-- PLAYER_ENTERING_WORLD: Finishing the loading sequence
 	if event == "PLAYER_ENTERING_WORLD" and not CombatMusic.Info.Loaded then
+		--@alpha@ 
+		CombatMusic._DebugMode = true
+		--@end-alpha@
 		CombatMusic:PrintMessage(L.OTHER.Loaded)
 		CombatMusic:PrintMessage(L.OTHER.DebugLoaded, false, true)
 		CombatMusic:SetTimer(2, function()
