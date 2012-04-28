@@ -579,7 +579,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	
 	-- Fade finished?
 	if FadeFinished then
-		if v.isBoss or v.LastFightWasBoss then
+		if v.isBoss or CombatMusic.Info.LastFightWasBoss then
 			-- If boss, then we should play the fanfare when the music fades.
 			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
