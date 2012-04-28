@@ -91,33 +91,39 @@ function CombatMusic.enterCombat()
 	
 	-- Check to see if music is already fading, stop here, if so.
 	if CombatMusic.Info.IsFading then
-		CombatMusic:PrintDebug("   IsFading!", false)
+		CombatMusic:PrintDebug("   IsFading!")
 		CombatMusic.Info.IsFading = nil
 		CombatMusic.Info.InCombat = true
 		if CombatMusic.Info.EnabledMusic ~= "0" then return end
 	end
 	
-	if BossList then return end
-	
-	CombatMusic.Info["InCombat"] = true
 	-- Play the music
+	CombatMusic:StartMusic(BossList)
+	CombatMusic.Info["InCombat"] = true
+end
+
+-- Start the music playing.
+function CombatMusic:StartMusic(songPath)
+	self:PrintDebug("StartMusic(" .. debugNils(songPath) .. ")")
 	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	if CombatMusic.Info.BossFight then
-		if CombatMusic_SavedDB.Music.numSongs.Bosses > 0 then
-			PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
-		else
-			CombatMusic.leaveCombat(1)
-		end
+	if songPath then
+		PlayMusic(songPath)
 	else
-		if CombatMusic_SavedDB.Music.numSongs.Battles > 0 then
-			PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.Music.numSongs.Battles)))
+		if CombatMusic.Info.BossFight then
+			if CombatMusic_SavedDB.Music.numSongs.Bosses > 0 then
+				PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
+			else
+				CombatMusic.leaveCombat(1)
+			end
 		else
-			CombatMusic.leaveCombat(1)
+			if CombatMusic_SavedDB.Music.numSongs.Battles > 0 then
+				PlayMusic(format(filePath, "Battles", "Battle", random(1, CombatMusic_SavedDB.Music.numSongs.Battles)))
+			else
+				CombatMusic.leaveCombat(1)
+			end
 		end
 	end
 end
-
-
 
 -- GetTargetList: generates a target list for the functions that require it.
 local function GetTargetList()
@@ -174,9 +180,8 @@ function CombatMusic.TargetChanged(unit)
 	CombatMusic.Info["BossFight"] = CombatMusic.StartTargetChecks()
 	
 	-- Get that music changed
-	local filePath = "Interface\\Music\\%s\\%s%d.mp3"
-	if CombatMusic.Info.BossFight then
-		PlayMusic(format(filePath, "Bosses", "Boss", random(1, CombatMusic_SavedDB.Music.numSongs.Bosses)))
+	if CombatMusic.Info.BossFight and not CombatMusic.Info.LastFightWasBoss then
+		CombatMusic:StartMusic()
 		return 0
 	end
 end
@@ -246,7 +251,7 @@ function CombatMusic.CheckTarget(unit)
 		inCombat = function()		
 				if UnitAffectingCombat(unit) then
 					return true
-				elseif not UnitAffectingCombat(unit) and CombatMusic.DebugMode then
+				elseif not UnitAffectingCombat(unit) and CombatMusic._DebugMode then
 					return true
 				else 
 					return false
@@ -375,11 +380,12 @@ function CombatMusic.CheckBossList()
 		-- use ipairs to do the focus/target checks.
 		for k, v in ipairs(tList) do
 			if CombatMusic_BossList[UnitName(v)] then
-				PlayMusic(CombatMusic_BossList[UnitName(v)])
+				--CombatMusic:StartPlayingMusic(CombatMusic_BossList[UnitName(v)])
+				--PlayMusic(CombatMusic_BossList[UnitName(v)])
 				CombatMusic.Info.BossFight = true
 				CombatMusic.Info.InCombat = true
 				CombatMusic:PrintDebug("   " .. v .. " found.. playing " .. CombatMusic_BossList[UnitName(v)])
-				return true
+				return CombatMusic_BossList[UnitName(v)]
 			end
 		end
 		
@@ -407,14 +413,17 @@ CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false
 	elseif isDisabling then
 		StopMusic()
 		CombatMusic.RestoreSavedStates()
+		CombatMusic.Info.LastFightWasBoss = nil
 	else
 		-- Left Combat normally, start the fading cycle
 		CombatMusic.FadeOutStart()
 	end
 	
 	CombatMusic.Info.InCombat = nil
+	if CombatMusic.Info.BossFight and not isDisabling then
+		CombatMusic.Info.LastFightWasBoss = true
+	end
 	CombatMusic.Info.BossFight = nil
-	
 end
 
 
@@ -427,6 +436,7 @@ function CombatMusic.GameOver()
 	if not CombatMusic.Info.Loaded then return end
 	
 	StopMusic()
+	
 	if CombatMusic.Info.InCombat then
 		--Leaving Combat, restore the saved vars.
 		CombatMusic.RestoreSavedStates()
@@ -444,6 +454,7 @@ function CombatMusic.GameOver()
 	
 	CombatMusic.Info.InCombat = nil
 	CombatMusic.Info.BossFight = nil
+	CombatMusic.Info.LastFightWasBoss = nil
 end
 
 
@@ -532,7 +543,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	CombatMusic:PrintDebug("FadeOutPlayingMusic()", false)
 	-- Set some args
 	local v = CombatMusic.Info.FadeTimerVars
-	if not v then return end
+	if not v then return true end
 	local FadeFinished
 	
 	-- All music fades logrithmically, just to make it all complicated and shit
@@ -568,7 +579,7 @@ function CombatMusic.FadeOutPlayingMusic()
 	
 	-- Fade finished?
 	if FadeFinished then
-		if v.isBoss then
+		if v.isBoss or v.LastFightWasBoss then
 			-- If boss, then we should play the fanfare when the music fades.
 			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
@@ -580,6 +591,7 @@ function CombatMusic.FadeOutPlayingMusic()
 		StopMusic()
 		CombatMusic.Info["RestoreTimer"] = CombatMusic:SetTimer(2, CombatMusic.RestoreSavedStates)
 		CombatMusic.Info.IsFading = nil
+		CombatMusic.Info.LastFightWasBoss = nil
 		return true
 	end
 end
