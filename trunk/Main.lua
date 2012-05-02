@@ -79,6 +79,7 @@ function CombatMusic.enterCombat()
 	CombatMusic.GetSavedStates()
 	
 	
+	
 	-- Check the BossList.
 	local BossList = CombatMusic.CheckBossList()
 	-- Check the player's target
@@ -98,8 +99,10 @@ function CombatMusic.enterCombat()
 	end
 	
 	-- Play the music
-	CombatMusic:StartMusic(BossList)
+	
 	CombatMusic.Info["InCombat"] = true
+	CombatMusic:StartMusic(BossList)
+	
 end
 
 -- Start the music playing.
@@ -397,8 +400,10 @@ end
 -- leaveCombat: Stop the music playing, and reset all our variables
 -- If isDisabling, then don't play a victory fanfare when the music stops.
 function CombatMusic.leaveCombat(isDisabling)
-CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false)
+	CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false)
 	--Check that CombatMusic is turned on
+	CombatMusic:PrintDebug('Enabled, Loaded, InCombat = ' .. debugNils(CombatMusic_SavedDB.Enabled, CombatMusic.Info.Loaded, CombatMusic.Info.InCombat))
+
 	if not CombatMusic_SavedDB.Enabled then return end
 	if not CombatMusic.Info.Loaded then return end
 	if not CombatMusic.Info.InCombat then return end
@@ -406,17 +411,10 @@ CombatMusic:PrintDebug("§aleaveCombat(" .. debugNils(isDisabling) .. ")", false
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
-	-- Check for boss fight, and if the user wants to hear it....
-	if CombatMusic_SavedDB.Victory.Enabled and not isDisabling and CombatMusic.Info.BossFight then
-		-- Wait FadeOut time before playing Fanfare...
-		CombatMusic.FadeOutStart(true)
-	elseif isDisabling then
-		StopMusic()
-		CombatMusic.RestoreSavedStates()
-		CombatMusic.Info.LastFightWasBoss = nil
+	if not isDisabling then
+		CombatMusic.FadeOutStart(CombatMusic.Info.BossFight)
 	else
-		-- Left Combat normally, start the fading cycle
-		CombatMusic.FadeOutStart()
+		CombatMusic.RestoreSavedStates()
 	end
 	
 	CombatMusic.Info.InCombat = nil
@@ -510,7 +508,7 @@ function CombatMusic.FadeOutStart(isBoss)
 	CombatMusic:PrintDebug("FadeOutStart()", false)
 	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
 	if FadeTime == 0 then
-		if isBoss then
+		if isBoss and CombatMusic_SavedDB.Victory.Enabled then
 			--Boss Only?
 			if (not CombatMusic.Info.FanfareCD) or (GetTime() >= CombatMusic.Info.FanfareCD) then
 				CombatMusic.Info["FanfareCD"] = GetTime() + CombatMusic_SavedDB.Victory.Cooldown
