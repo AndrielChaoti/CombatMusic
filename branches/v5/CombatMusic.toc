@@ -4,14 +4,20 @@
 ## Notes: An easy to use addon that is designed to play music while in combat.
 ## Author: Vandesdelca32
 ## X-EMail: Vandesdelca32@gmail.com
-## SavedVariables: CombatMusic_SavedDB, CombatMusic_BossList
-## SavedVariablesPerCharacter: CombatMusic_SavedDBPerChar
+## SavedVariables: CombatMusic_SavedDB
 
+#Embedded libraries
 embeds.xml
 
+#Core files
 init.lua
 core.lua
 combat_engine.lua
+
+#Config frame
+config.xml
+config_scripts.lua
+
 #@do-not-package@
 
 
