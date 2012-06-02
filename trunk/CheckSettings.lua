@@ -55,10 +55,15 @@ function CombatMusic.CheckMetricsReply(message, sender)
 	ver = strmatch(ver, "^S:(.+)")
 	-- We found the settings commstring, show the player
 	CombatMusic:PrintMessage(format("§b%s§r - Version: §b%s§r. Song Counts: Battles=§b%s§r, Bosses=§b%s§r", sender, ver, battles, bosses))
-	if not CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] then
-		CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] = true
-		CombatMusic_SavedDB._METRICS.UniqueCount = CombatMusic_SavedDB._METRICS.UniqueCount + 1
+	
+	-- Make sure we have their GUID first... This will only work with nearby players and in parties.
+	if senderGUID then
+		if not CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] then
+			CombatMusic_SavedDB._METRICS.UniqueGUIDList[senderGUID] = true
+			CombatMusic_SavedDB._METRICS.UniqueCount = CombatMusic_SavedDB._METRICS.UniqueCount + 1
+		end
 	end
+	
 	CombatMusic_SavedDB._METRICS.TotalCount = CombatMusic_SavedDB._METRICS.TotalCount + 1
 	CombatMusic:PrintMessage(format("§b%s§r unique players, of §b%s§r total players checked.", CombatMusic_SavedDB._METRICS.UniqueCount, CombatMusic_SavedDB._METRICS.TotalCount))
 	
