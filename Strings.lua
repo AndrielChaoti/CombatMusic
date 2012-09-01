@@ -44,7 +44,7 @@ local function GetVerString(short)
 			return "a" .. rev
 		end
 	end
-	return v .. " r" .. rev
+	return v .. "." .. rev
 end
 
 CM_STRINGS = {
