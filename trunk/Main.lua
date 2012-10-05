@@ -285,7 +285,7 @@ function CombatMusic.CheckTarget(unit)
 
 	-- Check the monster's type, and if we're in an instance:
 	CombatMusic:PrintDebug(format("   mobType = §b%s§r, instanceType = §b%s§r", tostring(unitInfo.mobType()), tostring(playerInfo.instanceType)))
-	if unitInfo.mobType() >= 1 then
+	if unitInfo.mobType() > 1 then
 		-- We give elites a +3 to the adjusted level check, appropriately. This is how we can tell what NPCs are bosses in 5-mans
 		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
 			unitInfo.level.adj = unitInfo.level.raw + 3
