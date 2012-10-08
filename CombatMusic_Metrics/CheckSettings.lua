@@ -14,14 +14,14 @@ CombatMusic.SendVersion = function()
 	-- Check to see who's in the party, and stop asking if it hasn't changed
 	-- or if everyone here's already been asked.
 	if gType == "PARTY" then
-		for i = 1, GetNumPartyMembers() do
+		for i = 1, GetNumGroupMembers() do
 			if not askedThisSession[UnitGUID("party" .. i)] then
 				difParty = true
 				askedThisSession[UnitGUID("party" .. i)] = true
 			end
 		end
 	elseif gType == "RAID" then
-		for i = 1, GetNumRaidMembers() do
+		for i = 1, GetNumGroupMembers() do
 			if not askedThisSession[UnitGUID("raid" .. i)] then
 				difParty = true
 				askedThisSession[UnitGUID("raid" .. i)] = true
@@ -54,7 +54,7 @@ function CombatMusic.CheckMetricsReply(message, sender)
 	local ver, battles, bosses = strsplit(",", message)
 	ver = strmatch(ver, "^S:(.+)")
 	-- We found the settings commstring, show the player
-	CombatMusic:PrintMessage(format("§b%s§r - Version: §b%s§r. Song Counts: Battles=§b%s§r, Bosses=§b%s§r", sender, ver, battles, bosses))
+	CombatMusic:PrintMessage(format("§b%s§r - §b%s§r.\nbat=§b%s§r, bos=§b%s§r", sender, ver, battles, bosses))
 	
 	-- Make sure we have their GUID first... This will only work with nearby players and in parties.
 	if senderGUID then
@@ -76,9 +76,9 @@ SlashCmdList["COMBATMUSIC_SETTINGSREQ"] = function(msg)
 	if msg == "" then
 		-- Get Group Type:
 		local t
-		if GetNumRaidMembers() > 0 then
+		if UnitInRaid('player') then
 			t = "RAID"
-		elseif GetNumPartyMembers() > 0 then
+		elseif UnitInParty('player') then
 			t = "PARTY"
 		else
 			t = "GUILD"

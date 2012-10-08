@@ -13,9 +13,3 @@ Strings.lua
 Core.lua
 Core.xml
 Main.lua
-#@do-not-package@
-
-
-#The CheckSettings module, PRIVATE USE ONLY
-CheckSettings.lua
-#@end-do-not-package@
