@@ -1,7 +1,7 @@
 ﻿package-as: CombatMusic
 
 ignore:
-    - CheckSettings.lua
+    - CombatMusic_Metrics
 
 externals:
    libs/LibStub:
