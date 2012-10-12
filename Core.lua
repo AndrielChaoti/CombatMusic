@@ -711,6 +711,8 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 	self:RegisterEvent("PLAYER_LEAVING_WORLD")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	-- self:RegisterEvent("PET_BATTLE_OPENING_START")
+	-- self:RegisterEvent("PET_BATTLE_FINAL_ROUND") -- {1="win", 2="lose"}
 	
 	-- Slash Command listings
 	SLASH_COMBATMUSIC_MAIN1 = "/combatmusic"
