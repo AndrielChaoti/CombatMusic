@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 	Project: Van32's CombatMusic, ver @project-version@
 	File: embeds.xml; revision @file-revision@
 	Date: @file-date-iso@
@@ -11,7 +11,9 @@
  http://wowprogramming.com/FrameXML/UI.xsd">
  
 	<Script file="lib\LibStub\LibStub.lua" />
+	<Script file="lib\CallbackHandler-1.0\CallbackHandler-1.0.lua" />
 	<Script file="lib\AceAddon-3.0\AceAddon-3.0.lua" />
+	<Script file="lib\AceEvent-3.0\AceEvent-3.0.lua" />
 	<Script file="lib\AceLocale-3.0\AceLocale-3.0.lua" />
 	<Script file="lib\LibVan32-1.0\LibVan32.lua" />
 	

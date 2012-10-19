@@ -5,12 +5,12 @@
 ## Author: Vandesdelca32
 ## X-EMail: Admin@Vandesdelca32.net
 ## SavedVariables: CombatMusic_SavedDB
-## SavedVariablesPerCharacter: CombatMusic_SavedDBPerChar
+## SavedVariablesPerCharacter: CombatMusic_PrivateDB
 
 embeds.xml
 
 # Localization
-locale\loadlocales.xml
+locale\load-locales.xml
 
 # Addon
 init.lua
