@@ -1,0 +1,14 @@
+<!--
+	Project: Van32's CombatMusic, ver @project-version@
+	File: loadlocales.xml; revision @file-revision@
+	Date: @file-date-iso@
+	Description: Locale Listfile.
+	Author: Vandesdelca32
+	
+	Copyright ©2010-2012 Vandesdelca32. All rights reserved.
+-->
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+ http://wowprogramming.com/FrameXML/UI.xsd">
+ 
+	<Script file="enUS.lua" />
+</Ui>

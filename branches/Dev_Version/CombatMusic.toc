@@ -1,0 +1,25 @@
+﻿## Interface: 50001
+## Title: Van32's |cFFAF96FFCombatMusic|r
+## Version: @project-version@
+## Notes: An easy to use addon that is designed to play music while in combat.
+## Author: Vandesdelca32
+## X-EMail: Admin@Vandesdelca32.net
+## SavedVariables: CombatMusic_SavedDB
+## SavedVariablesPerCharacter: CombatMusic_SavedDBPerChar
+
+embeds.xml
+
+# Localization
+locale\loadlocales.xml
+
+# Addon
+init.lua
+core.lua
+
+# 'modules'
+combat_engine.lua
+pet_battles.lua
+
+# options stuff.
+options.lua
+options.xml
