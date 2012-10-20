@@ -417,7 +417,7 @@ function CombatMusic.leaveCombat(isDisabling)
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
-	if not isDisabling or not CombatMusic.Info.isPetBattle then
+	if not isDisabling then
 		CombatMusic.FadeOutStart(CombatMusic.Info.BossFight)
 	else
 		CombatMusic.RestoreSavedStates()
