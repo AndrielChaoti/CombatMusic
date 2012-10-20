@@ -658,15 +658,15 @@ function CombatMusic_OnEvent(self, event, ...)
 		return CombatMusic.LevelUp()
 		
 	-- PLAYER_REGEN_DISABLED: Entering Combat
-	elseif event == "PLAYER_REGEN_DISABLED" then
+	elseif event == "PLAYER_REGEN_DISABLED" or event == "PET_BATTLE_OPENING_START" then
 		return CombatMusic.enterCombat()
 		
 	-- PLAYER_REGEN_ENABLED: Leaving Combat
-	elseif event == "PLAYER_REGEN_ENABLED" then
+	elseif event == "PLAYER_REGEN_ENABLED" or (event == "PET_BATTLE_FINAL_ROUND" and arg1 == 1) then
 		return CombatMusic.leaveCombat()
 	
 	-- PLAYER_DEAD: <==
-	elseif event == "PLAYER_DEAD" then
+	elseif event == "PLAYER_DEAD" or ( event == "PET_BATTLE_FINAL_ROUND" and arg1 == 2 ) then
 		return CombatMusic.GameOver()
 	
 	-- PLAYER_TARGET_CHANGED: <==
@@ -711,8 +711,8 @@ function CombatMusic_OnLoad(self)
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 	self:RegisterEvent("PLAYER_LEAVING_WORLD")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	-- self:RegisterEvent("PET_BATTLE_OPENING_START")
-	-- self:RegisterEvent("PET_BATTLE_FINAL_ROUND") -- {1="win", 2="lose"}
+	self:RegisterEvent("PET_BATTLE_OPENING_START")
+	self:RegisterEvent("PET_BATTLE_FINAL_ROUND") -- {1="win", 2="lose"}
 	
 	-- Slash Command listings
 	SLASH_COMBATMUSIC_MAIN1 = "/combatmusic"
