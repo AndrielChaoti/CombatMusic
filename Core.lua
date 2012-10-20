@@ -658,8 +658,12 @@ function CombatMusic_OnEvent(self, event, ...)
 		return CombatMusic.LevelUp()
 		
 	-- PLAYER_REGEN_DISABLED: Entering Combat
-	elseif event == "PLAYER_REGEN_DISABLED" or event == "PET_BATTLE_OPENING_START" then
+	elseif event == "PLAYER_REGEN_DISABLED" then
 		return CombatMusic.enterCombat()
+	
+	-- PET_BATTLE_OPENING_START: Pet Battle started!
+	elseif event == "PET_BATTLE_OPENING_START" then
+		return CombatMusic.StartPetBattle()
 		
 	-- PLAYER_REGEN_ENABLED: Leaving Combat
 	elseif event == "PLAYER_REGEN_ENABLED" or (event == "PET_BATTLE_FINAL_ROUND" and arg1 == 1) then
