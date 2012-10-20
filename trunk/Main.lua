@@ -47,6 +47,12 @@ do
 end
 
 
+function CombatMusic:StartPetBattle()
+	self.Info.isPetBattle = true
+	self.enterCombat()
+end
+
+
 -- EnterCombat: We just dropped into combat
 function CombatMusic.enterCombat()
 	CombatMusic:PrintDebug("§aenterCombat()", false)
@@ -411,7 +417,7 @@ function CombatMusic.leaveCombat(isDisabling)
 	-- OhNoes! The player's dead, don't want no fanfares playing...
 	if UnitIsDeadOrGhost("player") then return end
 	
-	if not isDisabling then
+	if not isDisabling or not CombatMusic.Info.isPetBattle then
 		CombatMusic.FadeOutStart(CombatMusic.Info.BossFight)
 	else
 		CombatMusic.RestoreSavedStates()
@@ -496,6 +502,7 @@ function CombatMusic.RestoreSavedStates()
 	CombatMusic:PrintDebug("RestoreSavedStates()", false)
 	CombatMusic.Info.FadeTimerVars = nil
 	CombatMusic.Info.RestoreTimer = nil
+	CombatMusic.Info.isPetBattle = nil
 	if not CombatMusic.Info.EnabledMusic then return end
 	SetCVar("Sound_EnableMusic", tostring(CombatMusic.Info.EnabledMusic))
 	if not CombatMusic.Info.MusicVolume then return end
@@ -507,6 +514,14 @@ end
 function CombatMusic.FadeOutStart(isBoss)
 	CombatMusic:PrintDebug("FadeOutStart()", false)
 	local FadeTime = CombatMusic_SavedDB.Music.FadeOut
+	local isPetBattle = CombatMusic.Info.isPetBattle
+	
+	-- Check for pet battle stuff
+	if isPetBattle then
+		FadeTime = 0
+		isBoss = true
+	end
+	
 	if FadeTime == 0 then
 		if isBoss and CombatMusic_SavedDB.Victory.Enabled then
 			--Boss Only?
