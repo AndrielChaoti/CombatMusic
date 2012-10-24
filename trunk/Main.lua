@@ -267,7 +267,7 @@ function CombatMusic.CheckTarget(unit)
 				end
 			end,
 		mobType = function()
-				local enumC = {minus = 0, normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5}
+				local enumC = {trivial = -1, minus = 0, normal = 1, rare = 2, elite = 3, rareelite = 4, worldboss = 5}
 				local C = UnitClassification(unit)
 				return enumC[C]
 			end,
