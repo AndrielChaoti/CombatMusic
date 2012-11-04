@@ -3,6 +3,7 @@
 ## Version: null
 ## Notes: CombatMusic Metrics module
 ## Author: Vandesdelca32
+## Dependencies: CombatMusic
 ## X-EMail: Vandesdelca32@gmail.com
 
 CheckSettings.lua
