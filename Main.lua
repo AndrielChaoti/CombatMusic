@@ -629,9 +629,9 @@ end
 -- CheckComm: Check incoming addon messages for what we need.
 function CombatMusic:CheckComm(prefix, message, channel, sender)
 	-- This isn't supposed to run if combatmusic communications are disabled
-	if not CombatMusic_SavedDB.Enabled and not CombatMusic_SavedDB.AllowComm then return end
 	if not self.Info.Loaded then return end
-	
+	if not CombatMusic_SavedDB.Enabled and not CombatMusic_SavedDB.AllowComm then return end
+		
 	-- Check the prefix
 	if prefix ~= "CM3" then return end
 	self:PrintDebug("CheckComm(" .. debugNils(prefix, message, channel, sender) .. ")")
