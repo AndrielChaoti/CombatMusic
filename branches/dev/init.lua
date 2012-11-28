@@ -8,8 +8,12 @@
     Copyright ©2010-2012 Vandesdelca32
 ]]
 
-local name, addOn = ...
+local addonName, Engine = ...
 
-addOn[1] = {}
-addOn[2] = LibStub:GetLibrary("AceLocale-3.0"):GetLocale(name)
-addOn[3] = 
+-- Initialize the addon:
+Engine[1] = {}
+LibStub:GetLibrary("LibVan32-1.0"):Embed(Engine[1], addonName)
+Engine[2] = LibStub:GetLibrary("AceLocale-3.0"):GetLocale(addonName)
+
+
+_G[addonName] = Engine
