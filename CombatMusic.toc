@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: Van32's |cFFAF96FFCombatMusic|r
 ## Version: @project-version@
 ## Notes: An easy to use addon that is designed to play music while in combat.
