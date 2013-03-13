@@ -32,50 +32,10 @@
 	"buffers":
 	[
 		{
-			"file": "CombatMusicDev.toc",
+			"file": ".pkgmeta",
 			"settings":
 			{
-				"buffer_size": 319,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "init.lua",
-			"settings":
-			{
-				"buffer_size": 2288,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "core.lua",
-			"settings":
-			{
-				"buffer_size": 5665,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "combatEngine.lua",
-			"settings":
-			{
-				"buffer_size": 13628,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "petbattles.lua",
-			"settings":
-			{
-				"buffer_size": 2479,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Locale/enUS.lua",
-			"settings":
-			{
-				"buffer_size": 673,
+				"buffer_size": 822,
 				"line_ending": "Windows"
 			}
 		}
@@ -86,6 +46,14 @@
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"ssyaml",
+				"Set Syntax: YAML"
+			],
+			[
+				"yaml",
+				"Set Syntax: YAML"
+			],
 			[
 				"Snippet: ",
 				"Snippet: SectionHeader.Lua"
@@ -180,17 +148,23 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/CombatMusicDev.toc",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/init.lua",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/core.lua",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/embeds.xml",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/combatEngine.lua",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/petbattles.lua",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/Locale/enUS.lua",
+		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/.pkgmeta",
+		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/User/YAML.sublime-settings",
+		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/C/Users/Vandesdelca32/Documents/World of Warcraft - Dev/Interface/Music/RenameMusic.bat",
 		"/C/Users/Vandesdelca32/Documents/World of Warcraft - Dev/Interface/RenameMusic.bat",
 		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/trunk/Main.lua",
-		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/User/Distraction Free.sublime-settings",
 		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/trunk/Core.lua",
 		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/User/SectionHeader.Lua.sublime-snippet",
-		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/Locale/enUS.lua",
 		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/Locale/loadLocale.xml",
-		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/embeds.xml",
-		"/C/Users/Vandesdelca32/Documents/Subversion/CombatMusic/branches/Dev/CombatMusicDev.toc",
 		"/C/Users/Vandesdelca32/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
 		"/C/Users/Vandesdelca32/Documents/World of Warcraft - Dev/Interface/AddOns/MiscScripts/scripts.lua",
 		"/C/Users/Vandesdelca32/Documents/World of Warcraft - Dev/Interface/AddOns/MiscScripts/MiscScripts.toc",
@@ -293,6 +267,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"self",
+			"\"target\"",
+			"StopMusic",
 			"X",
 			"x",
 			"X",
@@ -426,171 +403,30 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "CombatMusicDev.toc",
+					"file": ".pkgmeta",
 					"settings":
 					{
-						"buffer_size": 319,
+						"buffer_size": 822,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								319,
-								319
+								777,
+								777
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/wowtoc-syntax/WoWTOC.tmlanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "init.lua",
-					"settings":
-					{
-						"buffer_size": 2288,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								803,
-								803
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"syntax": "Packages/YAML/YAML.tmLanguage",
 							"tab_size": 3,
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 171.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "core.lua",
-					"settings":
-					{
-						"buffer_size": 5665,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4287,
-								4287
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2204.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "combatEngine.lua",
-					"settings":
-					{
-						"buffer_size": 13628,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8745,
-								8745
-							]
-						],
-						"settings":
-						{
-							"rulers":
-							[
-							],
-							"spell_check": false,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"wrap_width": 100
-						},
-						"translation.x": 0.0,
-						"translation.y": 4990.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "petbattles.lua",
-					"settings":
-					{
-						"buffer_size": 2479,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2479,
-								2479
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1596.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "Locale/enUS.lua",
-					"settings":
-					{
-						"buffer_size": 673,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								572,
-								572
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
