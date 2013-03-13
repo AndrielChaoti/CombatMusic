@@ -1,0 +1,16 @@
+## Interface: 50200
+## Title: Van32's |cFFAF96FFCombatMusic |cFFFF0000DEV|r
+## Notes: Plays custom music in combat.
+## Author: Vandesdelca32
+## Version: @project-version@
+## SavedVariables: CombatMusicDB, CombatMusicBossList
+
+embeds.xml
+
+#locales
+locale\loadLocale.xml
+
+init.lua
+core.lua
+combatEngine.lua
+petbattles.lua
