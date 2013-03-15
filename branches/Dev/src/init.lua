@@ -30,8 +30,8 @@ local df = {
 	_VER = 0.31,
 	General = {
 		Volume = 0.85,
-		PreferFocus = true,
-		CheckBoss = false,
+		PreferFocus = false,
+		CheckBoss = true,
 		SongList = {},
 	},
 	Modules = {},
