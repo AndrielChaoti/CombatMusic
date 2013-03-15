@@ -31,9 +31,6 @@ local tostring, tostringall, wipe, format = tostring, tostringall, wipe, format
 local exp, log = math.exp, math.log
 
 
-------------------
---	REFACTORED CODE
-------------------
 -- Debugging
 local printFuncName = E.printFuncName
 
@@ -41,6 +38,11 @@ local printFuncName = E.printFuncName
 local DIFFICULTY_NONE = 0
 local DIFFICULTY_NORMAL = 1
 local DIFFICULTY_BOSS = 2
+
+-- Default settings
+local defaults = {
+	FadeTimer = 10
+}
 
 
 --- Handles the events for entering combat
@@ -69,9 +71,9 @@ function CE:EnterCombat(event, ...)
 end
 
 
---- Update the targetInfo table
+--- Update the TargetInfo table
 local function UpdateTargetInfoTable(unit)
-	if not CE.TargetInfo[unit] then return end
+	if not unit then return end
 	CE.TargetInfo[unit] = {CE:GetTargetInfo(unit)}
 	E:PrintDebug(format("  ==§b%s, isBoss = %s, inCombat = %s", tostringall(unit, CE.TargetInfo[unit][1], CE.TargetInfo[unit][2])))
 end
@@ -100,6 +102,45 @@ function CE:UNIT_TARGET(event, ...)
 	self:ParseTargetInfo()
 end
 
+--- Builds target information necessary to choose a song, then attempts to
+-- parse that information
+function CE:BuildTargetInfo()
+	printFuncName("BuildTargetInfo")
+	local targetList = {}
+	self.TargetInfo = {}
+
+	-- Check to see if we should check the focustarget before the target
+	if E:GetSetting("General", "PreferFocus") then
+		targetList = {"focustarget", "target"}
+	else
+		targetList= {"target", "focustarget"}
+	end
+
+	-- Add the boss targets if enabled.
+	-- This can be a CPU hog, so some might wish to disable it.
+	if E:GetSetting("General", "CheckBoss") then
+		for i = 1, 5 do 
+			targetList[i+2] = "boss" .. i
+		end
+	end
+
+	-- Get the information required on each target and parse the returns:
+	for i = 1, #targetList do
+		-- Make sure the unit exists, before we check against our lists.
+		if UnitExists(targetList[i]) then
+			-- Check the BossList, as this trumps TargetInfo
+			-- because that function will play the music for us.
+			if E:CheckBossList(targetList[i]) then 
+				self.EncounterLevel = DIFFICULTY_BOSS
+				E:PrintDebug("  ==§cON BOSSLIST")
+				break --Bosslist trumps all.
+			end
+			UpdateTargetInfoTable(targetList[i])
+		end
+	end
+	-- Parse the information we got
+	return self:ParseTargetInfo()
+end
 
 --- Checks specific information about 'unit' to attempt to determine if it is a boss or not
 --@arg unit The unit token of the unit to check
@@ -227,50 +268,6 @@ function CE:GetTargetInfo(unit)
 end
 
 
---- Builds target information necessary to choose a song, then attempts to
--- parse that information
-function CE:BuildTargetInfo()
-	printFuncName("BuildTargetInfo")
-	local targetList = {}
-	self.TargetInfo = {}
-
-	-- Check to see if we should check the focustarget before the target
-	if E:GetSetting("Music", "PreferFocus") then
-		targetList = {"focustarget", "target"}
-	else
-		targetList= {"target", "focustarget"}
-	end
-
-	-- Add the boss targets if enabled.
-	-- This can be a CPU hog, so some might wish to disable it.
-	if E:GetSetting("Music", "BossTargets") then
-		for i = 1, 5 do 
-			targetList[i+2] = "boss" .. i
-		end
-	end
-
-	-- Get the information required on each target and parse the returns:
-	for i = 1, #targetList do
-		-- Check the BossList, as this trumps targetInfo
-		-- because that function will play the music for us.
-		if E:CheckBossList(targetList[i]) then 
-			self.EncounterLevel = DIFFICULTY_BOSS
-			E:PrintDebug("  ==§cON BOSSLIST")
-			break 
-		end
-		-- Can't use UpdateTargetInfoTable here, because we are BUILDING it here.
-		-- That function is explicitly for making a change to it AFTER this is done.
-		self.TargetInfo[targetList[i]] = {self:GetTargetInfo(targetList[i])}
-		E:PrintDebug(format("  ==§b%s, isBoss = %s, InCombat = %s", 
-		             tostringall(targetList[i], 
-		                         self.TargetInfo[targetList[i]][1], 
-		                         self.TargetInfo[targetList[i]][2])))
-	end
-	-- Parse the information we got
-	return self:ParseTargetInfo()
-end
-
-
 --- Iterates through the module's target information table and plays music appropriately
 function CE:ParseTargetInfo()
 	printFuncName("ParseTargetInfo")
@@ -278,7 +275,7 @@ function CE:ParseTargetInfo()
 	if not self.EncounterLevel then self.EncounterLevel = DIFFICULTY_NONE end
 
 	for k, v in pairs(self.TargetInfo) do
-		-- The targetInfo table is built {[1] = isBoss, [2] = InCombat}
+		-- The TargetInfo table is built {[1] = isBoss, [2] = InCombat}
 
 		-- What information were we given?
 		if v[1] and v[2] then
@@ -373,7 +370,7 @@ local function FadeStepCallback()
 
 	if not CE.FadeVars.StepCount then
 		CE.FadeVars.StepCount = 0
-		CE.FadeVars.CurrentVolume = E:GetSetting("Volume")
+		CE.FadeVars.CurrentVolume = E:GetSetting("General" , "Volume")
 		CE.FadeVars.VolumeStep = exp(CE.FadeVars.CurrentVolume)
 		CE.FadeVars.VolumeStepDelta = (CE.FadeVars.VolumeStep - 1) / (MAX_FADE_STEPS - 1)
 	end
@@ -412,7 +409,7 @@ function CE:BeginMusicFade()
 	if self.FadeTimer then return end
 
 	-- Get our fade timeout.
-	self.fadeTime = E:GetSetting("Music", "FadeTime")
+	self.fadeTime = E:GetSetting("CombatEngine", "FadeTimer")
 
 	-- The user's disabled fading...
 	if self.fadeTime <= 0 then 
@@ -469,16 +466,16 @@ end
 --	Module Functions
 -------------------
 function CE:OnInitialize()
-	-- Add our default settings to the defaults table
-	DF.Music = {
-		PreferFocus = true,
-		BossTargets = true,
-		FadeTime = 10,
-	}
+	-- Include our default setttings
+	DF.CombatEngine = defaults
 
-	-- And our song counts...
-	DF.NumSongs.Battles = -1
-	DF.NumSongs.Bosses = -1
+	-- And register our song types
+	E:RegisterNewSongType("Battles", true)
+	E:RegisterNewSongType("Bosses", true)
+
+	-- Last: mark this module to be loaded, seeing
+	-- as this module cannot be disabled.
+	DF.Modules.CombatEngine = true
 end
 
 function CE:OnEnable()

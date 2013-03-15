@@ -10,7 +10,10 @@ embeds.xml
 #locales
 locale\loadLocale.xml
 
+#core
 init.lua
 core.lua
+
+#modules
 combatEngine.lua
 petbattles.lua

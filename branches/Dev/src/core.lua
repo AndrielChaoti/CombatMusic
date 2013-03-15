@@ -18,7 +18,7 @@
 
 local E, L, DF, T = unpack(select(2, ...))
 
-local tconcat = table.concat
+local tconcat, error = table.concat, error
 local tostringall, strfind = tostringall, strfind
 local select, type, random = select, type, random
 
@@ -33,6 +33,7 @@ end
 E.printFuncName = printFuncName
 
 
+
 --------------
 --	Useful Code
 --------------
@@ -44,14 +45,18 @@ E.printFuncName = printFuncName
 function E:GetSetting(...)
 	printFuncName("GetSetting", ...)
 	local t = CombatMusicDB -- Start by setting t to the top-level settings table
-	local dt = DF -- And setting the defaults table
+	local dt = DF -- And the top-level defaults table.
 	for i = 1, select("#", ...) do
 		local key = select(i, ...)
 		if t[key] == nil then -- If the key doesn't exist in the table,
 			t[key] = dt[key] -- use the default value instead (modified to accept false key values!)
 		end
 		t = t[key] -- Set t to the value at key in the current table
-		dt = dt[key] -- And set dt to value at key in defaults table
+
+		if dt[key] == nil then -- Check if this is actually a valid setting
+			error("no such setting: " .. tconcat({tostringall(...)}, ", "), 2)
+		end
+		dt = dt[key] -- and dt to the value at key in the defaults table, so we can parse multiple table levels.
 		
 		if type(t) ~= "table" then -- If the new value of t isn't a table, return it now (terminating the function early)
 			return t
@@ -109,8 +114,8 @@ function E:CheckSettingsDB()
 		CombatMusicDB = DF
 		return false
 
-	-- Or their settings are outdated (No upgrade available, 2 is the only version)
-	elseif self:GetSetting("_Version") ~= DF._Version then
+	-- Or their settings are outdated
+	elseif self:GetSetting("_VER") ~= DF._VER then
 		self:PrintErr(L["ChatErr_SettingsOutOfDate"])
 		CombatMusicDB = DF
 		return false
@@ -124,19 +129,47 @@ end
 ------------
 -- Code that needs to be built into the engine
 
+--- The list of registered song types
+E.RegisteredSongs = {}
+
+--- Registers a new songtype to be saved in the "numsongs" table
+--@arg name The name of the songtype to register
+--@arg defaultState the default state to set the registered songtype
+--@return true if the songtype registration succeeded.
+function E:RegisterNewSongType(name, defaultState)
+	if not name or self.RegisteredSongs[name] then error("invalid songtype") end
+
+	-- Create our song's settings table.
+	DF.General.SongList[name] = {
+		Enable = defaultState,
+		Count = 1,
+	}
+
+	-- And add the type to the settings table
+	self.RegisteredSongs[name] = true
+	return true
+end
+
+
 --- Plays a random music file from the folder 'songPath'
 --@arg songPath The folder path rooted at "Interface\\Music" of the songs to pick from
 --@return 1 if music played successfully, otherwise nil
 --@usage MyModule.Success = E:PlayMusicFile("songPath")
 function E:PlayMusicFile(songPath)
 	printFuncName("PlayMusicFile", songPath)
-
+	if not songPath then return end
+	-- Quickly plot out the paths we use
 	local fullPath = "Interface\\Music\\" .. songPath
-	-- Sanity checks, If this songpath isn't in the settings then ignore it.
-	local max = self:GetSetting("NumSongs", songPath)
-	if not songPath and not max then return end
-	
-	-- If the maximum is -1, then songs aren't played.	
+
+	-- songPath needs to exist...
+	if not self:GetSetting("General","SongList",songPath) then return end
+	-- Are we using this song type?
+	if not self:GetSetting("General", "SongList", songPath, "Enable") then return end
+	-- How many songs are we using of this songType?
+	local max = self:GetSetting("General", "SongList", songPath, "Count")
+
+	-- Some more sanity checking...!
+	if not max then return end
 	if max > 0 then
 		local rand = random(1, max)
 		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".mp3")
@@ -168,7 +201,7 @@ function E:SetVolumeLevel(restore)
 	printFuncName("SetVolumeLevel", restore)
 	if not restore then
 		-- Set the in combat music levels
-		SetCVar("Sound_MusicVolume", self:GetSetting("Volume"))
+		SetCVar("Sound_MusicVolume", self:GetSetting("General", "Volume"))
 		SetCVar("Sound_EnableMusic", "1")
 	else
 		-- Set the out of combat ones.

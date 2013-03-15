@@ -22,18 +22,19 @@ local E = LibStub("AceAddon-3.0"):NewAddon(addonName, "AceEvent-3.0", "AceTimer-
 LibStub("LibVan32-1.0"):Embed(E, canonicalTitle)
 
 -- Set the addon's version number
-E._major = "*PRE" or "@project-version@"
+E._major = "@project-version@"
 E._revision = "@project-revision@"
 
 -- Mark our defaults table and it's 'version'
 local df = {
-	_Version = 0.9,
-	Volume = 0.85,
-	Modules = {
-		CombatEngine = true,
-		PetBattles = true,
+	_VER = 0.31,
+	General = {
+		Volume = 0.85,
+		PreferFocus = true,
+		CheckBoss = false,
+		SongList = {},
 	},
-	NumSongs =	{}
+	Modules = {},
 }
 
 -- Build the engine namespace
@@ -49,6 +50,7 @@ function E:OnInitialize()
 	SLASH_COMBATMUSIC1 = "/combatmusic"
 	SLASH_COMBATMUSIC2 = "/cm"
 
+
 	SlashCmdList["COMBATMUSIC"] = function(...) self:DoChatCommand(...) end
 	]]
 end
@@ -58,9 +60,6 @@ function E:OnEnable()
 	-- Check the settings, and make sure they're all there.
 	E:CheckSettingsDB()
 	self:PrintMessage(E:GetVersion() .. " LOADED")
-
-	-- Fix bug related to music cutting out during fade.
-	-- Can't play the same song if no song is playing..
 
 	-- This forces the user's Music volume to 0 if they have music off
 	-- so that they won't notice that it was turned on.
