@@ -17,7 +17,11 @@ local addonName = ...
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 if L then
-	L["Test"] = "Test"
-	L["ChatErr_SettingsNotFound"] = "Your configuration couldn't be loaded, perhaps this is your first run? Loading default config."
-	L["ChatErr_SettingsOutOfDate"] = "Your configuration is outdated, loading the default config."
+	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
+	L["ConfigLoadError"] = "Your configuration couldn't be loaded. Is this the first time you're running the addon? Using defaults."
+	L["ConfigOutOfDate"] = "Your configuration is outdated, loading the default config."
+
+	L["Enabled"] = true
+	L["LoginMessage"] = "Login Message"
+	L["Desc_Enabled"] = "Enable/Disable the addon or module."
 end

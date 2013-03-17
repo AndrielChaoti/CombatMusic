@@ -14,11 +14,13 @@
 ]]
 
 --GLOBALS: CombatMusicDB, CombatMusicBossList, SetCVar, GetCVar
---GLOBALS: PlayMusic, StopMusic, UnitName
+--GLOBALS: PlayMusic, StopMusic, PlaySoundFile, UnitName
+--GLOBALS: math
 
-local E, L, DF, T = unpack(select(2, ...))
+--Import Engine, Locale, Defaults.
+local E, L, DF = unpack(select(2, ...))
 
-local tconcat, error = table.concat, error
+local tconcat, error, pairs = table.concat, error, pairs
 local tostringall, strfind = tostringall, strfind
 local select, type, random = select, type, random
 
@@ -110,13 +112,12 @@ function E:CheckSettingsDB()
 
 	-- They don't have a settings database
 	if not CombatMusicDB then
-		self:PrintErr(L["ChatErr_SettingsNotFound"])
+		self:PrintErr(L["ConfigLoadError"])
 		CombatMusicDB = DF
 		return false
-
 	-- Or their settings are outdated
 	elseif self:GetSetting("_VER") ~= DF._VER then
-		self:PrintErr(L["ChatErr_SettingsOutOfDate"])
+		self:PrintErr(L["ConfigOutOfDate"])
 		CombatMusicDB = DF
 		return false
 	end
@@ -141,12 +142,45 @@ function E:RegisterNewSongType(name, defaultState)
 
 	-- Create our song's settings table.
 	DF.General.SongList[name] = {
-		Enable = defaultState,
+		Enabled = defaultState,
 		Count = 1,
 	}
 
 	-- And add the type to the settings table
 	self.RegisteredSongs[name] = true
+
+	-- And add it to the options table.
+	local t = {}
+	local cnt = 0
+	for k,_ in pairs(E.RegisteredSongs) do
+		cnt = cnt + 100
+		t[k] = {
+			type = "group",
+			name = L["SongType" .. k],
+			inline = true,
+			args = {
+				Enabled = {
+					name = L["Enabled"],
+					desc = L["Desc_Enabled"],
+					type = "toggle",
+					order = cnt
+				},
+				Count = {
+					name = L["Count"],
+					desc = L["Desc_Count"],
+					type = "range",
+					min = 1,
+					max = math.huge,
+					softMax = 100,
+					step = 1,
+					order = cnt + 1
+				},
+			},
+
+		}
+	end
+	E.Options.args.General.args.SongList.args = t
+
 	return true
 end
 
@@ -162,9 +196,9 @@ function E:PlayMusicFile(songPath)
 	local fullPath = "Interface\\Music\\" .. songPath
 
 	-- songPath needs to exist...
-	if not self:GetSetting("General","SongList",songPath) then return end
+	if not self:GetSetting("General","SongList", songPath) then return end
 	-- Are we using this song type?
-	if not self:GetSetting("General", "SongList", songPath, "Enable") then return end
+	if not self:GetSetting("General", "SongList", songPath, "Enabled") then return end
 	-- How many songs are we using of this songType?
 	local max = self:GetSetting("General", "SongList", songPath, "Count")
 
@@ -175,6 +209,19 @@ function E:PlayMusicFile(songPath)
 		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".mp3")
 		return PlayMusic(fullPath .. "\\song" .. rand .. ".mp3")
 	end
+end
+
+
+function E:PlaySoundFile( fileName )
+	printFuncName("PlaySoundFile", fileName)
+	if not fileName then return end
+
+	if self:GetSetting("General", "UseMaster") then
+		return PlaySoundFile(fileName, "Master")
+	else
+		return PlaySoundFile(fileName, "SFX")
+	end
+
 end
 
 

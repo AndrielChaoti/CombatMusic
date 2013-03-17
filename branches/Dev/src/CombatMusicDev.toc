@@ -12,7 +12,9 @@ locale\loadLocale.xml
 
 #core
 init.lua
+options.lua
 core.lua
+
 
 #modules
 combatEngine.lua

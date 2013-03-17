@@ -1,7 +1,7 @@
 --[[
   Project: CombatMusic
   Friendly Name: CombatMusic
-  Author: Vandesdelca323
+  Author: Vandesdelca32
 
   File: combatEngine.lua
   Purpose: The Engine that makes the magic happen
@@ -13,16 +13,15 @@
   See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
 ]]
 
--- Ignore these in GetGlobals, because people might change them...
+-- These functions are global API functions used by this module.
 --GLOBALS: debugprofilestop, SetCVar
 --GLOBALS: UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification, UnitAffectingCombat, UnitIsTrivial
 --GLOBALS: GetInstanceInfo, UnitInRaid, UnitInParty, UnitIsPVPFreeForAll
-
 --GLOBALS: StopMusic, PlaySoundFile, StopSound
-
 --GLOBALS: CombatMusicBossList
 
-local E, L, DF, T = unpack(select(2, ...))
+--Import Engine, Locale, Defaults.
+local E, L, DF = unpack(select(2, ...))
 local CE = E:NewModule("CombatEngine", "AceEvent-3.0", "AceTimer-3.0")
 
 -- Locals for faster lookups
@@ -458,7 +457,7 @@ function CE:PlayFanfare(fanfare)
 	end
 
 	-- Play our chosen fanfare
-	self.SoundId = select(2, PlaySoundFile("Interface\\Music\\" .. fanfare .. ".mp3", "Master"))
+	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".mp3"))
 end
 
 
