@@ -115,24 +115,23 @@ function CE:BuildTargetInfo()
 	-- Add the boss targets if enabled.
 	-- This can be a CPU hog, so some might wish to disable it.
 	if E:GetSetting("General","CombatEngine", "CheckBoss") then
-		for i = 1, 5 do 
-			targetList[i+2] = "boss" .. i
+		for i = 1, 5 do
+			if UnitExists("boss"..i) then
+				targetList[i+2] = "boss" .. i
+			end
 		end
 	end
 
 	-- Get the information required on each target and parse the returns:
 	for i = 1, #targetList do
-		-- Make sure the unit exists, before we check against our lists.
-		if UnitExists(targetList[i]) then
-			-- Check the BossList, as this trumps TargetInfo
-			-- because that function will play the music for us.
-			if E:CheckBossList(targetList[i]) then 
-				self.EncounterLevel = DIFFICULTY_BOSS
-				E:PrintDebug("  ==§cON BOSSLIST")
-				break --Bosslist trumps all.
-			end
-			UpdateTargetInfoTable(targetList[i])
+		-- Check the BossList, as this trumps TargetInfo
+		-- because that function will play the music for us.
+		if E:CheckBossList(targetList[i]) then 
+			self.EncounterLevel = DIFFICULTY_BOSS
+			E:PrintDebug("  ==§cON BOSSLIST")
+			break --Bosslist trumps all.
 		end
+		UpdateTargetInfoTable(targetList[i])
 	end
 	-- Parse the information we got
 	return self:ParseTargetInfo()
@@ -269,7 +268,7 @@ function CE:ParseTargetInfo()
 	printFuncName("ParseTargetInfo")
 	if not self.TargetInfo then return end
 	if not self.EncounterLevel then self.EncounterLevel = DIFFICULTY_NONE end
-	if self.fadeTimer then return end -- Don't change music if we're fading out...
+	if self.FadeTimer then return end -- Don't change music if we're fading out...
 
 	for k, v in pairs(self.TargetInfo) do
 		-- The TargetInfo table is built {[1] = isBoss, [2] = InCombat}
