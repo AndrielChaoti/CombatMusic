@@ -37,7 +37,7 @@ AddOn._revision = "@project-revision@"
 --	Default Settings
 -------------------
 AddOn.DF = {
-	_VER = 0.52,
+	_VER = 0.54,
 	Enabled = true,
 	LoginMessage = true,
 	General = {
@@ -108,8 +108,9 @@ end
 function AddOn:OnEnable()
 	-- Check the settings, and make sure they're all there.
 	self:CheckSettingsDB()
+	local ver = self:GetVersion()
 	if self:GetSetting("LoginMessage") then
-		self:PrintMessage(format(Locale["AddonLoaded"], canonicalTitle, self:GetVersion()))
+		self:PrintMessage(format(Locale["AddonLoaded"], canonicalTitle, ver))
 	end
 
 	-- This forces the user's Music volume to 0 if they have music off

@@ -18,8 +18,8 @@
 --Import Engine, Locale, Defaults, CanonicalTitle
 local AddOnName = ...
 local E, L, DF = unpack(select(2, ...))
-local DEFAULT_WIDTH = 890;
-local DEFAULT_HEIGHT = 651;
+local DEFAULT_WIDTH = 785
+local DEFAULT_HEIGHT = 500
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local ACR = LibStub("AceConfigRegistry-3.0")
@@ -36,13 +36,7 @@ function E:ToggleOptions()
 		self:PrintErr(L["Can't do that in combat."])
 		return
 	end
-	if E.ShowingOptions then
-		ACD:Close(AddOnName)
-		E.ShowingOptions = false
-	else
-		ACD:Open(AddOnName)
-		E.ShowingOptions = true
-	end
+	ACD:Open(AddOnName)
 end
 
 
@@ -77,14 +71,6 @@ E.Options.args = {
 		func = function() CombatMusicDB = DF; ACR:NotifyChange(AddOnName); end,
 		order = 120,
 	},
-	DebugMode = {
-		name = "Debug Mode",
-		desc = "Enable/Disable Debug Mode!",
-		type = "toggle",
-		set = function(info, val) E._DebugMode = val end,
-		get = function(info) return E._DebugMode end,
-		order = -1
-	},
 	General = {
 		name = "General",
 		type = "group",
@@ -95,8 +81,6 @@ E.Options.args = {
 				name = L["UseMaster"],
 				desc = L["Desc_UseMaster"],
 				type = "toggle",
-				order = 90,
-				width = "full",
 			},
 			Volume = {
 				name = L["Volume"],

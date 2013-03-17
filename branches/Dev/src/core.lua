@@ -173,6 +173,7 @@ function E:RegisterNewSongType(name, defaultState)
 					max = math.huge,
 					softMax = 100,
 					step = 1,
+					width = "double",
 					order = cnt + 1
 				},
 			},

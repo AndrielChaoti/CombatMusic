@@ -28,10 +28,10 @@ if L then
 	-----------
 	
 	L["Enabled"] = true
-	L["Volume"] = true
-	L["PreferFocus"] = "Prefer Focus' target"
+	L["Volume"] = "Music Volume"
+	L["PreferFocus"] = "Check 'focustarget' first"
 	L["LoginMessage"] = "Login Message"
-	L["CheckBoss"] = "Check Boss UnitIDs"
+	L["CheckBoss"] = "Check 'bossx' units"
 	L["NumSongs"] = "Song Counts"
 	L["FadeTimer"] = "Song Fadeout"
 	L["SongTypeBattles"] = "Battles"
@@ -41,9 +41,9 @@ if L then
 	L["UseMaster"] = "Use Master Channel"
 	L["BossOnly"] = "Boss fight only"
 	L["FanfareEnable"] = "Play Fanfare on..."
-	L["GameOverEnable"] = "Play Game Over"
+	L["GameOverEnable"] = "Play Game Over on..."
 	L["RestoreDefaults"] = "Restore Defaults"
-	L["UseDing"] = "Use 'DING'"
+	L["UseDing"] = "Use 'DING' instead of 'Victory' for levelling up"
 	L["MiscFeatures"] = "Miscellaneous features"
 
 	L["Desc_RestoreDefaults"] = "Restore all settings to their defaults."

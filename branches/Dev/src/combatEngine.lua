@@ -221,6 +221,8 @@ function CE:GetTargetInfo(unit)
 			-- Quick check to negate elites
 			if unitInfo.mobType ~= 3 then
 				isBoss = true
+			else
+				isBoss = false
 			end
 		else
 			-- Outside instances
@@ -238,6 +240,8 @@ function CE:GetTargetInfo(unit)
 		if unitInfo.level.adj >= 5 + playerInfo.level then
 			isBoss = true
 		end
+	else
+		isBoss = false
 	end
 
 	-- Level -1 check
@@ -355,7 +359,10 @@ end
 -- Handles event PLAYER_DEAD, as it requires a slightly different touch
 function CE:GameOver()
 	self:LeaveCombat("PLAYER_DEAD", true)
-	if E:GetSetting("General", "CombatEngine", "GameOverEnable") then
+	local GameOverWhen = E:GetSetting("General", "CombatEngine", "GameOverEnable")
+	if GameOverWhen == "ALL" then
+		self:PlayFanfare("GameOver")
+	elseif GameOverWhen == "INCOMBAT" and self.InCombat then
 		self:PlayFanfare("GameOver")
 	end
 end
@@ -482,7 +489,7 @@ end
 -----------------
 local defaults = {
 	FadeTimer = 10,
-	GameOverEnable = true,
+	GameOverEnable = "ALL",
 	FanfareEnable = "BOSSONLY",
 	PreferFocus = false,
 	CheckBoss = true,
@@ -492,12 +499,31 @@ local defaults = {
 
 local opt = {
 	type = "group",
-	inline = true,
+	--inline = true,
 	name = L["CombatEngine"],
 	set = function(info, val) CombatMusicDB.General.CombatEngine[info[#info]] = val end,
 	get = function(info) return E:GetSetting("General", "CombatEngine", info[#info]) end,
 	order = 600,
 	args = {
+
+		PreferFocus = {
+			name = L["PreferFocus"],
+			desc = L["Desc_PreferFocus"],
+			type = "toggle",
+			width =  "double",
+			order = 120,
+		},
+		CheckBoss = {
+			name = L["CheckBoss"],
+			desc = L["Desc_CheckBoss"],
+			type = "toggle",
+			order = 110,
+		},
+		SPACER1 = {
+			name = L["MiscFeatures"],
+			type = "header",
+			order = 200
+		},
 		FadeTimer = {
 			name = L["FadeTimer"],
 			desc = L["Desc_FadeTimer"],
@@ -506,49 +532,37 @@ local opt = {
 			max = 30,
 			step = 0.1,
 			bigStep = 1,
-			order = 100,
-			width = "double"
-		},
-		PreferFocus = {
-			name = L["PreferFocus"],
-			desc = L["Desc_PreferFocus"],
-			type = "toggle",
-			order = 110,
-		},
-		CheckBoss = {
-			name = L["CheckBoss"],
-			desc = L["Desc_CheckBoss"],
-			type = "toggle",
-			order = 120,
-		},
-		SPACER1 = {
-			name = L["MiscFeatures"],
-			type = "header",
-			order = 200
-		},
-		UseDing = {
-			name = L["UseDing"],
-			desc = L["Desc_UseDing"],
-			type = "toggle",
-			order = 320,
+			order = 311,
 		},
 		GameOverEnable = {
 			name = L["GameOverEnable"],
 			desc = L["Desc_GameOverEnable"],
-			type = "toggle",
-			order = 300
+			type = "select",
+			order = 310,
+			values = {
+				["ALL"] = ALL,
+				["INCOMBAT"] = L["InCombat"],
+				["NEVER"] = NEVER
+			}
 		},
 		FanfareEnable = {
 			name = L["FanfareEnable"],
 			desc = L["Desc_FanfareEnable"],
 			type = "select",
 			style = "dropdown",
-			order = 310,
+			order = 300,
 			values = {
 				["ALL"] = ALL,
 				["BOSSONLY"] = L["BossOnly"],
-				["NONE"] = NONE
+				["NEVER"] = NEVER
 			}
+		},
+		UseDing = {
+			name = L["UseDing"],
+			desc = L["Desc_UseDing"],
+			type = "toggle",
+			width = "full",
+			order = 320,
 		},
 	}
 }
