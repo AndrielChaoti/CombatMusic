@@ -14,11 +14,12 @@
 	]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
--- GLOBALS: GetCVarBool, SetCVar, format
+-- GLOBALS: GetCVarBool, SetCVar
 
 local AddOnName, Engine = ...
 local canonicalTitle = "CombatMusic"
 
+local format, tconcat, tostringall = format, table.concat, tostringall
 
 
 -----------------------
@@ -26,7 +27,26 @@ local canonicalTitle = "CombatMusic"
 -----------------------
 local AddOn = LibStub("AceAddon-3.0"):NewAddon(AddOnName, "AceEvent-3.0", "AceTimer-3.0")
 LibStub("LibVan32-1.0"):Embed(AddOn, canonicalTitle)
-AddOn.DF = {}
+
+AddOn._major = "@project-version@"
+AddOn._revision = "@project-revision@"
+
+
+
+-------------------
+--	Default Settings
+-------------------
+AddOn.DF = {
+	_VER = 0.52,
+	Enabled = true,
+	LoginMessage = true,
+	General = {
+		Volume = 0.85,
+		UseMaster = true,
+		SongList = {}
+	},
+	Modules = {},
+}
 
 
 
@@ -54,6 +74,21 @@ Engine[3] = AddOn.DF
 
 -- And expose it
 _G[AddOnName] = Engine
+
+
+
+
+--------------
+--	Debug stuff
+--------------
+-- Helps with printing function arguments and names in debug messages
+-- to make tracing code progress easier.
+function AddOn.printFuncName(func, ...)
+	local argList = tconcat({tostringall(...)}, "§r,§6 ")
+	return AddOn:PrintDebug("§a" .. func .. "§f(§6" .. (argList or "") .. "§f)")
+end
+
+
 
 
 -----------------

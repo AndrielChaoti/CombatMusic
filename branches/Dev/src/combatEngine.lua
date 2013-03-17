@@ -14,7 +14,7 @@
 ]]
 
 -- These functions are global API functions used by this module.
---GLOBALS: debugprofilestop, SetCVar
+--GLOBALS: debugprofilestop, SetCVar, CombatMusicDB
 --GLOBALS: UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification, UnitAffectingCombat, UnitIsTrivial
 --GLOBALS: GetInstanceInfo, UnitInRaid, UnitInParty, UnitIsPVPFreeForAll
 --GLOBALS: StopMusic, PlaySoundFile, StopSound
@@ -38,10 +38,7 @@ local DIFFICULTY_NONE = 0
 local DIFFICULTY_NORMAL = 1
 local DIFFICULTY_BOSS = 2
 
--- Default settings
-local defaults = {
-	FadeTimer = 10
-}
+
 
 
 --- Handles the events for entering combat
@@ -109,7 +106,7 @@ function CE:BuildTargetInfo()
 	self.TargetInfo = {}
 
 	-- Check to see if we should check the focustarget before the target
-	if E:GetSetting("General", "PreferFocus") then
+	if E:GetSetting("General", "CombatEngine", "PreferFocus") then
 		targetList = {"focustarget", "target"}
 	else
 		targetList= {"target", "focustarget"}
@@ -117,7 +114,7 @@ function CE:BuildTargetInfo()
 
 	-- Add the boss targets if enabled.
 	-- This can be a CPU hog, so some might wish to disable it.
-	if E:GetSetting("General", "CheckBoss") then
+	if E:GetSetting("General","CombatEngine", "CheckBoss") then
 		for i = 1, 5 do 
 			targetList[i+2] = "boss" .. i
 		end
@@ -272,6 +269,7 @@ function CE:ParseTargetInfo()
 	printFuncName("ParseTargetInfo")
 	if not self.TargetInfo then return end
 	if not self.EncounterLevel then self.EncounterLevel = DIFFICULTY_NONE end
+	if self.fadeTimer then return end -- Don't change music if we're fading out...
 
 	for k, v in pairs(self.TargetInfo) do
 		-- The TargetInfo table is built {[1] = isBoss, [2] = InCombat}
@@ -358,7 +356,9 @@ end
 -- Handles event PLAYER_DEAD, as it requires a slightly different touch
 function CE:GameOver()
 	self:LeaveCombat("PLAYER_DEAD", true)
-	self:PlayFanfare("GameOver")
+	if E:GetSetting("General", "CombatEngine", "GameOverEnable") then
+		self:PlayFanfare("GameOver")
+	end
 end
 
 
@@ -369,7 +369,7 @@ local function FadeStepCallback()
 
 	if not CE.FadeVars.StepCount then
 		CE.FadeVars.StepCount = 0
-		CE.FadeVars.CurrentVolume = E:GetSetting("General" , "Volume")
+		CE.FadeVars.CurrentVolume = E:GetSetting("General", "Volume")
 		CE.FadeVars.VolumeStep = exp(CE.FadeVars.CurrentVolume)
 		CE.FadeVars.VolumeStepDelta = (CE.FadeVars.VolumeStep - 1) / (MAX_FADE_STEPS - 1)
 	end
@@ -408,16 +408,17 @@ function CE:BeginMusicFade()
 	if self.FadeTimer then return end
 
 	-- Get our fade timeout.
-	self.fadeTime = E:GetSetting("CombatEngine", "FadeTimer")
-
+	self.fadeTime = E:GetSetting("General", "CombatEngine", "FadeTimer")
+	-- Set FadeVars
+	self.FadeVars = {}
+	
 	-- The user's disabled fading...
 	if self.fadeTime <= 0 then 
 		self:SendMessage("CombatMusic_FadeComplete")
 		return
 	end
 	
-	-- Set FadeVars
-	self.FadeVars = {}
+
 
 
 	-- Get the interval
@@ -434,7 +435,12 @@ function CE:CombatMusic_FadeComplete()
 	self:UnregisterMessage("CombatMusic_FadeComplete")
 
 	-- If this was a boss fight:
-	if self.EncounterLevel > 1 then
+	local playWhen = E:GetSetting("General", "CombatEngine", "FanfareEnable")
+	if playWhen == "BOSSONLY" then
+		if self.EncounterLevel > 1 then
+			self:PlayFanfare("Victory")
+		end
+	elseif playWhen == "ALL" then
 		self:PlayFanfare("Victory")
 	end
 
@@ -443,6 +449,17 @@ function CE:CombatMusic_FadeComplete()
 
 	-- Reset the combat state finally
 	ResetCombatState()
+end
+
+
+function CE:LevelUp()
+	if E:GetSetting("General", "CombatEngine", "DingEnabled") then
+		if E:GetSetting("General", "CombatEngine", "UseDing") then
+			self:PlayFanfare("DING")
+		else
+			self:PlayFanfare("Victory")
+		end
+	end
 end
 
 
@@ -461,12 +478,89 @@ function CE:PlayFanfare(fanfare)
 end
 
 
+-----------------
+--	Module Options
+-----------------
+local defaults = {
+	FadeTimer = 10,
+	GameOverEnable = true,
+	FanfareEnable = "BOSSONLY",
+	PreferFocus = false,
+	CheckBoss = true,
+	UseDing = true,
+}
+
+
+local opt = {
+	type = "group",
+	inline = true,
+	name = L["CombatEngine"],
+	set = function(info, val) CombatMusicDB.General.CombatEngine[info[#info]] = val end,
+	get = function(info) return E:GetSetting("General", "CombatEngine", info[#info]) end,
+	order = 600,
+	args = {
+		FadeTimer = {
+			name = L["FadeTimer"],
+			desc = L["Desc_FadeTimer"],
+			type = "range",
+			min = 0,
+			max = 30,
+			step = 0.1,
+			bigStep = 1,
+			order = 100,
+			width = "double"
+		},
+		PreferFocus = {
+			name = L["PreferFocus"],
+			desc = L["Desc_PreferFocus"],
+			type = "toggle",
+			order = 110,
+		},
+		CheckBoss = {
+			name = L["CheckBoss"],
+			desc = L["Desc_CheckBoss"],
+			type = "toggle",
+			order = 120,
+		},
+		SPACER1 = {
+			name = L["MiscFeatures"],
+			type = "header",
+			order = 200
+		},
+		UseDing = {
+			name = L["UseDing"],
+			desc = L["Desc_UseDing"],
+			type = "toggle",
+			order = 320,
+		},
+		GameOverEnable = {
+			name = L["GameOverEnable"],
+			desc = L["Desc_GameOverEnable"],
+			type = "toggle",
+			order = 300
+		},
+		FanfareEnable = {
+			name = L["FanfareEnable"],
+			desc = L["Desc_FanfareEnable"],
+			type = "select",
+			style = "dropdown",
+			order = 310,
+			values = {
+				["ALL"] = ALL,
+				["BOSSONLY"] = L["BossOnly"],
+				["NONE"] = NONE
+			}
+		},
+	}
+}
+
+
 -------------------
 --	Module Functions
 -------------------
 function CE:OnInitialize()
 	-- Include our default setttings
-	DF.CombatEngine = defaults
+	DF.General.CombatEngine = defaults
 
 	-- And register our song types
 	E:RegisterNewSongType("Battles", true)
@@ -475,22 +569,26 @@ function CE:OnInitialize()
 	-- Last: mark this module to be loaded, seeing
 	-- as this module cannot be disabled.
 	DF.Modules.CombatEngine = true
+	-- Last, but not least, add it's config to the options.
+	E.Options.args.General.args.CombatEngine = opt
 end
 
 function CE:OnEnable()
 	-- Enabling module, register events!
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "EnterCombat")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "LeaveCombat")
-	self:RegisterEvent("PLAYER_LEVEL_UP", "PlayFanfare", "DING")
+	self:RegisterEvent("PLAYER_LEVEL_UP", "LevelUp")
 	self:RegisterEvent("PLAYER_DEAD", "GameOver")
 	self:RegisterEvent("UNIT_TARGET")
 end
 
 function CE:OnDisable()
 	-- Disabling module, unregister events!
+	self:LeaveCombat(true)
 	self:UnregisterEvent("PLAYER_REGEN_DISABLED")
 	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 	self:UnregisterEvent("PLAYER_LEVEL_UP")
 	self:UnregisterEvent("PLAYER_DEAD")
 	self:UnregisterEvent("UNIT_TARGET")
 end
+

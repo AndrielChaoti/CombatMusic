@@ -24,15 +24,7 @@ local tconcat, error, pairs = table.concat, error, pairs
 local tostringall, strfind = tostringall, strfind
 local select, type, random = select, type, random
 
-
--- Helps with printing function arguments and names in debug messages
--- to make tracing code progress easier.
-local function printFuncName(func, ...)
-	local argList = tconcat({tostringall(...)}, "§r,§6 ")
-	return E:PrintDebug("§a" .. func .. "§f(§6" .. (argList or "") .. "§f)")
-end
-
-E.printFuncName = printFuncName
+local printFuncName = E.printFuncName
 
 
 
@@ -157,8 +149,16 @@ function E:RegisterNewSongType(name, defaultState)
 		t[k] = {
 			type = "group",
 			name = L["SongType" .. k],
+			set = function(info, val) CombatMusicDB.General.SongList[k][info[#info]] = val end,
+			get = function(info) return E:GetSetting("General", "SongList", k, info[#info]) end,
 			inline = true,
 			args = {
+				--[[Spacer = {
+					name = L["SongType"..k],
+					type = "description",
+					width = "full",
+					fontSize = "medium"
+				},]]
 				Enabled = {
 					name = L["Enabled"],
 					desc = L["Desc_Enabled"],

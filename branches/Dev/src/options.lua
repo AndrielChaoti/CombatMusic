@@ -13,15 +13,16 @@
   See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
   ]]
 
--- GLOBALS: CombatMusicDB, InCombatLockdown
+-- GLOBALS: CombatMusicDB, InCombatLockdown, ReloadUI
 
 --Import Engine, Locale, Defaults, CanonicalTitle
 local AddOnName = ...
-local E, L, DF, CT = unpack(select(2, ...))
+local E, L, DF = unpack(select(2, ...))
 local DEFAULT_WIDTH = 890;
 local DEFAULT_HEIGHT = 651;
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
+local ACR = LibStub("AceConfigRegistry-3.0")
 AC:RegisterOptionsTable(AddOnName, E.Options)
 ACD:SetDefaultSize(AddOnName, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
@@ -45,22 +46,6 @@ function E:ToggleOptions()
 end
 
 
--------------------
---	Default Settings
--------------------
-E.DF = {
-	_VER = 0.4,
-	Enabled = true,
-	LoginMessage = true,
-	General = {
-		PreferFocus = false,
-		CheckBoss = true,
-		Volume = 0.85,
-		NumSongs = {}
-	},
-	Modules = {},
-}
-
 
 ----------------
 --	Options Table
@@ -71,48 +56,68 @@ E.Options.args = {
 		name = L["Enabled"],
 		desc = L["Desc_Enabled"],
 		type = "toggle",
+		confirm = true,
+		confirmText = L["Confirm_Reload"],
 		get = function(info) return E:GetSetting("Enabled") end,
-		set = function(info, val) CombatMusicDB.Enabled = val end,
+		set = function(info, val) CombatMusicDB.Enabled = val; if val then E:Enable(); else E:Disable(); end; ReloadUI(); end,
 	},
 	LoginMessage = {
 		name = L["LoginMessage"],
 		type = "toggle",
 		get = function(info) return E:GetSetting("LoginMessage") end,
 		set = function(info, val) CombatMusicDB.LoginMessage = val end,
+		order = 110,
+	},
+	RestoreDefaults = {
+		name = L["RestoreDefaults"],
+		desc = L["Desc_RestoreDefaults"],
+		type = "execute",
+		confirm = true,
+		confirmText = L["Confirm_RestoreDefaults"],
+		func = function() CombatMusicDB = DF; ACR:NotifyChange(AddOnName); end,
+		order = 120,
+	},
+	DebugMode = {
+		name = "Debug Mode",
+		desc = "Enable/Disable Debug Mode!",
+		type = "toggle",
+		set = function(info, val) E._DebugMode = val end,
+		get = function(info) return E._DebugMode end,
+		order = -1
 	},
 	General = {
 		name = "General",
-		type = "Group",
+		type = "group",
 		get = function(info) return E:GetSetting("General", info[#info]) end,
 		set = function(info, val) CombatMusicDB.General[info[#info]] = val end,
 		args = {
-			PreferFocs = {
-				name = L["PreferFocs"],
-				desc = L["Desc_PreferFocs"],
+			UseMaster = {
+				name = L["UseMaster"],
+				desc = L["Desc_UseMaster"],
 				type = "toggle",
-			},
-			CheckBoss = {
-				name = L["CheckBoss"],
-				desc = L["Desc_CheckBoss"],
-				type = "toggle",
+				order = 90,
+				width = "full",
 			},
 			Volume = {
 				name = L["Volume"],
-				desc = L["Desc_Volume"],
+				--desc = L["Desc_Volume"],
 				type = "range",
+				width = "double",
 				min = 0.01,
 				max = 1,
 				step = 0.001,
 				bigStep = 0.01,
 				isPercent = true,
+				order = 200,
 			},
-			NumSongs = {
+			SongList = {
 				name = L["NumSongs"],
-				desc = L["Desc_NumSongs"],
+				--desc = L["Desc_NumSongs"],
 				type = "group",
 				inline = true,
+				order = 400,
 				args = {} -- This will be filled in by our :RegisterSongType 
-			},
-		},
+			}
+		}
 	}
 }
