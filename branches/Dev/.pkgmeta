@@ -1,5 +1,13 @@
 ﻿package-as: CombatMusic
 
+ignore: 
+   - libs
+   - CombatMusicDev.sublime-project
+   - CombatMusicDev.sublime-workspace
+
+move-folders:
+   src: CombatMusic
+
 externals:
    libs/LibStub:
       url: svn://svn.wowace.com/wow/libstub/mainline/trunk
