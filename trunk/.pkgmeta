@@ -6,7 +6,12 @@ ignore:
    - CombatMusicDev.sublime-workspace
 
 move-folders:
-   src: CombatMusic
+   src/: CombatMusic
+   src/locale: CombatMusic/locale
+
+manual-changelog:
+   filename: changelog.txt
+   markup-type: creole
 
 externals:
    libs/LibStub:
