@@ -8,9 +8,6 @@ ignore:
 move-folders:
    CombatMusic/src: CombatMusic
 
-manual-changelog:
-   filename: changelog.txt
-   markup-type: creole
 
 externals:
    libs/LibStub:
