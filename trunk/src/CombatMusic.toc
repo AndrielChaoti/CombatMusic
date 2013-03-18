@@ -1,5 +1,5 @@
 ## Interface: 50200
-## Title: Van32's |cFFAF96FFCombatMusic |cFFFF0000DEV|r
+## Title: Van32's |cFFAF96FFCombatMusic|r
 ## Notes: Plays custom music in combat.
 ## Author: Vandesdelca32
 ## Version: @project-version@
