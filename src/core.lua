@@ -70,7 +70,7 @@ function E:GetVersion(short)
 
 	local v, rev = self._major, self._revision
 	-- Check the build status:
-	if v:find("^alpha") or v:find("^@.+@$") then
+	if v:find("^r%d+") or v:find("^alpha") or v:find("^@.+@$") then
 		self._DebugMode = true
 	end 
 
