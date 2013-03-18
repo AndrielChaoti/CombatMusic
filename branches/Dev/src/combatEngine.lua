@@ -74,9 +74,10 @@ local function UpdateTargetInfoTable(unit)
 	E:PrintDebug(format("  ==§b%s, isBoss = %s, inCombat = %s", tostringall(unit, CE.TargetInfo[unit][1], CE.TargetInfo[unit][2])))
 end
 
+
 --- Handles target changes
 function CE:UNIT_TARGET(event, ...)
-	printFuncName("UNIT_TARGET", event, ...)
+	printFuncName("UNIT_TARGET", ...)
 	local unit = ...
 	-- This check only applies if the player is in combat.
 	if not self.InCombat then return end
@@ -97,6 +98,7 @@ function CE:UNIT_TARGET(event, ...)
 	-- and run a quick parse again
 	self:ParseTargetInfo()
 end
+
 
 --- Builds target information necessary to choose a song, then attempts to
 -- parse that information
@@ -592,6 +594,7 @@ function CE:OnEnable()
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "LeaveCombat")
 	self:RegisterEvent("PLAYER_LEVEL_UP", "LevelUp")
 	self:RegisterEvent("PLAYER_DEAD", "GameOver")
+	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "BuildTargetInfo")
 	self:RegisterEvent("UNIT_TARGET")
 end
 

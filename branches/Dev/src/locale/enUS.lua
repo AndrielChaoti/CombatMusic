@@ -45,6 +45,7 @@ if L then
 	L["RestoreDefaults"] = "Restore Defaults"
 	L["UseDing"] = "Use 'DING' instead of 'Victory' for levelling up"
 	L["MiscFeatures"] = "Miscellaneous features"
+	L["InCombat"] = "In Combat only"
 
 	L["Desc_RestoreDefaults"] = "Restore all settings to their defaults."
 	L["Confirm_RestoreDefaults"] = "Are you sure you want to reset all of your settings and Boss Lists?"
