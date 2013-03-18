@@ -7,7 +7,6 @@ ignore:
 
 move-folders:
    src: CombatMusic
-   RenameMusic.bat.txt: CombatMusic
 
 externals:
    libs/LibStub:
