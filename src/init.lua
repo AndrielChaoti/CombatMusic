@@ -37,7 +37,7 @@ AddOn._revision = "@project-revision@"
 --	Default Settings
 -------------------
 AddOn.DF = {
-	_VER = 0.54,
+	_VER = 1,
 	Enabled = true,
 	LoginMessage = true,
 	General = {
