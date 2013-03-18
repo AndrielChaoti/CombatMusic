@@ -69,14 +69,17 @@ function E:GetVersion(short)
 	printFuncName("GetVersion", short)
 
 	local v, rev = self._major, self._revision
+	-- Check the build status:
+	if v:find("^alpha") or v:find("^@.+@$") then
+		self._DebugMode = true
+	end 
+
 	if v:find("^@") then
 		v = "DEV_VERSION"
-		self._DebugMode = true
 	end
 
 	if rev:find("^@") then
 		rev = "???"
-		self._DebugMode = true
 	end
 
 	if short then
