@@ -71,6 +71,14 @@ E.Options.args = {
 		func = function() CombatMusicDB = DF; ACR:NotifyChange(AddOnName); end,
 		order = 120,
 	},
+	--@alpha@
+	DebugMode = {
+		name = "Debug Mode",
+		type = "toggle",
+		set = function(info,val) E._DebugMode = val end,
+		get = function(info) return E._DebugMode end,
+	},
+	--@end-alpha@
 	General = {
 		name = "General",
 		type = "group",
