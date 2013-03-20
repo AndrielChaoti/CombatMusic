@@ -325,18 +325,23 @@ end
 local function ResetCombatState()
 	if not CE.InCombat then return end
 	printFuncName("ResetCombatState")
-	-- Wipe the target info table
-	wipe(CE.TargetInfo)
-	-- Clear combat variables
-	CE.InCombat = false
-	CE.EncounterLevel = DIFFICULTY_NONE
-	-- Clear fade variables
-	wipe(CE.FadeVars)
+	-- Clear variables:
+	CE.InCombat = nil
+	CE.EncounterLevel = nil
 	CE.FadeTimer = nil
-	-- Cancel all timers
 	CE:CancelAllTimers()
-	-- Restore the volume after a second.
-	CE.FadeTimer = CE:ScheduleTimer(function() E:SetVolumeLevel(true) end, 1)
+
+	-- Wipe tables
+	if CE.TargetInfo then
+		wipe(CE.TargetInfo)
+	end
+
+	if CE.FadeVars then
+		wipe(CE.FadeVars)
+	end
+
+	-- Reset volume after a second
+	CE.FadeTimer = CE:ScheduleTimer(function() E:SetVolumeLevel(true); CE.FadeTimer = nil end, 1)
 end
 
 
