@@ -16,7 +16,7 @@
 -- These functions are global API functions used by this module.
 --GLOBALS: debugprofilestop, SetCVar, CombatMusicDB
 --GLOBALS: UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification, UnitAffectingCombat, UnitIsTrivial
---GLOBALS: GetInstanceInfo, UnitInRaid, UnitInParty, UnitIsPVPFreeForAll
+--GLOBALS: GetInstanceInfo, UnitInRaid, UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost
 --GLOBALS: StopMusic, PlaySoundFile, StopSound
 --GLOBALS: CombatMusicBossList
 
@@ -37,6 +37,7 @@ local printFuncName = E.printFuncName
 local DIFFICULTY_NONE = 0
 local DIFFICULTY_NORMAL = 1
 local DIFFICULTY_BOSS = 2
+local DIFFICULTY_BOSSLIST = 3
 
 
 
@@ -56,6 +57,7 @@ function CE:EnterCombat(event, ...)
 
 	-- Restore volume to defaults if we're already in combat
 	if self.InCombat then E:SetVolumeLevel(true) end
+	if UnitIsDeadOrGhost('player') then return end -- Don't play music if we're dead...
 
 	-- Save the last volume state and then set our InCombat volume
 	E:SaveLastVolumeState()
@@ -68,10 +70,26 @@ end
 
 
 --- Update the TargetInfo table
-local function UpdateTargetInfoTable(unit)
+function CE:UpdateTargetInfoTable(unit)
 	if not unit then return end
-	CE.TargetInfo[unit] = {CE:GetTargetInfo(unit)}
-	E:PrintDebug(format("  ==§b%s, isBoss = %s, inCombat = %s", tostringall(unit, CE.TargetInfo[unit][1], CE.TargetInfo[unit][2])))
+	-- This check only applies if the player is in combat
+	-- or not fading out...
+	if not self.InCombat then return true end
+	if self.FadeTimer then return true end
+
+	-- No checks if we're already using a song on the BossList
+	if self.EncounterLevel == DIFFICULTY_BOSSLIST then return true end
+
+	-- Check the bosslist first.
+	if E:CheckBossList(unit) and self.EncounterLevel ~= DIFFICULTY_BOSSLIST then 
+		self.EncounterLevel = DIFFICULTY_BOSSLIST
+		E:PrintDebug("  ==§cON BOSSLIST")
+		return true
+	end
+
+	-- Get the target's information.
+	self.TargetInfo[unit] = {self:GetTargetInfo(unit)}
+	E:PrintDebug(format("  ==§b%s, isBoss = %s, inCombat = %s", tostringall(unit, self.TargetInfo[unit][1], self.TargetInfo[unit][2])))
 end
 
 
@@ -79,8 +97,6 @@ end
 function CE:UNIT_TARGET(event, ...)
 	printFuncName("UNIT_TARGET", ...)
 	local unit = ...
-	-- This check only applies if the player is in combat.
-	if not self.InCombat then return end
 
 	-- Reset our target check timer
 	self._TargetCheckTime = debugprofilestop()
@@ -88,9 +104,9 @@ function CE:UNIT_TARGET(event, ...)
 	-- This is only to check player and focus target changes
 	-- other changes don't matter, so Get the new target info
 	if unit == "player" then
-		UpdateTargetInfoTable("target")
+		self:UpdateTargetInfoTable("target")
 	elseif unit == "focus" then
-		UpdateTargetInfoTable("focustarget")
+		self:UpdateTargetInfoTable("focustarget")
 	else
 		return
 	end
@@ -126,14 +142,7 @@ function CE:BuildTargetInfo()
 
 	-- Get the information required on each target and parse the returns:
 	for i = 1, #targetList do
-		-- Check the BossList, as this trumps TargetInfo
-		-- because that function will play the music for us.
-		if E:CheckBossList(targetList[i]) then 
-			self.EncounterLevel = DIFFICULTY_BOSS
-			E:PrintDebug("  ==§cON BOSSLIST")
-			break --Bosslist trumps all.
-		end
-		UpdateTargetInfoTable(targetList[i])
+		if self:UpdateTargetInfoTable(targetList[i]) then break end
 	end
 	-- Parse the information we got
 	return self:ParseTargetInfo()
@@ -297,7 +306,7 @@ function CE:ParseTargetInfo()
 			-- Schedule a recheck
 			local function recheck()
 				self._TargetCheckTime = debugprofilestop()
-				UpdateTargetInfoTable(k)
+				self:UpdateTargetInfoTable(k)
 				return self:ParseTargetInfo()
 			end
 			self:ScheduleTimer(recheck, 0.5)
@@ -314,6 +323,7 @@ function CE:ParseTargetInfo()
 end
 
 local function ResetCombatState()
+	if not CE.InCombat then return end
 	printFuncName("ResetCombatState")
 	-- Wipe the target info table
 	wipe(CE.TargetInfo)
@@ -486,6 +496,7 @@ function CE:PlayFanfare(fanfare)
 end
 
 
+
 -----------------
 --	Module Options
 -----------------
@@ -499,15 +510,14 @@ local defaults = {
 }
 
 
+
 local opt = {
 	type = "group",
 	--inline = true,
 	name = L["CombatEngine"],
 	set = function(info, val) CombatMusicDB.General.CombatEngine[info[#info]] = val end,
 	get = function(info) return E:GetSetting("General", "CombatEngine", info[#info]) end,
-	order = 600,
 	args = {
-
 		PreferFocus = {
 			name = L["PreferFocus"],
 			desc = L["Desc_PreferFocus"],
@@ -565,9 +575,10 @@ local opt = {
 			type = "toggle",
 			width = "full",
 			order = 320,
-		},
+		}
 	}
 }
+
 
 
 -------------------

@@ -13,7 +13,8 @@
   See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
   ]]
 
--- GLOBALS: CombatMusicDB, InCombatLockdown, ReloadUI
+-- GLOBALS: CombatMusicDB, CombatMusicBossList, InCombatLockdown, ReloadUI
+-- GLOBALS: UnitName
 
 --Import Engine, Locale, Defaults, CanonicalTitle
 local AddOnName = ...
@@ -27,9 +28,12 @@ AC:RegisterOptionsTable(AddOnName, E.Options)
 ACD:SetDefaultSize(AddOnName, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
 
-local tinsert, unpack, ipairs = table.insert, unpack, ipairs
+local tinsert, unpack, ipairs, pairs = table.insert, unpack, ipairs, pairs
+local strfind = string.find
 local printFuncName = E.printFuncName
 
+
+--- toggles the optiosn frame
 function E:ToggleOptions()
 	printFuncName("ToggleOptions")
 	if InCombatLockdown() then
@@ -37,6 +41,67 @@ function E:ToggleOptions()
 		return
 	end
 	ACD:Open(AddOnName)
+end
+
+
+local blName = ""
+local blSong = ""
+-- Adds the user's text to the bosslist.
+function E:AddNewBossListEntry()
+	printFuncName("AddNewBossListEntry")
+	
+	if not strfind(blSong, "\.mp3$") then 
+
+	end
+
+	-- Get the current target's name if they picked it.1
+	if blName == "%TARGET" then
+		blName = UnitName("target")
+	end
+
+	-- Check to make sure there's a target and song
+	if blName == "" or blName == nil then
+		self:PrintErr(L["Err_NoBossListNameTarget"])
+		return
+	end
+	if blSong == "" or blSong == nil then
+		self:PrintErr(L["Err_NoBossListSong"])
+		return
+	elseif not strfind(blSong, "\.mp3$") then
+		self:PrintErr(L["Err_NeedsToBeMP3"])
+		return
+	end
+
+	-- Add that song.
+	CombatMusicBossList[blName] = blSong
+	-- Rebuild the list of buttons! yay!
+	self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
+	ACR:NotifyChange(AddOnName)
+	blName = ""
+	blSong = ""
+end
+
+--- Gets and creates the list of buttons that the user can click to remove bosslist entries.
+function E:GetBosslistButtons()
+	local t = {}
+	local count = 0
+	for k, v in pairs(CombatMusicBossList) do
+		count = count + 1
+		t["ListItem" .. count] = {
+			type = "execute",
+			name = k,
+			desc = v,
+			confirm = true,
+			confirmText = L["RemoveBossList"],
+			func = function() 
+				CombatMusicBossList[k] = nil
+				-- redraw the list!
+				self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
+				ACR:NotifyChange(AddOnName)
+			end,
+		}
+	end
+	return t
 end
 
 
@@ -68,7 +133,7 @@ E.Options.args = {
 		type = "execute",
 		confirm = true,
 		confirmText = L["Confirm_RestoreDefaults"],
-		func = function() CombatMusicDB = DF; ACR:NotifyChange(AddOnName); end,
+		func = function() CombatMusicDB = DF; CombatMusicBossList = {}; ACR:NotifyChange(AddOnName); end,
 		order = 120,
 	},
 	--@alpha@
@@ -109,6 +174,50 @@ E.Options.args = {
 				inline = true,
 				order = 400,
 				args = {} -- This will be filled in by our :RegisterSongType 
+			},
+			BossList = {
+				name = L["BossList"],
+				type = "group",
+				order = -1,
+				args = {
+					Help1 = {
+						name = L["BossListHelp1"],
+						--desc = L["Desc_Help1"],
+						type = "description",
+						order = 90,
+					},
+					BossListName = {
+						name = L["BossListName"],
+						desc = L["Desc_BossListName"],
+						order = 100,
+						type = "input",
+						set = function(info,val) blName = val end,
+						get = function(info) return blName end,
+					},
+					BossListSong = {
+						name = L["BossListSong"],
+						desc = L["Desc_BossListSong"],
+						type = "input",
+						order = 110,
+						set = function(info, val) blSong = val end,
+						get = function(info) return blSong end,
+					},
+					AddBossList = {
+						name = L["AddBossList"],
+						desc = L["Desc_AddBossList"],
+						type = "execute",
+						order = 120,
+						func = function() E:AddNewBossListEntry() end,
+					},
+					ListGroup = {
+						name = L["ListGroup"],
+						--desc = L["Desc_ListGroup"],
+						type = "group",
+						order = -1,
+						inline = true,
+						args = {} -- Get the bosslist buttons dynamically as well.
+					}
+				}
 			}
 		}
 	}

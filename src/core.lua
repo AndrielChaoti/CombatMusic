@@ -239,7 +239,7 @@ function E:CheckBossList(unit)
 	local name = UnitName(unit)
 	if CombatMusicBossList[name] then
 		-- The unit is on the bosslist, play that specific song.
-		self.PlayingMusic = PlayMusic(CombatMusicBossList[name])
+		PlayMusic(CombatMusicBossList[name])
 		return true
 	end
 	return false
