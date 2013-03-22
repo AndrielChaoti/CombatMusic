@@ -61,7 +61,17 @@ function CE:EnterCombat(event, ...)
 
 	-- Begin target checking
 	self.InCombat = true
-	return self:BuildTargetInfo()
+	self.isPlayingMusic = self:BuildTargetInfo()
+	
+	-- Save the last volume state and then set our InCombat volume
+	if self.isPlayingMusic then
+		E:SaveLastVolumeState()
+		E:SetVolumeLevel()
+	end
+
+	-- This is the very end of the checking cylce.
+	-- Where music is finally played, so figure out how much time it took
+	E:PrintDebug(format("  ==§dTime taken: %fms",  debugprofilestop() - self._TargetCheckTime))
 end
 
 
@@ -75,6 +85,8 @@ function CE:UpdateTargetInfoTable(unit)
 
 	-- No checks if we're already using a song on the BossList
 	if self.EncounterLevel == DIFFICULTY_BOSSLIST then return true end
+
+	local isBossList = E:CheckBossList()
 
 	-- Check the bosslist first.
 	if E:CheckBossList(unit) and self.EncounterLevel ~= DIFFICULTY_BOSSLIST then 
@@ -281,8 +293,10 @@ function CE:ParseTargetInfo()
 	if not self.EncounterLevel then self.EncounterLevel = DIFFICULTY_NONE end
 	if self.FadeTimer then return end -- Don't change music if we're fading out...
 
-	local musicType
+	-- We need to let it know to change the volume
+	if self.EncounterLevel == DIFFICULTY_BOSSLIST then return true end
 
+	local musicType
 	for k, v in pairs(self.TargetInfo) do
 		-- The TargetInfo table is built {[1] = isBoss, [2] = InCombat}
 
@@ -317,10 +331,7 @@ function CE:ParseTargetInfo()
 	end
 
 	-- Play the music
-	self.isPlayingMusic = E:PlayMusicFile(musicType)
-	-- This is the very end of the checking cylce.
-	-- Where music is finally played, so figure out how much time it took
-	E:PrintDebug(format("  ==§dTime taken: %fms",  debugprofilestop() - self._TargetCheckTime))
+	return E:PlayMusicFile(musicType)
 end
 
 local function ResetCombatState()
@@ -437,7 +448,7 @@ function CE:BeginMusicFade()
 	self.FadeVars = {}
 	
 	-- The user's disabled fading...
-	-- or music isn't playing111
+	-- or music isn't playing
 	if (not self.isPlayingMusic) or self.fadeTime <= 0 then 
 		self:SendMessage("CombatMusic_FadeComplete")
 		return
