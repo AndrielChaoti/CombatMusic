@@ -206,12 +206,8 @@ function E:PlayMusicFile(songPath)
 	-- How many songs are we using of this songType?
 	local max = self:GetSetting("General", "SongList", songPath, "Count")
 
-	-- Save the last volume state and then set our InCombat volume
-	E:SaveLastVolumeState()
-	E:SetVolumeLevel()
-
 	-- Some more sanity checking...!
-	if not max then return end
+	if not max then return false end
 	if max > 0 then
 		local rand = random(1, max)
 		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".mp3")
@@ -239,7 +235,7 @@ end
 function E:CheckBossList(unit)
 	printFuncName("CheckBossList", unit)
 	if not unit then return end
-	
+	-- TODO: Fix the bosslist not counting as music bug!
 	local name = UnitName(unit)
 	if CombatMusicBossList[name] then
 		-- The unit is on the bosslist, play that specific song.
