@@ -200,11 +200,15 @@ function E:PlayMusicFile(songPath)
 	local fullPath = "Interface\\Music\\" .. songPath
 
 	-- songPath needs to exist...
-	if not self:GetSetting("General","SongList", songPath) then return end
+	if not self:GetSetting("General","SongList", songPath) then return false end
 	-- Are we using this song type?
-	if not self:GetSetting("General", "SongList", songPath, "Enabled") then return end
+	if not self:GetSetting("General", "SongList", songPath, "Enabled") then return false end
 	-- How many songs are we using of this songType?
 	local max = self:GetSetting("General", "SongList", songPath, "Count")
+
+	-- Save the last volume state and then set our InCombat volume
+	E:SaveLastVolumeState()
+	E:SetVolumeLevel()
 
 	-- Some more sanity checking...!
 	if not max then return end

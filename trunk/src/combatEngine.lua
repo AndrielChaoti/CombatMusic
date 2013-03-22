@@ -41,7 +41,6 @@ local DIFFICULTY_BOSSLIST = 3
 
 
 
-
 --- Handles the events for entering combat
 function CE:EnterCombat(event, ...)
 	printFuncName("EnterCombat", event, ...)
@@ -59,9 +58,6 @@ function CE:EnterCombat(event, ...)
 	if self.InCombat then E:SetVolumeLevel(true) end
 	if UnitIsDeadOrGhost('player') then return end -- Don't play music if we're dead...
 
-	-- Save the last volume state and then set our InCombat volume
-	E:SaveLastVolumeState()
-	E:SetVolumeLevel()
 
 	-- Begin target checking
 	self.InCombat = true
@@ -285,6 +281,8 @@ function CE:ParseTargetInfo()
 	if not self.EncounterLevel then self.EncounterLevel = DIFFICULTY_NONE end
 	if self.FadeTimer then return end -- Don't change music if we're fading out...
 
+	local musicType
+
 	for k, v in pairs(self.TargetInfo) do
 		-- The TargetInfo table is built {[1] = isBoss, [2] = InCombat}
 
@@ -293,14 +291,14 @@ function CE:ParseTargetInfo()
 			-- This is a boss, and we are in combat with it
 			-- Check to see if our encounter level is below what we're trying to play
 			if self.EncounterLevel < DIFFICULTY_BOSS then
-				E:PlayMusicFile("Bosses")
+				musicType = "Bosses"
 				self.EncounterLevel = DIFFICULTY_BOSS
 				break -- this trumps all other stuff.
 			end
 		elseif v[1] and not v[2] then
 			-- This IS a boss, but not in combat.
 			if self.EncounterLevel < DIFFICULTY_NORMAL then
-				E:PlayMusicFile("Battles")
+				musicType = "Battles"
 				self.EncounterLevel = DIFFICULTY_NORMAL
 			end
 			-- Schedule a recheck
@@ -312,11 +310,14 @@ function CE:ParseTargetInfo()
 			self:ScheduleTimer(recheck, 0.5)
 		else
 			if self.EncounterLevel < DIFFICULTY_NORMAL then
-				E:PlayMusicFile("Battles")
+				musicType = "Battles"
 				self.EncounterLevel = DIFFICULTY_NORMAL
 			end
 		end
 	end
+
+	-- Play the music
+	self.isPlayingMusic = E:PlayMusicFile(musicType)
 	-- This is the very end of the checking cylce.
 	-- Where music is finally played, so figure out how much time it took
 	E:PrintDebug(format("  ==§dTime taken: %fms",  debugprofilestop() - self._TargetCheckTime))
@@ -436,14 +437,12 @@ function CE:BeginMusicFade()
 	self.FadeVars = {}
 	
 	-- The user's disabled fading...
-	if self.fadeTime <= 0 then 
+	-- or music isn't playing111
+	if (not self.isPlayingMusic) or self.fadeTime <= 0 then 
 		self:SendMessage("CombatMusic_FadeComplete")
 		return
 	end
 	
-
-
-
 	-- Get the interval
 	self.FadeVars.interval = self.fadeTime / MAX_FADE_STEPS
 	-- Schedule the timer
