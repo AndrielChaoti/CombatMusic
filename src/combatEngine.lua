@@ -222,7 +222,7 @@ function CE:GetTargetInfo(unit)
 	if unitInfo.mobType() > 1 then
 		-- Do the level adjustment here, while we're checking
 		-- unit type.
-		if unitInfo.mobType == 3 or unitInfo.mobType == 4 then
+		if unitInfo.mobType() == 3 or unitInfo.mobType() == 4 then
 			unitInfo.level.adj = unitInfo.level.raw + 3
 		end
 
