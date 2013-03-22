@@ -215,7 +215,7 @@ function CE:GetTargetInfo(unit)
 	
 	local playerInfo = {
 		level = UnitLevel('player'),
-		instanceType = select(2, GetInstanceInfo('player'))
+		instanceType = select(2, GetInstanceInfo())
 	}
 
 	-- 1)
@@ -230,10 +230,10 @@ function CE:GetTargetInfo(unit)
 		if playerInfo.instanceType == "party" 
 			or playerInfo.instanceType == "raid" then
 			-- Quick check to negate elites
-			if unitInfo.mobType ~= 3 then
-				isBoss = true
-			else
+			if unitInfo.mobType() == 3 then
 				isBoss = false
+			else
+				isBoss = true
 			end
 		else
 			-- Outside instances
