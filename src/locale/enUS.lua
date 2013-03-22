@@ -17,6 +17,9 @@ local addonName = ...
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 if L then
+
+	--@localization(locale="enUS", format="lua_additive_table", same-key-is-true=true)@
+	--@do-not-package@--
 	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
 	L["ConfigLoadError"] = "Your configuration couldn't be loaded. Is this the first time you're running the addon? Using defaults."
 	L["ConfigOutOfDate"] = "Your configuration is outdated, loading the default config."
@@ -65,4 +68,5 @@ if L then
 	L["Desc_AddBossList"] = "Add this to the boss list."
 	L["Err_NoBossListNameTarget"] = "You need to specify a unit name to check for, or you didn't have a target."
 	L["Err_NoBossListSong"] = "You need to put in a song to play."
+	--@end-do-not-package@
 end
