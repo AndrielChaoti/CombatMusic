@@ -111,6 +111,11 @@ end
 ----------------
 
 E.Options.args = {
+	VerHeader = {
+		name = E:GetVersion(),
+		type = "header",
+		order = 0,
+	},
 	Enabled = {
 		name = L["Enabled"],
 		desc = L["Desc_Enabled"],
