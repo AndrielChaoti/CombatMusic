@@ -140,6 +140,7 @@ E.Options.args = {
 	DebugMode = {
 		name = "Debug Mode",
 		type = "toggle",
+		order = -1,
 		set = function(info,val) E._DebugMode = val end,
 		get = function(info) return E._DebugMode end,
 	},

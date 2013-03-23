@@ -77,6 +77,7 @@ end
 
 --- Update the TargetInfo table
 function CE:UpdateTargetInfoTable(unit)
+	printFuncName("UpdateTargetInfo", unit)
 	if not unit then return end
 	-- This check only applies if the player is in combat
 	-- or not fading out...
@@ -85,8 +86,6 @@ function CE:UpdateTargetInfoTable(unit)
 
 	-- No checks if we're already using a song on the BossList
 	if self.EncounterLevel == DIFFICULTY_BOSSLIST then return true end
-
-	local isBossList = E:CheckBossList()
 
 	-- Check the bosslist first.
 	if E:CheckBossList(unit) and self.EncounterLevel ~= DIFFICULTY_BOSSLIST then 
@@ -105,6 +104,8 @@ end
 function CE:UNIT_TARGET(event, ...)
 	printFuncName("UNIT_TARGET", ...)
 	local unit = ...
+
+	if not self.InCombat then return end
 
 	-- Reset our target check timer
 	self._TargetCheckTime = debugprofilestop()
@@ -331,7 +332,11 @@ function CE:ParseTargetInfo()
 	end
 
 	-- Play the music
-	return E:PlayMusicFile(musicType)
+	if musicType then
+		return E:PlayMusicFile(musicType)
+	elseif not musicType and self.isPlayingMusic then
+		return true
+	end
 end
 
 local function ResetCombatState()
@@ -341,6 +346,7 @@ local function ResetCombatState()
 	CE.InCombat = nil
 	CE.EncounterLevel = nil
 	CE.FadeTimer = nil
+	CE.isPlayingMusic = nil
 	CE:CancelAllTimers()
 
 	-- Wipe tables
