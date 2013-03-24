@@ -292,9 +292,9 @@ end
 function CE:Recheck(k)
 	self._TargetCheckTime = debugprofilestop()
 	-- figure out if the timer needs to be cancelled
-	if select(2, self:GetTargetInfo(k)) == true then
-		self.RecheckTimer[k] = nil
+	if UnitAffectingCombat(k) then
 		self:CancelTimer(self.RecheckTimer[k])
+		self.RecheckTimer[k] = nil
 	end
 	self:UpdateTargetInfoTable(k)
 	self:ParseTargetInfo()
