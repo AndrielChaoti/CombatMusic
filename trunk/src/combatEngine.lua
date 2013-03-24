@@ -330,7 +330,7 @@ function CE:ParseTargetInfo()
 				musicType = "Battles"
 				self.EncounterLevel = DIFFICULTY_NORMAL
 			end
-
+			if not self.RecheckTimer then self.RecheckTimer = {} end
 			-- Fix a serious bug that can lock up the gameclient by stacking timers endlessly.
 			if not self.RecheckTimer[k] then 
 				self.RecheckTimer[k] = self:ScheduleRepeatingTimer("Recheck", 0.5, k)
