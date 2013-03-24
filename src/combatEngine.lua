@@ -44,6 +44,7 @@ local DIFFICULTY_BOSSLIST = 3
 --- Handles the events for entering combat
 function CE:EnterCombat(event, ...)
 	printFuncName("EnterCombat", event, ...)
+	if not E:GetSetting("Enabled") then return end
 
 	-- for debugging, mark the time we started target checking
 	self._TargetCheckTime = debugprofilestop()
@@ -105,6 +106,7 @@ function CE:UNIT_TARGET(event, ...)
 	printFuncName("UNIT_TARGET", ...)
 	local unit = ...
 
+	if not E:GetSetting("Enabled") then return end
 	if not self.InCombat then return end
 
 	-- Reset our target check timer
@@ -286,6 +288,18 @@ function CE:GetTargetInfo(unit)
 	return (isBoss or false), InCombat()
 end
 
+-- Schedule a recheck
+function CE:Recheck(k)
+	self._TargetCheckTime = debugprofilestop()
+	-- figure out if the timer needs to be cancelled
+	if select(2, self:GetTargetInfo(k)) == true then
+		self.RecheckTimer[k] = nil
+		self:CancelTimer(self.RecheckTimer[k])
+	end
+	self:UpdateTargetInfoTable(k)
+	self:ParseTargetInfo()
+end
+
 
 --- Iterates through the module's target information table and plays music appropriately
 function CE:ParseTargetInfo()
@@ -316,13 +330,11 @@ function CE:ParseTargetInfo()
 				musicType = "Battles"
 				self.EncounterLevel = DIFFICULTY_NORMAL
 			end
-			-- Schedule a recheck
-			local function recheck()
-				self._TargetCheckTime = debugprofilestop()
-				self:UpdateTargetInfoTable(k)
-				return self:ParseTargetInfo()
+
+			-- Fix a serious bug that can lock up the gameclient by stacking timers endlessly.
+			if not self.RecheckTimer[k] then 
+				self.RecheckTimer[k] = self:ScheduleRepeatingTimer("Recheck", 0.5, k)
 			end
-			self:ScheduleTimer(recheck, 0.5)
 		else
 			if self.EncounterLevel < DIFFICULTY_NORMAL then
 				musicType = "Battles"
@@ -358,6 +370,10 @@ local function ResetCombatState()
 		wipe(CE.FadeVars)
 	end
 
+	if CE.RecheckTimer then
+		wipe(CE.RecheckTimer)
+	end
+
 	-- Reset volume after a second
 	CE.FadeTimer = CE:ScheduleTimer(function() E:SetVolumeLevel(true); CE.FadeTimer = nil end, 1)
 end
@@ -372,6 +388,7 @@ function CE:LeaveCombat(event, forceStop)
 
 	-- Need to be in combat to leave it!
 	if not self.InCombat then return end
+	if not E:GetSetting("Enabled") then return end
 
 	-- Register a message to mark when fadeout is complete
 	self:RegisterMessage("CombatMusic_FadeComplete")
@@ -393,6 +410,8 @@ end
 
 -- Handles event PLAYER_DEAD, as it requires a slightly different touch
 function CE:GameOver()
+	printFuncName("GameOver")
+	if not E:GetSetting("Enabled") then return end
 	self:LeaveCombat("PLAYER_DEAD", true)
 	local GameOverWhen = E:GetSetting("General", "CombatEngine", "GameOverEnable")
 	if GameOverWhen == "ALL" then
@@ -492,6 +511,8 @@ end
 
 
 function CE:LevelUp()
+	printFuncName("LevelUp")
+	if not E:GetSetting("Enabled") then return end
 	if E:GetSetting("General", "CombatEngine", "DingEnabled") then
 		if E:GetSetting("General", "CombatEngine", "UseDing") then
 			self:PlayFanfare("DING")

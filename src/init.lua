@@ -106,8 +106,12 @@ function AddOn:OnInitialize()
 	SlashCmdList["COMBATMUSIC"] = function(...)
 		self:ToggleOptions()
 	end
+	-- if the addon is disabled, DON'T LOAD IT
 	if not self:GetSetting("Enabled") then
 		self:SetEnabledState(false)
+		for _, module in self:IterateModules() do
+			module:SetEnabledState(false)
+		end
 	end
 end
 
