@@ -153,6 +153,7 @@ E.Options.args = {
 	General = {
 		name = "General",
 		type = "group",
+		order = 0,
 		get = function(info) return E:GetSetting("General", info[#info]) end,
 		set = function(info, val) CombatMusicDB.General[info[#info]] = val end,
 		args = {
