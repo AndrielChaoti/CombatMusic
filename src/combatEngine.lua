@@ -413,9 +413,6 @@ function CE:GameOver()
 	printFuncName("GameOver")
 	if not E:GetSetting("Enabled") then return end
 	self:LeaveCombat("PLAYER_DEAD", true)
-	
-	-- don't play the sound again if we're already dead...
-	if UnitIsDead("player") then return end
 
 	-- Get the game over setting
 	local GameOverWhen = E:GetSetting("General", "CombatEngine", "GameOverEnable")
