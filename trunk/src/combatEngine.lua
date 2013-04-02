@@ -413,7 +413,14 @@ function CE:GameOver()
 	printFuncName("GameOver")
 	if not E:GetSetting("Enabled") then return end
 	self:LeaveCombat("PLAYER_DEAD", true)
+	
+	-- don't play the sound again if we're already dead...
+	if UnitIsDead("player") then return end
+
+	-- Get the game over setting
 	local GameOverWhen = E:GetSetting("General", "CombatEngine", "GameOverEnable")
+
+	-- play the fanfare :D
 	if GameOverWhen == "ALL" then
 		self:PlayFanfare("GameOver")
 	elseif GameOverWhen == "INCOMBAT" and self.InCombat then
@@ -513,12 +520,10 @@ end
 function CE:LevelUp()
 	printFuncName("LevelUp")
 	if not E:GetSetting("Enabled") then return end
-	if E:GetSetting("General", "CombatEngine", "DingEnabled") then
-		if E:GetSetting("General", "CombatEngine", "UseDing") then
-			self:PlayFanfare("DING")
-		else
-			self:PlayFanfare("Victory")
-		end
+	if E:GetSetting("General", "CombatEngine", "UseDing") then
+		self:PlayFanfare("DING")
+	else
+		self:PlayFanfare("Victory")
 	end
 end
 
@@ -592,6 +597,7 @@ local opt = {
 			name = L["GameOverEnable"],
 			desc = L["Desc_GameOverEnable"],
 			type = "select",
+			style = "dropdown",
 			order = 310,
 			values = {
 				["ALL"] = ALL,
