@@ -46,7 +46,11 @@ AddOn.DF = {
 		["Fix5.3Bug"] = true,
 		SongList = {}
 	},
-	Modules = {},
+	Modules = {
+		-- Only put this one here, because we don't give an
+		-- option to disable it ingame.
+		CombatEngine = true,
+	},
 }
 
 
