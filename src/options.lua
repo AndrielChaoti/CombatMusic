@@ -175,8 +175,8 @@ E.Options.args = {
 				order = 200,
 			},
 			["Fix5.3Bug"] = {
-				name = L["Fix5.3Bug"]
-				desc = L["Fix5.3Bug_Desc"]
+				name = L["Fix5.3Bug"],
+				desc = L["Fix5.3Bug_Desc"],
 				type = "toggle",
 				width = "full",
 				order = 201,
