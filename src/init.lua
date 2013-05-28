@@ -43,7 +43,7 @@ AddOn.DF = {
 	General = {
 		Volume = 0.85,
 		UseMaster = true,
-		["Fix5.3Bug"] = true,
+		--["Fix5.3Bug"] = true,
 		SongList = {}
 	},
 	Modules = {
