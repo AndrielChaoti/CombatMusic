@@ -255,20 +255,21 @@ function E:SetVolumeLevel(restore)
 		SetCVar("Sound_MusicVolume", self:GetSetting("General", "Volume"))
 		SetCVar("Sound_EnableMusic", "1")
 
-		-- 5.3 HACK FIX!
+		--[[ 5.3 HACK FIX!
 		if self:GetSetting("General", "Fix5.3Bug") then
 			-- Disabling SFX will allow music to play normally!
 			SetCVar("Sound_EnableSFX", "0")
-		end
+		end]]
 	else
 		-- Set the out of combat ones.
 		SetCVar("Sound_MusicVolume", self.lastMusicVolume)
+		
 		-- We don't -restore- EnableMusic, because it's always supposed to be on.
 
-		-- 5.3 HACK FIX!
+		--[[5.3 HACK FIX!
 		if self:GetSetting("General", "Fix5.3Bug") then
 			SetCVar("Sound_EnableSFX", self.lastSoundEnabled)
-		end
+		end]]
 		
 	end
 end
@@ -278,8 +279,8 @@ function E:SaveLastVolumeState()
 	printFuncName("SaveLastVolumeState")
 	self.lastMusicVolume = GetCVar("Sound_MusicVolume")
 
-	-- 5.3 HACK FIX!
+	--[[ 5.3 HACK FIX!
 	if self:GetSetting("General", "Fix5.3Bug") then
 		self.lastSoundEnabled = GetCVar("Sound_EnableSFX")
-	end
+	end]]
 end
