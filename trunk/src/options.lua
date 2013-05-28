@@ -174,13 +174,13 @@ E.Options.args = {
 				isPercent = true,
 				order = 200,
 			},
-			["Fix5.3Bug"] = {
-				name = L["Fix5.3Bug"],
-				desc = L["Fix5.3Bug_Desc"],
-				type = "toggle",
-				width = "full",
-				order = 201,
-			},
+			-- ["Fix5.3Bug"] = {
+			-- 	name = L["Fix5.3Bug"],
+			-- 	desc = L["Fix5.3Bug_Desc"],
+			-- 	type = "toggle",
+			-- 	width = "full",
+			-- 	order = 201,
+			-- },
 			SongList = {
 				name = L["NumSongs"],
 				--desc = L["Desc_NumSongs"],
