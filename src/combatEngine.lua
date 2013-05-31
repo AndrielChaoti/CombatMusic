@@ -64,9 +64,11 @@ function CE:EnterCombat(event, ...)
 	self.InCombat = true
 	self.isPlayingMusic = self:BuildTargetInfo()
 	
-	-- Save the last volume state and then set our InCombat volume
+	-- Save the last volume state...
+	E:SaveLastVolumeState()
+
 	if self.isPlayingMusic then
-		E:SaveLastVolumeState()
+		-- Don't change the volume if we're not playing music
 		E:SetVolumeLevel()
 	end
 
