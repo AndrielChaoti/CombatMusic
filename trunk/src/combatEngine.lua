@@ -498,6 +498,12 @@ function CE:CombatMusic_FadeComplete()
 	-- Unregister the message
 	self:UnregisterMessage("CombatMusic_FadeComplete")
 
+	-- CombatMusic Challenge Mode checks:
+	if E:GetSetting("General", "InChallengeMode") and self.ChallengeModeRunning then
+		-- Show the little popup thingy that says the challenge is complete.
+		-- TODO: ChallengeMode Complete code.
+	end
+
 	-- If this was a boss fight:
 	local playWhen = E:GetSetting("General", "CombatEngine", "FanfareEnable")
 	if playWhen == "BOSSONLY" then
@@ -541,6 +547,42 @@ function CE:PlayFanfare(fanfare)
 	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".mp3"))
 end
 
+
+-- Starts the CombatMusic Challenge, and markes some things.
+function CE:StartCombatChallenge()
+	printFuncName("StartCombatChallenge")
+
+	-- Make sure the challenge isn't already running:
+	if not self.ChallengeModeRunning and E:GetSetting("General", "InChallengeMode") then
+		-- Mark the start time of the challenge
+		self.ChallengeStartTime = debugprofilestop()
+		self.ChallengeModeRunning = true
+
+		-- Notify the user that the challenge has started.
+		-- Probably going to abuse one of those dungeon popups because they look cool >.>
+	end
+end 
+
+
+--- Ends the current CombatMusic Challenge, and reports the time to the user!
+function CE:EndCombatChallenge()
+	printFuncName("EndCombatChallenge")
+
+	if self.ChallengeModeRunning then
+		-- Challenge mode will need to be running to finish the entire thing
+		local completeTime = debugProfileStop() - self.ChallengeStartTime
+		self.ChallengeModeRunning = false
+		-- Show a fancy popup to let the user know their time.
+	end
+	
+end
+
+
+--- Gets current Challenge Mode state
+--@return Integer representing the current challengemode state. If 1, returns start time, if 2 returns start and end time, if nil, does not return any extra arguments.
+function CE:GetChallengeModeState()
+	
+end
 
 
 -----------------

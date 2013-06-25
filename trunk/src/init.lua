@@ -44,7 +44,8 @@ AddOn.DF = {
 		Volume = 0.85,
 		UseMaster = true,
 		--["Fix5.3Bug"] = true,
-		SongList = {}
+		SongList = {},
+		InChallengeMode = false,
 	},
 	Modules = {
 		-- Only put this one here, because we don't give an
@@ -109,7 +110,7 @@ function AddOn:OnInitialize()
 	self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
 
 	SlashCmdList["COMBATMUSIC"] = function(...)
-		self:ToggleOptions()
+		self:HandleChatCommand(...)
 	end
 	-- if the addon is disabled, DON'T LOAD IT
 	if not self:GetSetting("Enabled") then
