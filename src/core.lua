@@ -21,7 +21,7 @@
 local E, L, DF = unpack(select(2, ...))
 
 local tconcat, error, pairs = table.concat, error, pairs
-local tostringall, strfind = tostringall, strfind
+local tostringall, strfind, strsplit, strlower = tostringall, strfind, strsplit, strlower
 local select, type, random = select, type, random
 
 local printFuncName = E.printFuncName
@@ -124,6 +124,23 @@ end
 --	Core code
 ------------
 -- Code that needs to be built into the engine
+
+
+--- Handles chat command processing.
+function E:HandleChatCommand(args)
+	local args = {}
+	local args = {strsplit(" ", strlower(args))};
+	if args[1] == "challenge" then
+		-- Change our Challenge Mode setting
+		if self:GetSetting("General", "InChallengeMode") and not (challengerunningcheck) then
+			CombatMusicDB.General.InChallengeMode = false
+			self:PrintMessage(L["Challenge Mode disabled"])
+		else
+			CombatMusicDB.General.InChallengeMode = true
+			self:PrintMessage(L["Challenge mode enabled"])
+		end
+	end
+end
 
 --- The list of registered song types
 E.RegisteredSongs = {}

@@ -20,6 +20,8 @@ if L then
 
 	--@localization(locale="enUS", format="lua_additive_table", same-key-is-true=true)@
 	--@do-not-package@--
+	L["Chat_ChallengeModeOn"] = "ChallengeMode has been enabled. The next time you enter combat in an instance, the timer starts! §6ry to keep the same song playing as long as you can!"
+	L["Chat_ChallengeModeOff"] = "ChallengeMode has been disabled."
 	L["AddBossList"] = "Add"
 	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
 	L["BossList"] = "BossList"
