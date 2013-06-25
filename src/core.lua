@@ -134,10 +134,10 @@ function E:HandleChatCommand(args)
 		-- Change our Challenge Mode setting
 		if self:GetSetting("General", "InChallengeMode") and not (challengerunningcheck) then
 			CombatMusicDB.General.InChallengeMode = false
-			self:PrintMessage(L["Challenge Mode disabled"])
+			self:PrintMessage(L["Chat_ChallengeModeDisabled"])
 		else
 			CombatMusicDB.General.InChallengeMode = true
-			self:PrintMessage(L["Challenge mode enabled"])
+			self:PrintMessage(L["Chat_ChallengeModeEnabled"])
 		end
 	end
 end
