@@ -45,7 +45,7 @@ AddOn.DF = {
 		UseMaster = true,
 		--["Fix5.3Bug"] = true,
 		SongList = {},
-		InChallengeMode = false,
+		InCombatChallenge = false,
 	},
 	Modules = {
 		-- Only put this one here, because we don't give an
