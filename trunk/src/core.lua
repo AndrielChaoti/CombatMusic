@@ -131,14 +131,22 @@ function E:HandleChatCommand(args)
 	local args = {}
 	local args = {strsplit(" ", strlower(args))};
 	if args[1] == "challenge" then
-		-- Change our Challenge Mode setting
-		if self:GetSetting("General", "InChallengeMode") and not (challengerunningcheck) then
+		-- Get the current challenge mode state:
+		local isEnabled, isRunning, isComplete = self:GetModule("CombatEngine"):GetChallengeModeState()
+
+		-- Make sure challenge mode isn't running before changing states!
+		if isEnabled and not isRunning then
 			CombatMusicDB.General.InChallengeMode = false
 			self:PrintMessage(L["Chat_ChallengeModeDisabled"])
-		else
+		elseif not isEnabled then
 			CombatMusicDB.General.InChallengeMode = true
 			self:PrintMessage(L["Chat_ChallengeModeEnabled"])
+			self:RegisterMessage("COMBATMUSIC_COMBATENTERED", self:GetModule("CombatEngine").StartCombatChallenge)
+		else
+			self:PrintMessage(L["Chat_Can'tDoThat"])
 		end
+	else
+		self:ToggleOptions()
 	end
 end
 

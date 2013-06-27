@@ -22,6 +22,10 @@ if L then
 	--@do-not-package@--
 	L["Chat_ChallengeModeOn"] = "ChallengeMode has been enabled. The next time you enter combat in an instance, the timer starts! §6ry to keep the same song playing as long as you can!"
 	L["Chat_ChallengeModeOff"] = "ChallengeMode has been disabled."
+	L["Chat_ChallengeModeReset"] = "Challenge Mode has been reset, you can try again!"
+	L["Chat_ChallengeModeCompleted"] = "Challenge Mode Completed! The music kept playing for §6%0.3f seconds§r!"
+	L["Chat_ChallengeModeStarted"] = "Challenge Mode Started! Good luck!"
+	L["Chat_Can'tDoThat"] = "Now's not the time to use that!"
 	L["AddBossList"] = "Add"
 	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
 	L["BossList"] = "BossList"
