@@ -20,7 +20,7 @@ if L then
 
 	--@localization(locale="enUS", format="lua_additive_table", same-key-is-true=true)@
 	--@do-not-package@--
-	L["Chat_ChallengeModeOn"] = "ChallengeMode has been enabled. The next time you enter combat in an instance, the timer starts! §6ry to keep the same song playing as long as you can!"
+	L["Chat_ChallengeModeOn"] = "ChallengeMode has been enabled. The next time you enter combat in an instance, the timer starts! §6Try to keep the same song playing as long as you can!"
 	L["Chat_ChallengeModeOff"] = "ChallengeMode has been disabled."
 	L["Chat_ChallengeModeReset"] = "Challenge Mode has been reset, you can try again!"
 	L["Chat_ChallengeModeCompleted"] = "Challenge Mode Completed! The music kept playing for §6%0.3f seconds§r!"
