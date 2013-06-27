@@ -497,13 +497,7 @@ end
 function CE:COMBATMUSIC_FADECOMPLETE()
 	printFuncName("COMBATMUSIC_FADECOMPLETE")
 	-- Unregister the message
-	self:UnregisterMessage("COMBATMUSIC_FADECOMPLETE")
-
-	-- CombatMusic Challenge Mode checks:
-	if E:GetSetting("General", "InChallengeMode") and self.ChallengeModeRunning then
-		-- Show the little popup thingy that says the challenge is complete.
-		-- TODO: ChallengeMode Complete code.
-	end
+	-- self:UnregisterMessage("COMBATMUSIC_FADECOMPLETE")
 
 	-- If this was a boss fight:
 	local playWhen = E:GetSetting("General", "CombatEngine", "FanfareEnable")
@@ -555,20 +549,25 @@ function CE:StartCombatChallenge()
 	-- We'll only make this check if debug mode is off
 	if not E._DebugMode and (GetInstanceInfo("player") ~= "party" or GetInstanceInfo("player") ~= "raid") then return end
 
-	local isEnabled, isRunning = self:GetChallengeModeState()
+	local isEnabled, isRunning = CE:GetChallengeModeState()
 	-- Make sure the challenge isn't already running:
 	if isEnabled and not isRunning then
 		-- Mark the start time of the challenge, clear the finish time
 		self.ChallengeStartTime = debugprofilestop()
 		self.ChallengeModeRunning = true
 		self.ChallengeFinishTime = nil
+		E:UnregisterMessage("COMBATMUSIC_COMBATENTERED")
+
+		-- Set the user's Fadeout timer to 10 seconds:
+		self.OldFadeOut = E:GetSetting("General", "CombatEngine", "FadeTimer")
+		CombatMusicDB.General.CombatEngine.FadeTimer = 10
 
 		-- Notify the user that the challenge has started.
 		-- Some sort of shiny popup maybe goes here.
 		E:PrintMessage(L["Chat_ChallengeModeStarted"])
 		
 		-- Register our fade listener to call EndCombatChallenge
-		E:RegisterMessage("COMBATMUSIC_FADECOMPLETE", "EndCombatChallenge")
+		E:RegisterMessage("COMBATMUSIC_FADECOMPLETE", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
 	end
 end 
 
@@ -582,13 +581,15 @@ function CE:EndCombatChallenge()
 	if isEnabled and isRunning then
 		-- Mark the finish time, this marks challenge modes as completed.
 		self.ChallengeFinishTime = debugprofilestop()
-		self.ChallengModeRunning = false
+		self.ChallengeModeRunning = false
+		CombatMusicDB.General.CombatEngine.FadeTimer = self.OldFadeOut or DF.General.CombatEngine.FadeTimer
 
 		-- Disable the challenge mode option so it doesn't start again.
-		CombatMusicDB.General.InChallengeMode = false
+		CombatMusicDB.General.InCombatChallenge = false
 
 		-- Flash a fancy popup here
 		E:PrintMessage(format(L["Chat_ChallengeModeCompleted"], (self.ChallengeFinishTime - startTime) / 1000))
+		E:UnregisterMessage("COMBATMUSIC_FADECOMPLETE")
 	end
 end
 
@@ -599,7 +600,7 @@ function CE:ResetCombatChallenge()
 	self.ChallengeModeRunning = nil
 	self.ChallengeStartTime = nil
 	self.ChallengeFinishTime = nil
-
+	
 	-- Let the user know that the challenge is ready to start again.
 	E:PrintMessage(L["Chat_ChallengeModeReset"])
 end
@@ -657,6 +658,10 @@ local opt = {
 		FadeTimer = {
 			name = L["FadeTimer"],
 			desc = L["Desc_FadeTimer"],
+			disabled = function()
+				local _, isRunning = CE:GetChallengeModeState()
+				return isRunning
+			end,
 			type = "range",
 			min = 0,
 			max = 30,
