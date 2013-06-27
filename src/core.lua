@@ -128,8 +128,7 @@ end
 
 --- Handles chat command processing.
 function E:HandleChatCommand(args)
-	local args = {}
-	local args = {strsplit(" ", strlower(args))};
+	args = {strsplit(" ", strlower(args))};
 	if args[1] == "challenge" then
 		-- Get the current challenge mode state:
 		local isEnabled, isRunning, isComplete = self:GetModule("CombatEngine"):GetChallengeModeState()
