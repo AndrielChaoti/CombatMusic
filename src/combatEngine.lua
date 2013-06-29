@@ -548,7 +548,9 @@ function CE:StartCombatChallenge()
 	printFuncName("StartCombatChallenge")
 	-- We'll only make this check if debug mode is off
 	local instanceType = select(2,GetInstanceInfo())
-	if not E._DebugMode and (instanceType ~= "party" or instanceType ~= "raid") then return end
+	if not E._DebugMode then
+		if (instanceType ~= "party" and instanceType ~= "raid") then return end
+	end
 
 	local isEnabled, isRunning = CE:GetChallengeModeState()
 	-- Make sure the challenge isn't already running:
