@@ -141,7 +141,7 @@ function E:HandleChatCommand(args)
 			CombatMusicDB.General.InCombatChallenge = true
 			self:PrintMessage(L["Chat_ChallengeModeOn"])
 			self:GetModule("CombatEngine"):ResetCombatChallenge()
-			self:RegisterMessage("COMBATMUSIC_COMBATENTERED", function() return self:GetModule("CombatEngine"):StartCombatChallenge() end)
+			self:RegisterMessage("COMBATMUSIC_ENTER_COMBAT", function() return self:GetModule("CombatEngine"):StartCombatChallenge() end)
 		else
 			self:PrintErr(L["Chat_Can'tDoThat"])
 		end
