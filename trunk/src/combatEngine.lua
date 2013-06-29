@@ -573,7 +573,7 @@ function CE:StartCombatChallenge()
 		E:RegisterMessage("COMBATMUSIC_FADE_COMPLETED", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
 
 		-- Fire an event just so we can make plugins for this easier. (I WANT TO MAKE A TIMER PLUGIN FOR THIS!)
-		CM:SendMessage("COMBATMUSIC_CHALLENGE_MODE_STARTED")
+		self:SendMessage("COMBATMUSIC_CHALLENGE_MODE_STARTED")
 	end
 end 
 
@@ -596,7 +596,7 @@ function CE:EndCombatChallenge()
 		-- Flash a fancy popup here
 		E:PrintMessage(format(L["Chat_ChallengeModeCompleted"], (self.ChallengeFinishTime - startTime) / 1000))
 		E:UnregisterMessage("COMBATMUSIC_FADE_COMPLETED")
-		CM:SendMessage("COMBATMUSIC_CHALLENGE_MODE_FINISHED")
+		self:SendMessage("COMBATMUSIC_CHALLENGE_MODE_FINISHED")
 	end
 end
 
