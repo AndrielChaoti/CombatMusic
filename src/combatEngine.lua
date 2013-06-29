@@ -75,7 +75,7 @@ function CE:EnterCombat(event, ...)
 	-- This is the very end of the checking cylce.
 	-- Where music is finally played, so figure out how much time it took
 	E:PrintDebug(format("  ==§dTime taken: %fms",  debugprofilestop() - self._TargetCheckTime))
-	E:SendMessage("COMBATMUSIC_COMBATENTERED")
+	E:SendMessage("COMBATMUSIC_ENTER_COMBAT")
 end
 
 
@@ -394,7 +394,7 @@ function CE:LeaveCombat(event, forceStop)
 	if not E:GetSetting("Enabled") then return end
 
 	-- Register a message to mark when fadeout is complete
-	self:RegisterMessage("COMBATMUSIC_FADECOMPLETE")
+	self:RegisterMessage("COMBATMUSIC_FADE_COMPLETED")
 	-- Stop all the timers, in case we've got any rechecks going
 	self:CancelAllTimers()
 
@@ -402,7 +402,7 @@ function CE:LeaveCombat(event, forceStop)
 	if forceStop then
 		-- Force it to not be a boss fight first, so we don't get a fanfare.
 		self.EncounterLevel = DIFFICULTY_NONE
-		self:SendMessage("COMBATMUSIC_FADECOMPLETE")
+		self:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	else
 		-- Begin fadeout "magic"
@@ -458,7 +458,7 @@ local function FadeStepCallback()
 		SetCVar("Sound_MusicVolume", CE.FadeVars.CurrentVolume)
 		CE:CancelTimer(CE.FadeTimer)
 		StopMusic()
-		CE:SendMessage("COMBATMUSIC_FADECOMPLETE")
+		CE:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	end
 
@@ -482,7 +482,7 @@ function CE:BeginMusicFade()
 	-- The user's disabled fading...
 	-- or music isn't playing
 	if (not self.isPlayingMusic) or self.fadeTime <= 0 then 
-		self:SendMessage("COMBATMUSIC_FADECOMPLETE")
+		self:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	end
 	
@@ -494,10 +494,10 @@ end
 
 
 ---Handles the message for when fadeouts are finished.
-function CE:COMBATMUSIC_FADECOMPLETE()
-	printFuncName("COMBATMUSIC_FADECOMPLETE")
+function CE:COMBATMUSIC_FADE_COMPLETED()
+	printFuncName("COMBATMUSIC_FADE_COMPLETED")
 	-- Unregister the message
-	-- self:UnregisterMessage("COMBATMUSIC_FADECOMPLETE")
+	-- self:UnregisterMessage("COMBATMUSIC_FADE_COMPLETED")
 
 	-- If this was a boss fight:
 	local playWhen = E:GetSetting("General", "CombatEngine", "FanfareEnable")
@@ -559,7 +559,7 @@ function CE:StartCombatChallenge()
 		self.ChallengeStartTime = debugprofilestop()
 		self.ChallengeModeRunning = true
 		self.ChallengeFinishTime = nil
-		E:UnregisterMessage("COMBATMUSIC_COMBATENTERED")
+		E:UnregisterMessage("COMBATMUSIC_ENTER_COMBAT")
 
 		-- Set the user's Fadeout timer to 10 seconds:
 		self.OldFadeOut = E:GetSetting("General", "CombatEngine", "FadeTimer")
@@ -570,7 +570,10 @@ function CE:StartCombatChallenge()
 		E:PrintMessage(L["Chat_ChallengeModeStarted"])
 		
 		-- Register our fade listener to call EndCombatChallenge
-		E:RegisterMessage("COMBATMUSIC_FADECOMPLETE", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
+		E:RegisterMessage("COMBATMUSIC_FADE_COMPLETED", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
+
+		-- Fire an event just so we can make plugins for this easier. (I WANT TO MAKE A TIMER PLUGIN FOR THIS!)
+		CM:SendMessage("COMBATMUSIC_CHALLENGE_MODE_STARTED")
 	end
 end 
 
@@ -592,7 +595,8 @@ function CE:EndCombatChallenge()
 
 		-- Flash a fancy popup here
 		E:PrintMessage(format(L["Chat_ChallengeModeCompleted"], (self.ChallengeFinishTime - startTime) / 1000))
-		E:UnregisterMessage("COMBATMUSIC_FADECOMPLETE")
+		E:UnregisterMessage("COMBATMUSIC_FADE_COMPLETED")
+		CM:SendMessage("COMBATMUSIC_CHALLENGE_MODE_FINISHED")
 	end
 end
 
