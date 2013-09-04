@@ -15,7 +15,7 @@ externals:
       tag: latest
    libs/!LibVan32:
       url: svn://svn.curseforge.net/wow/libvan32/mainline/trunk
-      tag: latest
+      tag: release_v1.6.6
    libs/CallbackHandler-1.0:
       url: svn://svn.wowace.com/wow/ace3/mainline/trunk/CallbackHandler-1.0
       tag: latest
