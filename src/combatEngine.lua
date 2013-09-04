@@ -228,7 +228,7 @@ function CE:GetTargetInfo(unit)
 	}
 	
 	local playerInfo = {
-		level = UnitLevel('player'),
+		level = E.dungeonLevel or UnitLevel('player'),
 		instanceType = select(2, GetInstanceInfo())
 	}
 
