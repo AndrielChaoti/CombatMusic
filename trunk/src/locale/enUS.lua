@@ -26,6 +26,7 @@ if L then
 	L["Chat_ChallengeModeCompleted"] = "Challenge Mode Completed! The music kept playing for §6%0.3f seconds§r!"
 	L["Chat_ChallengeModeStarted"] = "Challenge Mode Started! Good luck!"
 	L["Chat_Can'tDoThat"] = "Now's not the time to use that!"
+	L["Chat_NeedsNumber"] = "That command requires a number between 1 and " .. GetMaxPlayerLevel() .. "!"
 	L["AddBossList"] = "Add"
 	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
 	L["BossList"] = "BossList"
