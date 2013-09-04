@@ -27,6 +27,8 @@ if L then
 	L["Chat_ChallengeModeStarted"] = "Challenge Mode Started! Good luck!"
 	L["Chat_Can'tDoThat"] = "Now's not the time to use that!"
 	L["Chat_NeedsNumber"] = "That command requires a number between 1 and " .. GetMaxPlayerLevel() .. "!"
+	L["Chat_LevelSet"] = "The dungeon level was set to §6%d§r."
+	L["Chat_LevelReset"] = "The dungeon level was reset."
 	L["AddBossList"] = "Add"
 	L["AddonLoaded"] = "%s §6%s§r loaded successfully. Type §6/combatmusic§r to access options"
 	L["BossList"] = "BossList"
