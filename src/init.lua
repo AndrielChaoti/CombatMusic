@@ -106,7 +106,12 @@ function AddOn:OnInitialize()
 	SLASH_COMBATMUSIC1 = "/combatmusic"
 	SLASH_COMBATMUSIC2 = "/cm"
 
-	-- Build the bosslist buttons:	
+	-- Initialize the Boss list
+	if type(CombatMusicBossList) ~= "table" then
+		CombatMusicBossList = {}
+	end
+
+	-- Build the bosslist buttons:
 	self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
 
 	SlashCmdList["COMBATMUSIC"] = function(...)
