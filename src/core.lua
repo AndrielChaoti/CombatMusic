@@ -157,9 +157,11 @@ function E:HandleChatCommand(args)
 		if num then
 			if num < 1 or num > GetMaxPlayerLevel() then
 				self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
+				return
 			end
 		else
 			self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
+			return
 		end
 
  		self.dungeonLevel = num
