@@ -149,17 +149,21 @@ function E:HandleChatCommand(args)
 		-- We can use this to override and set the 'music level' for dungeons
 		if args[2] == "reset" then
 			self.dungeonLevel = nil
+			self:PrintMessage(L["Chat_LevelReset"])
+			return
 		end
 		
 		local num = tonumber(args[2])
 		if num then
 			if num < 1 or num > GetMaxPlayerLevel() then
-				self:PrintErr(L["Chat_NeedsNumber"])
+				self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
+			end
 		else
-			self:PrintErr(L["Chat_NeedsNumber"])
+			self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
 		end
 
- 		self.dungeonLevel = tonumber(args[2])
+ 		self.dungeonLevel = num
+ 		self:PrintMessage(format(L["Chat_LevelSet"], num))
 	else
 		self:ToggleOptions()
 	end
