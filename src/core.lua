@@ -20,9 +20,10 @@
 --Import Engine, Locale, Defaults.
 local E, L, DF = unpack(select(2, ...))
 
-local tconcat, error, pairs = table.concat, error, pairs
+local tconcat, error, pairs, format = table.concat, error, pairs, format
 local tostringall, strfind, strsplit, strlower = tostringall, strfind, strsplit, strlower
-local select, type, random = select, type, random
+local select, type, random, tonumber = select, type, random, tonumber
+local GetMaxPlayerLevel = GetMaxPlayerLevel
 
 local printFuncName = E.printFuncName
 
@@ -152,20 +153,17 @@ function E:HandleChatCommand(args)
 			self:PrintMessage(L["Chat_LevelReset"])
 			return
 		end
-		
-		local num = tonumber(args[2])
-		if num then
-			if num < 1 or num > GetMaxPlayerLevel() then
-				self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
-				return
-			end
-		else
-			self:PrintErr(format(L["Chat_NeedsNumber"]), GetMaxPlayerLevel())
+
+		-- See if they set the numbers right.
+		local setLevel = tonumber(args[2])
+		local maxLevel = GetMaxPlayerLevel()
+		if not setLevel or (setLevel > maxLevel or setLevel < 1) then
+			self:PrintErr(format(L["Chat_NeedsNumber"], GetMaxPlayerLevel()))
 			return
 		end
 
- 		self.dungeonLevel = num
- 		self:PrintMessage(format(L["Chat_LevelSet"], num))
+		self.dungeonLevel = setLevel
+		self:PrintMessage(format(L["Chat_LevelSet"], setLevel))
 	else
 		self:ToggleOptions()
 	end

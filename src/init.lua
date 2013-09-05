@@ -15,11 +15,12 @@
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
 -- GLOBALS: GetCVarBool, SetCVar
+-- GLOBALS: CombatMusicDB, CombatMusicBossList
 
 local AddOnName, Engine = ...
 local canonicalTitle = "CombatMusic"
 
-local format, tconcat, tostringall = format, table.concat, tostringall
+local format, tconcat, tostringall, type = format, table.concat, tostringall, type
 
 
 -----------------------
