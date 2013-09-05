@@ -256,7 +256,7 @@ function CE:GetTargetInfo(unit)
 	end
 
 	-- 2)
-	if UnitIsTrivial(unit) then
+	if (not E.dungeonLevel) and UnitIsTrivial(unit) then
 		return false, InCombat()
 	end
 
