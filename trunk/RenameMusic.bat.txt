@@ -7,12 +7,15 @@
 
 @ECHO OFF
 
-ECHO This batch file will rename all of the songs you've placed inside of your Interface\Music directory to names that CombatMusic will recognize.
+ECHO This batch file will rename all of the songs you've placed inside of your 
+ECHO Interface\Music directory to names that CombatMusic will recognize.
 ECHO.
-ECHO WARNING: Running this batch file multiple times can mess up the names of all of the files.
-ECHO To fix this, just go into each of the folders, press CTRL + A then F2, type in some garbage, and press enter.
-ECHO Afterwards, run this batch file again.
+ECHO WARNING: Running this batch file multiple times can mess up the names of
+ECHO all of the files. To fix this, just go into each of the folders, press 
+ECHO CTRL + A then F2, type in some garbage, and press enter. Afterwards, run 
+ECHO this batch file again.
 ECHO.
+
 PAUSE
 
 :Recheck
@@ -49,7 +52,7 @@ FOR /R %%X IN (*.mp3) DO (
 	IF NOT "%%~dpX"=="!LASTPATH!" (SET /A COUNT=0) ELSE (SET /A COUNT=!COUNT!+1)
 	SET LASTPATH=%%~dpX
 	:: make sure we don't rename songs in the root folder
-	IF NOT "%%~dpX"=="% __CD__%" (
+	IF NOT "%%~dpX"=="%__CD__%" (
 		REN "%%X" song!COUNT!.mp3
 		ECHO Renamed %%X to song!COUNT!.mp3
 	)
