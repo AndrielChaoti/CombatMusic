@@ -14,7 +14,11 @@
 ]]
 
 -- These functions are global API functions used by this module.
--- GLOBALS: SetCVar, CombatMusicDB
+--GLOBALS: debugprofilestop, SetCVar, CombatMusicDB
+--GLOBALS: UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification, UnitAffectingCombat, UnitIsTrivial
+--GLOBALS: GetInstanceInfo, UnitInRaid, UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost
+--GLOBALS: StopMusic, PlaySoundFile, StopSound
+--GLOBALS: CombatMusicBossList
 
 --Import Engine, Locale, Defaults.
 local E, L, DF = unpack(select(2, ...))
@@ -24,13 +28,6 @@ local CE = E:NewModule("CombatEngine", "AceEvent-3.0", "AceTimer-3.0")
 local pairs, select, random = pairs, select, random
 local tostring, tostringall, wipe, format = tostring, tostringall, wipe, format
 local exp, log = math.exp, math.log
-
--- Locals for Target Info lookups:
-local debugprofilestop = debugprofilestop
-local UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification = UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification
-local UnitAffectingCombat, UnitIsTrivial, GetInstanceInfo, UnitInRaid = UnitAffectingCombat, UnitIsTrivial, GetInstanceInfo, UnitInRaid
-local UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost = UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost
-local StopMusic, PlaySoundFile, StopSound = StopMusic, PlaySoundFile, StopSound
 
 
 -- Debugging
@@ -43,24 +40,25 @@ local DIFFICULTY_BOSS = 2
 local DIFFICULTY_BOSSLIST = 3
 
 
---- Fires when the player loads into the world:
--- Is used to check whether or not the player is in combat, so we can start music.
-function CE:PLAYER_ENTERING_WORLD(event, ... )
-	printFuncName("PLAYER_ENTERING_WORLD", event, ...)
-	if not E:GetSetting("Enabled") then return end
-
-	-- Check to see if the player is currently in combat
-	if UnitAffectingCombat("player") then
-		-- Enter Combat:
-		self:EnterCombat(event, ...)
-	end
-end
-
 
 --- Handles the events for entering combat
 function CE:EnterCombat(event, ...)
 	printFuncName("EnterCombat", event, ...)
 	if not E:GetSetting("Enabled") then return end
+	-- We need to delay this if we were on a loading screen
+	-- (Music doesn't play otherwise)
+
+	if not WorldFrame:IsVisible() then
+		E:PrintDebug("== §aWorldFrame §4Not §avisible...")
+		local timerID
+		timerID = self:ScheduleRepeatingTimer(function()
+			if WorldFrame:IsVisible() then
+				self:CancelTimer(timerID)
+				self:EnterCombat()
+			end
+		end, 0.1)
+		return
+	end
 
 	-- for debugging, mark the time we started target checking
 	self._TargetCheckTime = debugprofilestop()
@@ -79,7 +77,7 @@ function CE:EnterCombat(event, ...)
 	-- Begin target checking
 	self.InCombat = true
 	self.isPlayingMusic = self:BuildTargetInfo()
-
+	
 	-- Save the last volume state...
 	E:SaveLastVolumeState()
 
@@ -108,7 +106,7 @@ function CE:UpdateTargetInfoTable(unit)
 	if self.EncounterLevel == DIFFICULTY_BOSSLIST then return true end
 
 	-- Check the bosslist first.
-	if E:CheckBossList(unit) and self.EncounterLevel ~= DIFFICULTY_BOSSLIST then
+	if E:CheckBossList(unit) and self.EncounterLevel ~= DIFFICULTY_BOSSLIST then 
 		self.EncounterLevel = DIFFICULTY_BOSSLIST
 		E:PrintDebug("  ==§cON BOSSLIST")
 		return true
@@ -186,7 +184,7 @@ function CE:GetTargetInfo(unit)
 
 	-- No target check if there's no unit to check.
 	if not unit then return end
-	if not UnitExists(unit) then
+	if not UnitExists(unit) then 
 		E:PrintDebug("  ==§c" .. unit .. " doesn't exist.")
 		return
 	end
@@ -242,7 +240,7 @@ function CE:GetTargetInfo(unit)
 		end,
 		inGroup = (UnitInParty(unit) or UnitInRaid(unit)),
 	}
-
+	
 	local playerInfo = {
 		level = E.dungeonLevel or UnitLevel('player'),
 		instanceType = select(2, GetInstanceInfo())
@@ -257,7 +255,7 @@ function CE:GetTargetInfo(unit)
 		end
 
 		-- Instance check:
-		if playerInfo.instanceType == "party"
+		if playerInfo.instanceType == "party" 
 			or playerInfo.instanceType == "raid" then
 			-- Quick check to negate elites
 			if unitInfo.mobType() == 3 then
@@ -298,8 +296,8 @@ function CE:GetTargetInfo(unit)
 		end
 
 		-- The clincher of 3.b)
-		if unitInfo.inGroup then
-			return false, InCombat()
+		if unitInfo.inGroup then 
+			return false, InCombat() 
 		end
 	end
 
@@ -351,7 +349,7 @@ function CE:ParseTargetInfo()
 			end
 			if not self.RecheckTimer then self.RecheckTimer = {} end
 			-- Fix a serious bug that can lock up the gameclient by stacking timers endlessly.
-			if not self.RecheckTimer[k] then
+			if not self.RecheckTimer[k] then 
 				self.RecheckTimer[k] = self:ScheduleRepeatingTimer("Recheck", 0.5, k)
 			end
 		else
@@ -409,6 +407,8 @@ function CE:LeaveCombat(event, forceStop)
 	if not self.InCombat then return end
 	if not E:GetSetting("Enabled") then return end
 
+	-- Check event:
+	if event == "PLAYER_LEAVING_WORLD" then forceStop = true end
 	-- Register a message to mark when fadeout is complete
 	self:RegisterMessage("COMBATMUSIC_FADE_COMPLETED")
 	-- Stop all the timers, in case we've got any rechecks going
@@ -494,14 +494,14 @@ function CE:BeginMusicFade()
 	self.fadeTime = E:GetSetting("General", "CombatEngine", "FadeTimer")
 	-- Set FadeVars
 	self.FadeVars = {}
-
+	
 	-- The user's disabled fading...
 	-- or music isn't playing
-	if (not self.isPlayingMusic) or self.fadeTime <= 0 then
+	if (not self.isPlayingMusic) or self.fadeTime <= 0 then 
 		self:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	end
-
+	
 	-- Get the interval
 	self.FadeVars.interval = self.fadeTime / MAX_FADE_STEPS
 	-- Schedule the timer
@@ -584,14 +584,14 @@ function CE:StartCombatChallenge()
 		-- Notify the user that the challenge has started.
 		-- Some sort of shiny popup maybe goes here.
 		E:PrintMessage(L["Chat_ChallengeModeStarted"])
-
+		
 		-- Register our fade listener to call EndCombatChallenge
 		E:RegisterMessage("COMBATMUSIC_FADE_COMPLETED", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
 
 		-- Fire an event just so we can make plugins for this easier. (I WANT TO MAKE A TIMER PLUGIN FOR THIS!)
 		self:SendMessage("COMBATMUSIC_CHALLENGE_MODE_STARTED")
 	end
-end
+end 
 
 
 --- Ends the current CombatMusic Challenge, and reports the time to the user!
@@ -623,7 +623,7 @@ function CE:ResetCombatChallenge()
 	self.ChallengeModeRunning = nil
 	self.ChallengeStartTime = nil
 	self.ChallengeFinishTime = nil
-
+	
 	-- Let the user know that the challenge is ready to start again.
 	E:PrintMessage(L["Chat_ChallengeModeReset"])
 end
@@ -754,7 +754,6 @@ function CE:OnEnable()
 	self:RegisterEvent("PLAYER_DEAD", "GameOver")
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "BuildTargetInfo")
 	self:RegisterEvent("UNIT_TARGET")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function CE:OnDisable()
@@ -765,6 +764,5 @@ function CE:OnDisable()
 	self:UnregisterEvent("PLAYER_LEVEL_UP")
 	self:UnregisterEvent("PLAYER_DEAD")
 	self:UnregisterEvent("UNIT_TARGET")
-	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
