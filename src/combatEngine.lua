@@ -720,7 +720,6 @@ local opt = {
 --	Module Functions
 -------------------
 local function CheckForCombat(self, elapsed)
-	print(CE.inCombat, CE.isPlayingMusic, CE.EncounterLevel)
 	if CE.isPlayingMusic then
 		CE:LeaveCombat(nil, 1)
 		CE:ScheduleTimer("EnterCombat", 2)
@@ -746,7 +745,7 @@ function CE:OnInitialize()
 	f:Hide()
 	f:RegisterEvent("PLAYER_ENTERING_WORLD")
 	f:SetScript("OnUpdate", CheckForCombat)
-	f:SetScript("OnEvent", function(self, event, ...) self:Show(); print("Frame Shown"); end)
+	f:SetScript("OnEvent", function(self, event, ...) self:Show(); end)
 end
 
 function CE:OnEnable()
