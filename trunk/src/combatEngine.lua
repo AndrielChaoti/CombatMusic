@@ -14,7 +14,7 @@
 ]]
 
 -- These functions are global API functions used by this module.
--- GLOBALS: SetCVar, CombatMusicDB, WorldFrame
+-- GLOBALS: SetCVar, CombatMusicDB, WorldFrame, CreateFrame
 
 --Import Engine, Locale, Defaults.
 local E, L, DF = unpack(select(2, ...))
@@ -409,8 +409,19 @@ function CE:LeaveCombat(event, forceStop)
 		self:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	else
-		-- Begin fadeout "magic"
-		self:BeginMusicFade()
+		-- We don't want to always fade the music out if the user doesn't want it to
+		-- so check that here.
+		local fadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
+		if (fadeMode == "ALL") or
+			 (fadeMode == "BOSSNEVER" and self.EncounterLevel == DIFFICULTY_NORMAL) or
+			 (fadeMode == "BOSSALWAYS" and self.EncounterLevel > DIFFICULTY_NORMAL) then
+			-- They actually want music fading? Start it up!
+			self:BeginMusicFade()
+		else
+			-- If they don't want a fade, this will just stop the music without it,
+			-- everything else will happen as configured.
+			self:SendMessage("COMBATMUSIC_FADE_COMPLETED")
+		end
 	end
 end
 
@@ -566,8 +577,10 @@ function CE:StartCombatChallenge()
 		E:UnregisterMessage("COMBATMUSIC_ENTER_COMBAT")
 
 		-- Set the user's Fadeout timer to 10 seconds:
+		self.OldFadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
 		self.OldFadeOut = E:GetSetting("General", "CombatEngine", "FadeTimer")
 		CombatMusicDB.General.CombatEngine.FadeTimer = 10
+		CombatMusicDB.General.CombatEngine.FadeMode = "ALL"
 
 		-- Notify the user that the challenge has started.
 		-- Some sort of shiny popup maybe goes here.
@@ -593,6 +606,7 @@ function CE:EndCombatChallenge()
 		self.ChallengeFinishTime = debugprofilestop()
 		self.ChallengeModeRunning = false
 		CombatMusicDB.General.CombatEngine.FadeTimer = self.OldFadeOut or DF.General.CombatEngine.FadeTimer
+		CombatMusicDB.General.CombatEngine.FadeMode = self.OldFadeMode or DF.General.CombatEngine.FadeMode
 
 		-- Disable the challenge mode option so it doesn't start again.
 		CombatMusicDB.General.InCombatChallenge = false
@@ -632,11 +646,12 @@ end
 -----------------
 local defaults = {
 	FadeTimer = 10,
-	GameOverEnable = "ALL",
-	FanfareEnable = "BOSSONLY",
+	GameOverEnable = "ALL", -- Valid are "ALL", "BOSSONLY", "NONE"
+	FanfareEnable = "BOSSONLY", -- Valid are "ALL", "BOSSONLY", "NONE"
 	PreferFocus = false,
 	CheckBoss = true,
 	UseDing = true,
+	FadeMode = "ALL", -- Valid are "ALL", "BOSSONLY", "BOSSNEVER", "NONE"
 }
 
 
@@ -666,28 +681,48 @@ local opt = {
 			type = "header",
 			order = 200
 		},
+		FadeMode = {
+			name = L["FadeMode"],
+			desc = L["Desc_FadeMode"],
+			disabled = function()
+				local _, isRunning = CE:GetChallengeModeState()
+				return isRunning
+			end,
+			type = "select",
+			style = "dropdown",
+			values = {
+				["ALL"] = ALWAYS,
+				["BOSSONLY"] = L["BossOnly"],
+				["BOSSNEVER"] = L["BossNever"],
+				["NEVER"] = NEVER
+			},
+			order = 310
+		},
 		FadeTimer = {
 			name = L["FadeTimer"],
 			desc = L["Desc_FadeTimer"],
 			disabled = function()
 				local _, isRunning = CE:GetChallengeModeState()
-				return isRunning
+				if isRunning then return true end
+				local FadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
+				if FadeMode == "NEVER" then return true end
 			end,
 			type = "range",
-			min = 0,
+			min = 0.1,
 			max = 30,
 			step = 0.1,
 			bigStep = 1,
-			order = 311,
+			order = 315,
+			width = "full",
 		},
 		GameOverEnable = {
 			name = L["GameOverEnable"],
 			desc = L["Desc_GameOverEnable"],
 			type = "select",
 			style = "dropdown",
-			order = 310,
+			order = 305,
 			values = {
-				["ALL"] = ALL,
+				["ALL"] = ALWAYS,
 				["INCOMBAT"] = L["InCombat"],
 				["NEVER"] = NEVER
 			}
@@ -699,7 +734,7 @@ local opt = {
 			style = "dropdown",
 			order = 300,
 			values = {
-				["ALL"] = ALL,
+				["ALL"] = ALWAYS,
 				["BOSSONLY"] = L["BossOnly"],
 				["NEVER"] = NEVER
 			}
