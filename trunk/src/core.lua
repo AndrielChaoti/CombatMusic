@@ -52,12 +52,12 @@ function E:GetSetting(...)
 			error("no such setting: " .. tconcat({tostringall(...)}, ", "), 2)
 		end
 		dt = dt[key] -- and dt to the value at key in the defaults table, so we can parse multiple table levels.
-		
+
 		if type(t) ~= "table" then -- If the new value of t isn't a table, return it now (terminating the function early)
 			return t
 		end
 		-- Otherwise, t is the new table and we move on to the next key
-		
+
 		-- We repeat the above until we've processed every key or encountered a non-table value.
 	end
 	return t
@@ -73,7 +73,7 @@ function E:GetVersion(short)
 	-- Check the build status:
 	if v:find("^r%d+") or v:find("^alpha") or v:find("^@.+@$") then
 		self._DebugMode = true
-	end 
+	end
 
 	if v:find("^@") then
 		v = "DEV_VERSION"
@@ -85,7 +85,7 @@ function E:GetVersion(short)
 
 	if short then
 		-- Try to discern what release stage:
-		if strfind(v, "release") then 
+		if strfind(v, "release") then
 			return "r" .. rev
 		elseif strfind(v, "beta") then
 			return "b" .. rev
@@ -254,8 +254,8 @@ function E:PlayMusicFile(songPath)
 	if not max then return false end
 	if max > 0 then
 		local rand = random(1, max)
-		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".mp3")
-		return PlayMusic(fullPath .. "\\song" .. rand .. ".mp3")
+		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".ogg")
+		return PlayMusic(fullPath .. "\\song" .. rand .. ".ogg")
 	end
 end
 
@@ -307,14 +307,14 @@ function E:SetVolumeLevel(restore)
 	else
 		-- Set the out of combat ones.
 		SetCVar("Sound_MusicVolume", self.lastMusicVolume)
-		
+
 		-- We don't -restore- EnableMusic, because it's always supposed to be on.
 
 		--[[5.3 HACK FIX!
 		if self:GetSetting("General", "Fix5.3Bug") then
 			SetCVar("Sound_EnableSFX", self.lastSoundEnabled)
 		end]]
-		
+
 	end
 end
 

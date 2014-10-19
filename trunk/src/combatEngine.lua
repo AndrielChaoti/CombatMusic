@@ -414,7 +414,7 @@ function CE:LeaveCombat(event, forceStop)
 		local fadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
 		if (fadeMode == "ALL") or
 			 (fadeMode == "BOSSNEVER" and self.EncounterLevel == DIFFICULTY_NORMAL) or
-			 (fadeMode == "BOSSALWAYS" and self.EncounterLevel > DIFFICULTY_NORMAL) then
+			 (fadeMode == "BOSSONLY" and self.EncounterLevel > DIFFICULTY_NORMAL) then
 			-- They actually want music fading? Start it up!
 			self:BeginMusicFade()
 		else
@@ -450,10 +450,19 @@ local function FadeStepCallback()
 	if not CE.FadeTimer then return end
 
 	if not CE.FadeVars.StepCount then
-		CE.FadeVars.StepCount = 0
-		CE.FadeVars.CurrentVolume = E:GetSetting("General", "Volume")
-		CE.FadeVars.VolumeStep = exp(CE.FadeVars.CurrentVolume)
-		CE.FadeVars.VolumeStepDelta = (CE.FadeVars.VolumeStep - 1) / (MAX_FADE_STEPS - 1)
+
+			CE.FadeVars.StepCount = 0
+			CE.FadeVars.CurrentVolume = E:GetSetting("General", "Volume")
+			if E:GetSetting("General", "CombatEngine", "FadeLog") then
+				-- Logarithmic Fading...
+				CE.FadeVars.VolumeStep = exp(CE.FadeVars.CurrentVolume)
+				CE.FadeVars.VolumeStepDelta = (CE.FadeVars.VolumeStep - 1) / (MAX_FADE_STEPS - 1)
+			else
+				-- Linear fading
+				CE.FadeVars.VolumeStep = CE.FadeVars.CurrentVolume / MAX_FADE_STEPS
+				CE.FadeVars.VolumeStepDelta = 0
+			end
+
 	end
 
 	-- Increment the step counter
@@ -554,7 +563,7 @@ function CE:PlayFanfare(fanfare)
 	end
 
 	-- Play our chosen fanfare
-	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".mp3"))
+	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".ogg"))
 end
 
 
@@ -652,6 +661,7 @@ local defaults = {
 	CheckBoss = true,
 	UseDing = true,
 	FadeMode = "ALL", -- Valid are "ALL", "BOSSONLY", "BOSSNEVER", "NONE"
+	FadeLog = true,
 }
 
 
@@ -713,7 +723,17 @@ local opt = {
 			step = 0.1,
 			bigStep = 1,
 			order = 315,
-			width = "full",
+			width = "double",
+		},
+		FadeLog = {
+			name = L["FadeLog"],
+			desc = L["Desc_FadeLog"],
+			disabled = function()
+				local FadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
+				if FadeMode == "NEVER" then return true end
+			end,
+			type = "toggle",
+			order = 320,
 		},
 		GameOverEnable = {
 			name = L["GameOverEnable"],
