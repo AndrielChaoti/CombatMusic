@@ -445,7 +445,8 @@ end
 
 
 --- Fade Cycle timer callback
-local function FadeStepCallback()
+-- @arg logMode set to true to switch to log mode
+local function FadeStepCallback(logMode)
 	printFuncName("FadeStep")
 	if not CE.FadeTimer then return end
 
@@ -453,7 +454,7 @@ local function FadeStepCallback()
 
 			CE.FadeVars.StepCount = 0
 			CE.FadeVars.CurrentVolume = E:GetSetting("General", "Volume")
-			if E:GetSetting("General", "CombatEngine", "FadeLog") then
+			if logMode then
 				-- Logarithmic Fading...
 				CE.FadeVars.VolumeStep = exp(CE.FadeVars.CurrentVolume)
 				CE.FadeVars.VolumeStepDelta = (CE.FadeVars.VolumeStep - 1) / (MAX_FADE_STEPS - 1)
@@ -469,7 +470,7 @@ local function FadeStepCallback()
 	CE.FadeVars.StepCount = CE.FadeVars.StepCount + 1
 
 	-- Update the current volume
-	if E:GetSetting("General", "CombatEngine", "FadeLog") then
+	if logMode then
 		CE.FadeVars.CurrentVolume = log(CE.FadeVars.VolumeStep)
   else
 		CE.FadeVars.CurrentVolume = CE.FadeVars.CurrentVolume - CE.FadeVars.VolumeStep
@@ -518,7 +519,7 @@ function CE:BeginMusicFade()
 	-- Get the interval
 	self.FadeVars.interval = self.fadeTime / MAX_FADE_STEPS
 	-- Schedule the timer
-	self.FadeTimer = self:ScheduleRepeatingTimer(FadeStepCallback, self.FadeVars.interval)
+	self.FadeTimer = self:ScheduleRepeatingTimer(FadeStepCallback, self.FadeVars.interval, E:GetSetting("General", "CombatEngine", "FadeLog"))
 end
 
 
