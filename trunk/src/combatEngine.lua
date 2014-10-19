@@ -469,7 +469,12 @@ local function FadeStepCallback()
 	CE.FadeVars.StepCount = CE.FadeVars.StepCount + 1
 
 	-- Update the current volume
-	CE.FadeVars.CurrentVolume = log(CE.FadeVars.VolumeStep)
+	if E:GetSetting("General", "CombatEngine", "FadeLog") then
+		CE.FadeVars.CurrentVolume = log(CE.FadeVars.VolumeStep)
+  else
+		CE.FadeVars.CurrentVolume = CE.FadeVars.CurrentVolume - CE.FadeVars.VolumeStep
+  end
+
 	E:PrintDebug(format("  ==§bStepCount = %d, CurrentVolume = %f",  CE.FadeVars.StepCount, CE.FadeVars.CurrentVolume))
 	-- And change our VolumeStep
 	CE.FadeVars.VolumeStep = CE.FadeVars.VolumeStep - CE.FadeVars.VolumeStepDelta
