@@ -296,8 +296,11 @@ function E:SetVolumeLevel(restore)
 	if not restore then
 		-- Set the in combat music levels
 		SetCVar("Sound_MusicVolume", self:GetSetting("General", "Volume"))
-		SetCVar("Sound_EnableMusic", "1")
-
+		-- SetCVar("Sound_EnableMusic", "1")
+		if not WARNING_SHOWN then
+			StaticPopup_Show("CM_MUSICDISABLEDWARNING")
+			WARNING_SHOWN = true
+		end
 		--[[ 5.3 HACK FIX!
 		if self:GetSetting("General", "Fix5.3Bug") then
 			-- Disabling SFX will allow music to play normally!

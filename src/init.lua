@@ -114,6 +114,15 @@ function AddOn:OnInitialize()
 	-- Build the bosslist buttons:
 	self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
 
+	-- Static Popups
+	StaticPopupDialogs["CM_MUSICDISABLEDWARNING"] = {
+		text = L["MusicDisabled"],
+		button1 = OKAY,
+		hideOnEscape = true,
+		whileDead = true,
+		timeOut = 0
+	}
+
 	SlashCmdList["COMBATMUSIC"] = function(...)
 		self:HandleChatCommand(...)
 	end
