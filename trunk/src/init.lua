@@ -116,7 +116,7 @@ function AddOn:OnInitialize()
 
 	-- Static Popups
 	StaticPopupDialogs["CM_MUSICDISABLEDWARNING"] = {
-		text = L["MusicDisabled"],
+		text = self:ParseColorCodedString(L["MusicDisabled"]),
 		button1 = OKAY,
 		hideOnEscape = true,
 		whileDead = true,
