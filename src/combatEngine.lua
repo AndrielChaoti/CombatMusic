@@ -737,7 +737,7 @@ local opt = {
 				local FadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
 				if FadeMode == "NEVER" then return true end
 			end,
-			type = ".mp3le",
+			type = "toggle",
 			order = 320,
 		},
 		GameOverEnable = {
@@ -767,7 +767,7 @@ local opt = {
 		UseDing = {
 			name = L["UseDing"],
 			desc = L["Desc_UseDing"],
-			type = ".mp3le",
+			type = "toggle",
 			width = "full",
 			order = 320,
 		}
