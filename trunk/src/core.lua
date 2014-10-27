@@ -208,7 +208,7 @@ function E:RegisterNewSongType(name, defaultState)
 				Enabled = {
 					name = L["Enabled"],
 					desc = L["Desc_Enabled"],
-					type = ".mp3le",
+					type = "toggle",
 					order = cnt
 				},
 				Count = {
