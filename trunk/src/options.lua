@@ -1,17 +1,16 @@
 --[[
-  Project: CombatMusic
-  Friendly Name: CombatMusic
-  Author: Vandesdelca32
+	Project: CombatMusic
+	Friendly Name: CombatMusic
+	Author: Vandesdelca32
 
-  File: options.lua
-  Purpose: All of the options that come with the standard kit.
+	File: options.lua
+	Purpose: All of the options that come with the standard kit.
 
-  Version: @file-revision@
+	Version: @file-revision@
 
-
-  This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-  See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
-  ]]
+	ALL RIGHTS RESERVED.
+	COPYRIGHT (c)2010-2014 VANDESDELCA32
+]]
 
 -- GLOBALS: CombatMusicDB, CombatMusicBossList, InCombatLockdown, ReloadUI
 -- GLOBALS: UnitName
@@ -49,8 +48,8 @@ local blSong = ""
 -- Adds the user's text to the bosslist.
 function E:AddNewBossListEntry()
 	printFuncName("AddNewBossListEntry")
-	
-	if not strfind(blSong, "\.mp3$") then 
+
+	if not strfind(blSong, "\.mp3$") then
 
 	end
 
@@ -93,7 +92,7 @@ function E:GetBosslistButtons()
 			desc = v,
 			confirm = true,
 			confirmText = L["RemoveBossList"],
-			func = function() 
+			func = function()
 				CombatMusicBossList[k] = nil
 				-- redraw the list!
 				self.Options.args.General.args.BossList.args.ListGroup.args = self:GetBosslistButtons()
@@ -187,7 +186,7 @@ E.Options.args = {
 				type = "group",
 				inline = true,
 				order = 400,
-				args = {} -- This will be filled in by our :RegisterSongType 
+				args = {} -- This will be filled in by our :RegisterSongType
 			},
 			BossList = {
 				name = L["BossList"],

@@ -8,10 +8,9 @@
 
 	Version: @file-revision@
 
-
-	This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-	See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
-	]]
+	ALL RIGHTS RESERVED.
+	COPYRIGHT (c)2010-2014 VANDESDELCA32
+]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
 -- GLOBALS: GetCVarBool, SetCVar

@@ -8,9 +8,8 @@
 
 	Version: @file-revision@
 
-
-	This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-	See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
+	ALL RIGHTS RESERVED.
+	COPYRIGHT (c)2010-2014 VANDESDELCA32
 ]]
 
 --GLOBALS: CombatMusicDB, CombatMusicBossList, SetCVar, GetCVar
@@ -165,7 +164,7 @@ function E:HandleChatCommand(args)
 		self.dungeonLevel = setLevel
 		self:PrintMessage(format(L["Chat_LevelSet"], setLevel))
 	else
-		self:ToggleOptions()
+		self:.ToggleOptions()
 	end
 end
 
@@ -209,7 +208,7 @@ function E:RegisterNewSongType(name, defaultState)
 				Enabled = {
 					name = L["Enabled"],
 					desc = L["Desc_Enabled"],
-					type = "toggle",
+					type = ".mp3le",
 					order = cnt
 				},
 				Count = {
@@ -254,8 +253,8 @@ function E:PlayMusicFile(songPath)
 	if not max then return false end
 	if max > 0 then
 		local rand = random(1, max)
-		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".ogg")
-		return PlayMusic(fullPath .. "\\song" .. rand .. ".ogg")
+		self:PrintDebug("  ==§bSong: " .. fullPath .. "\\song" .. rand .. ".mp3")
+		return PlayMusic(fullPath .. "\\song" .. rand .. ".mp3")
 	end
 end
 
