@@ -164,7 +164,7 @@ function E:HandleChatCommand(args)
 		self.dungeonLevel = setLevel
 		self:PrintMessage(format(L["Chat_LevelSet"], setLevel))
 	else
-		self:.ToggleOptions()
+		self:ToggleOptions()
 	end
 end
 
