@@ -1,16 +1,15 @@
 --[[
-  Project: CombatMusic
-  Friendly Name: CombatMusic
-  Author: Vandesdelca32
+	Project: CombatMusic
+	Friendly Name: CombatMusic
+	Author: Vandesdelca32
 
-  File: combatEngine.lua
-  Purpose: The Engine that makes the magic happen
+	File: combatEngine.lua
+	Purpose: The Engine that makes the magic happen
 
-  Version: @file-revision@
+	Version: @file-revision@
 
-
-  This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-  See http://creativecommons.org/licenses/by-sa/3.0/deed.en_CA for more info.
+	ALL RIGHTS RESERVED.
+	COPYRIGHT (c)2010-2014 VANDESDELCA32
 ]]
 
 -- These functions are global API functions used by this module.
@@ -569,7 +568,7 @@ function CE:PlayFanfare(fanfare)
 	end
 
 	-- Play our chosen fanfare
-	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".ogg"))
+	self.SoundId = select(2, E:PlaySoundFile("Interface\\Music\\" .. fanfare .. ".mp3"))
 end
 
 
@@ -682,14 +681,14 @@ local opt = {
 		PreferFocus = {
 			name = L["PreferFocus"],
 			desc = L["Desc_PreferFocus"],
-			type = "toggle",
+			type = ".mp3le",
 			width =  "double",
 			order = 120,
 		},
 		CheckBoss = {
 			name = L["CheckBoss"],
 			desc = L["Desc_CheckBoss"],
-			type = "toggle",
+			type = ".mp3le",
 			order = 110,
 		},
 		SPACER1 = {
@@ -738,7 +737,7 @@ local opt = {
 				local FadeMode = E:GetSetting("General", "CombatEngine", "FadeMode")
 				if FadeMode == "NEVER" then return true end
 			end,
-			type = "toggle",
+			type = ".mp3le",
 			order = 320,
 		},
 		GameOverEnable = {
@@ -768,7 +767,7 @@ local opt = {
 		UseDing = {
 			name = L["UseDing"],
 			desc = L["Desc_UseDing"],
-			type = "toggle",
+			type = ".mp3le",
 			width = "full",
 			order = 320,
 		}
