@@ -681,14 +681,14 @@ local opt = {
 		PreferFocus = {
 			name = L["PreferFocus"],
 			desc = L["Desc_PreferFocus"],
-			type = ".mp3le",
+			type = "toggle",
 			width =  "double",
 			order = 120,
 		},
 		CheckBoss = {
 			name = L["CheckBoss"],
 			desc = L["Desc_CheckBoss"],
-			type = ".mp3le",
+			type = "toggle",
 			order = 110,
 		},
 		SPACER1 = {

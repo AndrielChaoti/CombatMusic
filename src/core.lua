@@ -14,6 +14,7 @@
 
 --GLOBALS: CombatMusicDB, CombatMusicBossList, SetCVar, GetCVar
 --GLOBALS: PlayMusic, StopMusic, PlaySoundFile, UnitName
+--GLOBALS: GetCVarBool
 --GLOBALS: math
 
 --Import Engine, Locale, Defaults.
@@ -288,7 +289,7 @@ function E:CheckBossList(unit)
 	return false
 end
 
-
+local WARNING_SHOWN
 --- Sets or restores the volume levels provided in the settings
 --@arg restore Set to true to restore the out of combat levels instead.
 function E:SetVolumeLevel(restore)
@@ -297,8 +298,8 @@ function E:SetVolumeLevel(restore)
 		-- Set the in combat music levels
 		SetCVar("Sound_MusicVolume", self:GetSetting("General", "Volume"))
 		-- SetCVar("Sound_EnableMusic", "1")
-		if not WARNING_SHOWN then
-			StaticPopup_Show("CM_MUSICDISABLEDWARNING")
+		if not WARNING_SHOWN and not GetCVarBool("Sound_EnableMusic") then
+			self:PrintErr(L["MusicDisabled"])
 			WARNING_SHOWN = true
 		end
 		--[[ 5.3 HACK FIX!
