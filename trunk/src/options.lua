@@ -217,7 +217,7 @@ E.Options.args = {
 						get = function(info) return blSong end,
 					},
 					AddBossList = {
-						name = L["AddBossList"],
+						name = ADD,
 						desc = L["Desc_AddBossList"],
 						type = "execute",
 						width = "full",
