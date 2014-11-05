@@ -39,7 +39,7 @@ local printFuncName = E.printFuncName
 local DIFFICULTY_NONE = 0
 local DIFFICULTY_NORMAL = 1
 local DIFFICULTY_BOSS = 2
-local DIFFICULTY_BOSSLIST = 3
+local DIFFICULTY_BOSSLIST = 10
 
 --- Handles the events for entering combat
 function CE:EnterCombat(event, ...)
