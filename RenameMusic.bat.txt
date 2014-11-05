@@ -1,49 +1,49 @@
-:: If you double-clicked on this file and are reading this text...then you 
-:: messed something up. Make sure that you have “Hide Extensions for known file 
+:: If you double-clicked on this file and are reading this text...then you
+:: messed something up. Make sure that you have “Hide Extensions for known file
 :: types" turned OFF in your folder settings BEFORE trying to open this file!
-:: If you can't figure out how to change that setting, then visit 
+:: If you can't figure out how to change that setting, then visit
 :: http://support.microsoft.com/kb/865219 for instructions.
 :: Oh, the "::" just means comment to Batch files, so you can ignore them.
 
 @ECHO OFF
 
-ECHO This batch file will rename all of the songs you've placed inside of your 
+ECHO This batch file will rename all of the songs you've placed inside of your
 ECHO Interface\Music directory to names that CombatMusic will recognize.
 ECHO.
 ECHO WARNING: Running this batch file multiple times can mess up the names of
-ECHO all of the files. To fix this, just go into each of the folders, press 
-ECHO CTRL + A then F2, type in some garbage, and press enter. Afterwards, run 
+ECHO all of the files. To fix this, just go into each of the folders, press
+ECHO CTRL + A then F2, type in some garbage, and press enter. Afterwards, run
 ECHO this batch file again.
 ECHO.
 
 PAUSE
 
-:Recheck
+:CHECKFOLDERS
 ECHO.
 IF ["%__CD__:~-16%"]==["Interface\Music\"] (
-   IF NOT EXIST Battles\ (
-       MKDIR Battles
-       SET NODIR=1
-   )
-   IF NOT EXIST Bosses\ (
-      MKDIR Bosses
-      SET NODIR=1
-   )
-   IF NOT DEFINED NODIR (GOTO LOOP) ELSE (GOTO End)
+	IF NOT EXIST Battles\ (
+		MKDIR Battles
+		SET NODIR=1
+	)
+	IF NOT EXIST Bosses\ (
+		MKDIR Bosses
+		SET NODIR=1
+	)
+	IF NOT DEFINED NODIR (GOTO LOOP) ELSE (GOTO END)
 ) ELSE (
 	IF ["%__CD__:~-10%"]==["Interface\"] (
-	   IF NOT EXIST Music\ (
-	      ECHO Couldn't find the directories needed for CombatMusic, creating them now.
-	   	MKDIR Music
-	   	MKDIR Music\Battles
-	   	MKDIR Music\Bosses
-	   	GOTO End
-	   )
+		IF NOT EXIST Music\ (
+			ECHO Directories for CombatMusic are not initialized; creating them now...
+			MKDIR Music
+			MKDIR Music\Battles
+			MKDIR Music\Bosses
+			GOTO END
+		)
 		CD Music
-		GOTO Recheck
+		GOTO CHECKFOLDERS
 	)
-	ECHO Could not find Interface\Music directory, aborting.
-	GOTO End
+	ECHO Could not locate "Interface" directory. Aborting!
+	GOTO END
 )
 
 :LOOP
