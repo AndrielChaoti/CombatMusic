@@ -726,7 +726,6 @@ local opt = {
 			min = 0.1,
 			max = 30,
 			step = 0.1,
-			bigStep = 1,
 			order = 315,
 			width = "double",
 		},
