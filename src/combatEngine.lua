@@ -378,7 +378,6 @@ local function ResetCombatState()
 	end
 
 	E:SetVolumeLevel(true)
-	CE.FadeTimer = nil
 end
 
 
@@ -486,7 +485,6 @@ local function FadeStepCallback(logMode)
 		-- fading complete message.
 		SetCVar("Sound_MusicVolume", CE.FadeVars.CurrentVolume)
 		CE:CancelTimer(CE.FadeTimer)
-		StopMusic()
 		CE:SendMessage("COMBATMUSIC_FADE_COMPLETED")
 		return
 	end
@@ -541,6 +539,7 @@ function CE:COMBATMUSIC_FADE_COMPLETED()
 	-- Stop the music
 	StopMusic()
 	self.isPlayingMusic = nil
+	self.EncounterLevel = nil
 
 	-- Reset the combat state finally
 	self.FadeTimer = self:ScheduleTimer(ResetCombatState, 1)
