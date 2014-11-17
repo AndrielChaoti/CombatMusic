@@ -377,8 +377,8 @@ local function ResetCombatState()
 		wipe(CE.RecheckTimer)
 	end
 
-	-- Reset volume after a second
-	CE.FadeTimer = CE:ScheduleTimer(function() E:SetVolumeLevel(true); CE.FadeTimer = nil end, 1)
+	E:SetVolumeLevel(true)
+	CE.FadeTimer = nil
 end
 
 
@@ -540,9 +540,10 @@ function CE:COMBATMUSIC_FADE_COMPLETED()
 
 	-- Stop the music
 	StopMusic()
+	self.isPlayingMusic = nil
 
 	-- Reset the combat state finally
-	ResetCombatState()
+	self.FadeTimer = self:ScheduleTimer(ResetCombatState, 1)
 end
 
 
