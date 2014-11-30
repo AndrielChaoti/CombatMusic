@@ -395,6 +395,9 @@ function CE:LeaveCombat(event, forceStop)
 	-- Check event:
 	if event == "PLAYER_LEAVING_WORLD" then forceStop = true end
 
+	-- Make sure the player's not dead and firing a normal LeaveCombat... God Blizz
+	if event == "PLAYER_REGEN_ENABLED" and UnitIsDeadOrGhost("player") then return end
+
 	-- Register a message to mark when fadeout is complete
 	self:RegisterMessage("COMBATMUSIC_FADE_COMPLETED")
 	-- Stop all the timers, in case we've got any rechecks going
