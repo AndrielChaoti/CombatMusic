@@ -13,13 +13,16 @@
 ]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
--- GLOBALS: GetCVarBool, SetCVar
+-- GLOBALS: GetCVarBool, SetCVar, StaticPopupDialogs
+-- GLOBALS: OKAY
 -- GLOBALS: CombatMusicDB, CombatMusicBossList
 
 local AddOnName, Engine = ...
 local canonicalTitle = "CombatMusic"
 
 local format, tconcat, tostringall, type = format, table.concat, tostringall, type
+local date = date
+
 
 
 -----------------------
@@ -141,9 +144,15 @@ function AddOn:OnEnable()
 	local ver = self:GetVersion()
 	if self:GetSetting("LoginMessage") then
 		self:PrintMessage(format(Locale["AddonLoaded"], canonicalTitle, ver))
+
+		-- Birthday Messsages!
+		local tDate = date("*t")
+		--if date.month == 3 and (date.day >= 16 and date.day <= 23) then
+			self:PrintMessage(format(Locale["Chat_BirthdayMessage"]))
+		--end
 	end
 
-	-- This forces the user's Music volume to 0 if they have music off
+	-- This forces the user's Happy 5th birthday to CombatMusic! Holy crap, this addon is still active five years after I first started writing it... I have to honestly say thank you for giving me something awesome and meaningful to do in my spare time!Music volume to 0 if they have music off
 	-- so that they won't notice that it was turned on.
 	if not GetCVarBool("Sound_EnableMusic") then
 		SetCVar("Sound_MusicVolume", "0")
