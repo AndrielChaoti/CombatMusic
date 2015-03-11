@@ -147,9 +147,9 @@ function AddOn:OnEnable()
 
 		-- Birthday Messsages!
 		local tDate = date("*t")
-		--if date.month == 3 and (date.day >= 16 and date.day <= 23) then
+		if date.month == 3 and (date.day >= 16 and date.day <= 23) then
 			self:PrintMessage(format(Locale["Chat_BirthdayMessage"]))
-		--end
+		end
 	end
 
 	-- This forces the user's Happy 5th birthday to CombatMusic! Holy crap, this addon is still active five years after I first started writing it... I have to honestly say thank you for giving me something awesome and meaningful to do in my spare time!Music volume to 0 if they have music off
