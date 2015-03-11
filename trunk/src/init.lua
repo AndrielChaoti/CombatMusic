@@ -147,7 +147,7 @@ function AddOn:OnEnable()
 
 		-- Birthday Messsages!
 		local tDate = date("*t")
-		if date.month == 3 and (date.day >= 16 and date.day <= 23) then
+		if tDate.month == 3 and (tDate.day >= 16 and tDate.day <= 23) then
 			self:PrintMessage(format(Locale["Chat_BirthdayMessage"]))
 		end
 	end
