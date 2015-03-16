@@ -29,6 +29,8 @@ if L then
 	L["BossNever"] = "Only for Regular fights"
 	L["BossOnly"] = "Only for Boss fights"
 	L["Can't do that in combat."] = "Can't do that in combat."
+	L["Chat_BirthdayMessage"] = [=[Happy 5th birthday to CombatMusic! Holy crap, this addon is still active five years after I first started writing it... I have to honestly say thank you for giving me something awesome and meaningful to do in my spare time!
+	- Andaendis @ Wyrmrest Accord]=]
 	L["Chat_Can'tDoThat"] = "Now's not the time to use that!"
 	L["Chat_ChallengeModeCompleted"] = "Challenge Mode Completed! The music kept playing for §6%0.3f seconds§r!"
 	L["Chat_ChallengeModeOff"] = "ChallengeMode has been disabled."
@@ -73,11 +75,7 @@ if L then
 	L["ListGroup"] = "Current BossList targets"
 	L["LoginMessage"] = "Login Message"
 	L["MiscFeatures"] = "Miscellaneous features"
-	L["MusicDisabled"] = [=[Your in-game music has been turned off.
-
-	§cWhile your music is off, CombatMusic won't work properly!§r
-
-	Turn your music back on, or reload your UI to use CombatMusic again.]=]
+	L["MusicDisabled"] = "Your in-game music has been turned off. §cWhile your music is off, CombatMusic won't work properly!§r Turn your music back on, or reload your UI to use CombatMusic again."
 	L["NumSongs"] = "Song Counts"
 	L["PreferFocus"] = "Check 'focustarget' first"
 	L["RemoveBossList"] = "Remove this unit from the BossList?"
@@ -87,7 +85,6 @@ if L then
 	L["UseDing"] = "Use 'DING' instead of 'Victory' for levelling up"
 	L["UseMaster"] = "Use Master Channel"
 	L["Volume"] = "Music Volume"
-
 
 	--@end-do-not-package@
 end
