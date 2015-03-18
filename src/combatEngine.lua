@@ -178,7 +178,7 @@ local garrisonIDs = {
 --@return instanceEnum An enumeration of the instance type, 0 = outdoors, 1 = dungeon, 2 = raid
 function CE:GetInstanceInfo()
 	local _, instanceType, _, _, _, _, _, instanceMap, _ = GetInstanceInfo()
-	if garrisonIDs[instanceMap] and self:GetSetting("General", "CombatEngine", "GarrisonsAreOutdoors") then
+	if garrisonIDs[instanceMap] and E:GetSetting("General", "CombatEngine", "GarrisonsAreOutdoors") then
 		return 0
 	else
 		if instanceType == "party" then
