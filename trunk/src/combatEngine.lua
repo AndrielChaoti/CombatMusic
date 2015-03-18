@@ -162,6 +162,36 @@ function CE:BuildTargetInfo()
 	return self:ParseTargetInfo()
 end
 
+-- Use these instance IDs to ignore the garrisons.
+local garrisonIDs = {
+	[1152] = true, --	FW Horde Garrison Level 1
+	[1330] = true, --	FW Horde Garrison Level 2
+	[1153] = true, --	FW Horde Garrison Level 3
+	[1154] = true, --	FW Horde Garrison Level 4
+	[1158] = true, --	SMV Alliance Garrison Level 1
+	[1331] = true, --	SMV Alliance Garrison Level 2
+	[1159] = true, --	SMV Alliance Garrison Level 3
+	[1160] = true, --	SMV Alliance Garrison Level 4
+}
+
+--- Checks instance stuff, and returns appropriate values
+--@return instanceEnum An enumeration of the instance type, 0 = outdoors, 1 = dungeon, 2 = raid
+function CE:GetInstanceInfo()
+	local _, instanceType, _, _, _, _, _, instanceMap, _ = GetInstanceInfo()
+	if garrisonIDs[instanceMap] and self:GetSetting("General", "CombatEngine", "GarrisonsAreOutdoors") then
+		return 0
+	else
+		if instanceType == "party" then
+			return 1
+		elseif instanceType == "raid" then
+			return 2
+		else
+			return 0
+		end
+	end
+end
+
+
 --- Checks specific information about 'unit' to attempt to determine if it is a boss or not
 --@arg unit The unit token of the unit to check
 --@return isBoss, InCombat, whether or not the unit is a boss or we are in combat with it
@@ -229,7 +259,7 @@ function CE:GetTargetInfo(unit)
 
 	local playerInfo = {
 		level = E.dungeonLevel or UnitLevel('player'),
-		instanceType = select(2, GetInstanceInfo())
+		instance = self:GetInstanceInfo()
 	}
 
 	-- 1)
@@ -241,8 +271,7 @@ function CE:GetTargetInfo(unit)
 		end
 
 		-- Instance check:
-		if playerInfo.instanceType == "party"
-			or playerInfo.instanceType == "raid" then
+		if playerInfo.instance ~= 0 then
 			-- Quick check to negate elites
 			if unitInfo.mobType() == 3 then
 				isBoss = false
@@ -670,6 +699,7 @@ local defaults = {
 	UseDing = true,
 	FadeMode = "ALL", -- Valid are "ALL", "BOSSONLY", "BOSSNEVER", "NONE"
 	FadeLog = true,
+	GarrisonsAreOutdoors = true,
 }
 
 
@@ -772,6 +802,13 @@ local opt = {
 			type = "toggle",
 			width = "full",
 			order = 320,
+		},
+		GarrisonsAreOutdoors = {
+			name = L["GarrisonsAreOutdoors"],
+			desc = L["Desc_GarrisonsAreOutdoors"],
+			type = "toggle",
+			width = "full",
+			order = 330,
 		}
 	}
 }
