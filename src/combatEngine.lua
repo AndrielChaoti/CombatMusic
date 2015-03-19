@@ -294,7 +294,7 @@ function CE:GetTargetInfo(unit)
 	end
 
 	-- 3.a)
-	if playerInfo.instanceType ~= INSTANCE_RAID then
+	if playerInfo.instance ~= INSTANCE_RAID then
 		if unitInfo.level.adj >= 5 + playerInfo.level then
 			isBoss = true
 		end
