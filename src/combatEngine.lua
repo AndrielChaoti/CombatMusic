@@ -174,19 +174,23 @@ local garrisonIDs = {
 	[1160] = true, --	SMV Alliance Garrison Level 4
 }
 
---- Checks instance stuff, and returns appropriate values
+
+local INSTANCE_OUTDOORS = 0
+local INSTANCE_DUNGEON = 1
+local INSTANCE_RAID = 2
+--- Figures out what kind of instance the player is in.
 --@return instanceEnum An enumeration of the instance type, 0 = outdoors, 1 = dungeon, 2 = raid
 function CE:GetInstanceInfo()
 	local _, instanceType, _, _, _, _, _, instanceMap, _ = GetInstanceInfo()
 	if garrisonIDs[instanceMap] and E:GetSetting("General", "CombatEngine", "GarrisonsAreOutdoors") then
-		return 0
+		return INSTANCE_OUTDOORS
 	else
 		if instanceType == "party" then
-			return 1
+			return INSTANCE_DUNGEON
 		elseif instanceType == "raid" then
-			return 2
+			return INSTANCE_RAID
 		else
-			return 0
+			return INSTANCE_OUTDOORS
 		end
 	end
 end
@@ -271,7 +275,7 @@ function CE:GetTargetInfo(unit)
 		end
 
 		-- Instance check:
-		if playerInfo.instance ~= 0 then
+		if playerInfo.instance ~= INSTANCE_OUTDOORS then
 			-- Quick check to negate elites
 			if unitInfo.mobType() == 3 then
 				isBoss = false
@@ -290,7 +294,7 @@ function CE:GetTargetInfo(unit)
 	end
 
 	-- 3.a)
-	if playerInfo.instanceType ~= "raid" then
+	if playerInfo.instanceType ~= INSTANCE_RAID then
 		if unitInfo.level.adj >= 5 + playerInfo.level then
 			isBoss = true
 		end

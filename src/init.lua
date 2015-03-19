@@ -152,7 +152,7 @@ function AddOn:OnEnable()
 		end
 	end
 
-	-- This forces the user's Happy 5th birthday to CombatMusic! Holy crap, this addon is still active five years after I first started writing it... I have to honestly say thank you for giving me something awesome and meaningful to do in my spare time!Music volume to 0 if they have music off
+	-- This forces the user's Music volume to 0 if they have music off
 	-- so that they won't notice that it was turned on.
 	if not GetCVarBool("Sound_EnableMusic") then
 		SetCVar("Sound_MusicVolume", "0")
