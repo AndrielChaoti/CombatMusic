@@ -1,4 +1,4 @@
-## Interface: 60100
+## Interface: 60200
 ## Title: Van32's |cFFAF96FFCombatMusic|r
 ## Notes: Plays custom music in combat.
 ## Author: Vandesdelca32
