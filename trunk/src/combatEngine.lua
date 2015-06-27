@@ -26,7 +26,7 @@ local exp, log = math.exp, math.log
 
 -- Locals for Target Info lookups:
 local debugprofilestop = debugprofilestop
-local UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification = UnitExists, UnitLevel, UnitIsPlayer, UnitIsPVP, UnitClassification
+local UnitExists, UnitEffectiveLevel, UnitIsPlayer, UnitIsPVP, UnitClassification = UnitExists, UnitEffectiveLevel, UnitIsPlayer, UnitIsPVP, UnitClassification
 local UnitAffectingCombat, UnitIsTrivial, GetInstanceInfo, UnitInRaid = UnitAffectingCombat, UnitIsTrivial, GetInstanceInfo, UnitInRaid
 local UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost = UnitInParty, UnitIsPVPFreeForAll, UnitIsDeadOrGhost
 local StopMusic, PlaySoundFile, StopSound = StopMusic, PlaySoundFile, StopSound
@@ -248,8 +248,8 @@ function CE:GetTargetInfo(unit)
 	-- Cache a table of collected information to parse
 	local unitInfo = {
 		level = {
-			raw = UnitLevel(unit),
-			adj = UnitLevel(unit)
+			raw = UnitEffectiveLevel(unit),
+			adj = UnitEffectiveLevel(unit)
 		},
 		isPlayer = UnitIsPlayer(unit),
 		isPvP = UnitIsPVP(unit) or UnitIsPVPFreeForAll(unit),
@@ -262,7 +262,7 @@ function CE:GetTargetInfo(unit)
 	}
 
 	local playerInfo = {
-		level = E.dungeonLevel or UnitLevel('player'),
+		level = E.dungeonLevel or UnitEffectiveLevel('player'),
 		instance = self:GetInstanceInfo()
 	}
 
