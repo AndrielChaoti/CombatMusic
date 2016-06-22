@@ -221,6 +221,7 @@ function E:RegisterNewSongType(name, defaultState)
 					softMax = 100,
 					step = 1,
 					width = "double",
+					disabled = function() return not E:GetSetting("General", "SongList", k, "Enabled") end,
 					order = cnt + 1
 				},
 			},
