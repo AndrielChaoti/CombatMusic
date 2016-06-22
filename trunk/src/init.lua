@@ -28,8 +28,8 @@ local date = date
 -----------------------
 --	Library Registration
 -----------------------
-local AddOn = LibStub("AceAddon-3.0"):NewAddon(AddOnName, "AceEvent-3.0", "AceTimer-3.0")
-LibStub("LibVan32-1.0"):Embed(AddOn, canonicalTitle)
+local AddOn = LibStub("AceAddon-3.0"):NewAddon(AddOnName, "AceEvent-3.0", "AceTimer-3.0", "LibVan32-2.0")
+--LibStub("LibVan32-1.0"):Embed(AddOn, canonicalTitle)
 
 AddOn._major = "@project-version@"
 AddOn._revision = "@project-revision@"
@@ -119,7 +119,7 @@ function AddOn:OnInitialize()
 
 	-- Static Popups
 	StaticPopupDialogs["CM_MUSICDISABLEDWARNING"] = {
-		text = self:ParseColorCodedString(Locale["MusicDisabled"]),
+		text = self:ParseColoredString(Locale["MusicDisabled"]),
 		button1 = OKAY,
 		hideOnEscape = true,
 		whileDead = true,
@@ -129,6 +129,9 @@ function AddOn:OnInitialize()
 	SlashCmdList["COMBATMUSIC"] = function(...)
 		self:HandleChatCommand(...)
 	end
+
+	self:CheckSettingsDB()
+
 	-- if the addon is disabled, DON'T LOAD IT
 	if not self:GetSetting("Enabled") then
 		self:SetEnabledState(false)
@@ -140,15 +143,15 @@ end
 
 function AddOn:OnEnable()
 	-- Check the settings, and make sure they're all there.
-	self:CheckSettingsDB()
+
 	local ver = self:GetVersion()
 	if self:GetSetting("LoginMessage") then
-		self:PrintMessage(format(Locale["AddonLoaded"], canonicalTitle, ver))
+		self:Print(format(Locale["AddonLoaded"], canonicalTitle, ver))
 
 		-- Birthday Messsages!
 		local tDate = date("*t")
 		if tDate.month == 3 and (tDate.day >= 16 and tDate.day <= 23) then
-			self:PrintMessage(format(Locale["Chat_BirthdayMessage"]))
+			self:Print(format(Locale["Chat_BirthdayMessage"]))
 		end
 	end
 

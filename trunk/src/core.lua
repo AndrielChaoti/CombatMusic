@@ -108,12 +108,12 @@ function E:CheckSettingsDB()
 
 	-- They don't have a settings database
 	if not CombatMusicDB then
-		self:PrintErr(L["ConfigLoadError"])
+		self:PrintError(L["ConfigLoadError"])
 		CombatMusicDB = DF
 		return false
 	-- Or their settings are outdated
 	elseif self:GetSetting("_VER") ~= DF._VER then
-		self:PrintErr(L["ConfigOutOfDate"])
+		self:PrintError(L["ConfigOutOfDate"])
 		CombatMusicDB = DF
 		return false
 	end
@@ -137,20 +137,20 @@ function E:HandleChatCommand(args)
 		-- Make sure challenge mode isn't running before changing states!
 		if isEnabled and not isRunning then
 			CombatMusicDB.General.InCombatChallenge = false
-			self:PrintMessage(L["Chat_ChallengeModeOff"])
+			self:Print(L["Chat_ChallengeModeOff"])
 		elseif not isEnabled then
 			CombatMusicDB.General.InCombatChallenge = true
-			self:PrintMessage(L["Chat_ChallengeModeOn"])
+			self:Print(L["Chat_ChallengeModeOn"])
 			self:GetModule("CombatEngine"):ResetCombatChallenge()
 			self:RegisterMessage("COMBATMUSIC_ENTER_COMBAT", function() return self:GetModule("CombatEngine"):StartCombatChallenge() end)
 		else
-			self:PrintErr(L["Chat_Can'tDoThat"])
+			self:PrintError(L["Chat_Can'tDoThat"])
 		end
 	elseif args[1] == "setlevel" or args[1] == "level" then
 		-- We can use this to override and set the 'music level' for dungeons
 		if args[2] == "reset" then
 			self.dungeonLevel = nil
-			self:PrintMessage(L["Chat_LevelReset"])
+			self:Print(L["Chat_LevelReset"])
 			return
 		end
 
@@ -158,12 +158,12 @@ function E:HandleChatCommand(args)
 		local setLevel = tonumber(args[2])
 		local maxLevel = GetMaxPlayerLevel()
 		if not setLevel or (setLevel > maxLevel or setLevel < 1) then
-			self:PrintErr(format(L["Chat_NeedsNumber"], GetMaxPlayerLevel()))
+			self:PrintError(format(L["Chat_NeedsNumber"], GetMaxPlayerLevel()))
 			return
 		end
 
 		self.dungeonLevel = setLevel
-		self:PrintMessage(format(L["Chat_LevelSet"], setLevel))
+		self:Print(format(L["Chat_LevelSet"], setLevel))
 	else
 		self:ToggleOptions()
 	end
@@ -299,7 +299,7 @@ function E:SetVolumeLevel(restore)
 		SetCVar("Sound_MusicVolume", self:GetSetting("General", "Volume"))
 		-- SetCVar("Sound_EnableMusic", "1")
 		if not WARNING_SHOWN and not GetCVarBool("Sound_EnableMusic") then
-			self:PrintErr(L["MusicDisabled"])
+			self:PrintError(L["MusicDisabled"])
 			WARNING_SHOWN = true
 		end
 		--[[ 5.3 HACK FIX!

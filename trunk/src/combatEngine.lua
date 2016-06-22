@@ -634,7 +634,7 @@ function CE:StartCombatChallenge()
 
 		-- Notify the user that the challenge has started.
 		-- Some sort of shiny popup maybe goes here.
-		E:PrintMessage(L["Chat_ChallengeModeStarted"])
+		E:Print(L["Chat_ChallengeModeStarted"])
 
 		-- Register our fade listener to call EndCombatChallenge
 		E:RegisterMessage("COMBATMUSIC_FADE_COMPLETED", function() E:GetModule("CombatEngine"):EndCombatChallenge() end)
@@ -662,7 +662,7 @@ function CE:EndCombatChallenge()
 		CombatMusicDB.General.InCombatChallenge = false
 
 		-- Flash a fancy popup here
-		E:PrintMessage(format(L["Chat_ChallengeModeCompleted"], (self.ChallengeFinishTime - startTime) / 1000))
+		E:Print(format(L["Chat_ChallengeModeCompleted"], (self.ChallengeFinishTime - startTime) / 1000))
 		E:UnregisterMessage("COMBATMUSIC_FADE_COMPLETED")
 		self:SendMessage("COMBATMUSIC_CHALLENGE_MODE_FINISHED")
 	end
@@ -677,7 +677,7 @@ function CE:ResetCombatChallenge()
 	self.ChallengeFinishTime = nil
 
 	-- Let the user know that the challenge is ready to start again.
-	E:PrintMessage(L["Chat_ChallengeModeReset"])
+	E:Print(L["Chat_ChallengeModeReset"])
 end
 
 --- Gets current Challenge Mode state

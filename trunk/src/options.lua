@@ -36,7 +36,7 @@ local printFuncName = E.printFuncName
 function E:ToggleOptions()
 	printFuncName("ToggleOptions")
 	if InCombatLockdown() then
-		self:PrintErr(L["Can't do that in combat."])
+		self:PrintError(L["Can't do that in combat."])
 		return
 	end
 	ACD:Open(AddOnName)
@@ -60,14 +60,14 @@ function E:AddNewBossListEntry()
 
 	-- Check to make sure there's a target and song
 	if blName == "" or blName == nil then
-		self:PrintErr(L["Err_NoBossListNameTarget"])
+		self:PrintError(L["Err_NoBossListNameTarget"])
 		return
 	end
 	if blSong == "" or blSong == nil then
-		self:PrintErr(L["Err_NoBossListSong"])
+		self:PrintError(L["Err_NoBossListSong"])
 		return
 	elseif not strfind(blSong, "\.mp3$") then
-		self:PrintErr(L["Err_NeedsToBeMP3"])
+		self:PrintError(L["Err_NeedsToBeMP3"])
 		return
 	end
 
