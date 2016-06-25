@@ -764,7 +764,7 @@ local opt = {
 			max = 30,
 			step = 0.1,
 			order = 315,
-			width = "double",
+			--width = "double",
 		},
 		FadeLog = {
 			name = L["FadeLog"],
