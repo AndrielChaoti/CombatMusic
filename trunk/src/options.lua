@@ -13,7 +13,7 @@
 ]]
 
 -- GLOBALS: CombatMusicDB, CombatMusicBossList, InCombatLockdown, ReloadUI
--- GLOBALS: UnitName
+-- GLOBALS: UnitName, InterfaceOptionsFrame_OpenToCategory
 
 --Import Engine, Locale, Defaults, CanonicalTitle
 local AddOnName = ...
@@ -25,6 +25,20 @@ local ACD = LibStub("AceConfigDialog-3.0")
 local ACR = LibStub("AceConfigRegistry-3.0")
 AC:RegisterOptionsTable(AddOnName, E.Options)
 ACD:SetDefaultSize(AddOnName, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+
+local f = ACD:AddToBlizOptions(AddOnName)
+
+local strCredits=[[I want to give a special thank you to everyone who's helped out with CombatMusic's development, or donated money to the project.
+§TCombatMusic's§r Authors:
+------------------
+    §TVandesdelca32§r - Author / Project Manager
+    yuningning520 - zhCN translation
+
+§6Special Thanks:§r
+------------------
+
+    Zeshio@Proudmoore
+]]
 
 
 local tinsert, unpack, ipairs, pairs = table.insert, unpack, ipairs, pairs
@@ -39,7 +53,7 @@ function E:ToggleOptions()
 		self:PrintError(L["Can't do that in combat."])
 		return
 	end
-	ACD:Open(AddOnName)
+	InterfaceOptionsFrame_OpenToCategory(f)
 end
 
 
@@ -149,6 +163,22 @@ E.Options.args = {
 		get = function(info) return E._DebugMode end,
 	},
 	--@end-alpha@
+
+	-- Contributors & Credits --
+	----------------------------
+	Credits = {
+		name = "Credits",
+		type = "group",
+		order = -1,
+		args = {
+			ContList = {
+				name = E:ParseColoredString(strCredits),
+				--desc = ""
+				type = "description",
+			},
+		},
+	},
+
 	General = {
 		name = "General",
 		type = "group",
