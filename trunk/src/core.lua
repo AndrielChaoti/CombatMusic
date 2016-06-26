@@ -210,6 +210,7 @@ function E:RegisterNewSongType(name, defaultState)
 					name = L["Enabled"],
 					desc = L["Desc_Enabled"],
 					type = "toggle",
+					width = "half",
 					order = cnt
 				},
 				Count = {
