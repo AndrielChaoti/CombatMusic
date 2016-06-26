@@ -164,6 +164,14 @@ function E:HandleChatCommand(args)
 
 		self.dungeonLevel = setLevel
 		self:Print(format(L["Chat_LevelSet"], setLevel))
+
+	elseif args[1] == "debug" then
+		if not self._DebugMode then
+			self:Print(L["DebugModeWarning"])
+		else
+			self:Print(L["DebugModeDisabled"])
+		end
+		self._DebugMode = not self._DebugMode
 	else
 		self:ToggleOptions()
 	end

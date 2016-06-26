@@ -162,15 +162,7 @@ E.Options.args = {
 		func = function() E:RestoreDefaults() end,
 		order = 120,
 	},
-	--@alpha@
-	DebugMode = {
-		name = "Debug Mode",
-		type = "toggle",
-		order = 130,
-		set = function(info,val) E._DebugMode = val end,
-		get = function(info) return E._DebugMode end,
-	},
-	--@end-alpha@
+
 
 	-- Contributors & Credits --
 	----------------------------
