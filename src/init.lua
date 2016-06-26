@@ -94,7 +94,7 @@ _G[AddOnName] = Engine
 -- to make tracing code progress easier.
 function AddOn.printFuncName(func, ...)
 	local argList = tconcat({tostringall(...)}, "§r,§6 ")
-	return AddOn:PrintDebug("§a" .. func .. "§f(§6" .. (argList or "") .. "§f)")
+	return AddOn:PrintDebug("§7" .. func .. "§f(§6" .. (argList or "") .. "§f)")
 end
 
 
