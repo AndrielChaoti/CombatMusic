@@ -18,7 +18,7 @@
 --Import Engine, Locale, Defaults, CanonicalTitle
 local AddOnName = ...
 local E, L, DF = unpack(select(2, ...))
-local DEFAULT_WIDTH = 785
+local DEFAULT_WIDTH = 770
 local DEFAULT_HEIGHT = 500
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
@@ -26,11 +26,14 @@ local ACR = LibStub("AceConfigRegistry-3.0")
 AC:RegisterOptionsTable(AddOnName, E.Options)
 ACD:SetDefaultSize(AddOnName, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
-local f = ACD:AddToBlizOptions(AddOnName)
+--local f = ACD:AddToBlizOptions(AddOnName)
+--f.default = function() E:RestoreDefaults() end
 
-local strCredits=[[I want to give a special thank you to everyone who's helped out with CombatMusic's development, or donated money to the project.
+local strCredits=[[I want to give a special thank you to everyone who's helped out with CombatMusic's development, or donated money to the project. If I've missed your name, send me a PM on Curse, and I will add you!
+
 §TCombatMusic's§r Authors:
 ------------------
+
     §TVandesdelca32§r - Author / Project Manager
     yuningning520 - zhCN translation
 
@@ -53,7 +56,7 @@ function E:ToggleOptions()
 		self:PrintError(L["Can't do that in combat."])
 		return
 	end
-	InterfaceOptionsFrame_OpenToCategory(f)
+	ACD:Open(AddOnName)
 end
 
 
@@ -117,6 +120,11 @@ function E:GetBosslistButtons()
 	return t
 end
 
+function E:RestoreDefaults()
+	CombatMusicDB = DF
+	CombatMusicBossList = {}
+	ACR:NotifyChange(AddOnName)
+end
 
 
 ----------------
@@ -151,14 +159,14 @@ E.Options.args = {
 		type = "execute",
 		confirm = true,
 		confirmText = L["Confirm_RestoreDefaults"],
-		func = function() CombatMusicDB = DF; CombatMusicBossList = {}; ACR:NotifyChange(AddOnName); end,
+		func = function() E:RestoreDefaults() end,
 		order = 120,
 	},
 	--@alpha@
 	DebugMode = {
 		name = "Debug Mode",
 		type = "toggle",
-		order = -1,
+		order = 130,
 		set = function(info,val) E._DebugMode = val end,
 		get = function(info) return E._DebugMode end,
 	},
@@ -169,12 +177,13 @@ E.Options.args = {
 	Credits = {
 		name = "Credits",
 		type = "group",
-		order = -1,
+		order = 500,
 		args = {
 			ContList = {
 				name = E:ParseColoredString(strCredits),
 				--desc = ""
 				type = "description",
+				fontSize = "medium",
 			},
 		},
 	},
