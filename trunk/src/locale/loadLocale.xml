@@ -1,6 +1,6 @@
 <Ui>
-	<Script file="ptBR.lua" />
 	<Script file="enUS.lua" />
+	<Script file="ptBR.lua" />
 	<Script file="frFR.lua" />
 	<Script file="deDE.lua" />
 	<Script file="itIT.lua" />
