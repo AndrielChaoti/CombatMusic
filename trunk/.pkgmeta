@@ -11,31 +11,31 @@ move-folders:
 
 externals:
    libs/LibStub:
-      url: svn://svn.wowace.com/wow/libstub/mainline/trunk
+      url: https://repos.wowace.com/wow/libstub/trunk
       tag: latest
    libs/!LibVan32:
-      url: svn://svn.curseforge.net/wow/libvan32/mainline/trunk
+      url: https://repos.curseforge.com/wow/libvan32/trunk
       tag: latest
    libs/CallbackHandler-1.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/CallbackHandler-1.0
+      url: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
       tag: latest
    libs/AceAddon-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
       tag: latest
    libs/AceEvent-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
       tag: latest
    libs/AceLocale-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
       tag: latest
    libs/AceTimer-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceTimer-3.0
       tag: latest
    libs/AceGUI-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
       tag: latest
    libs/AceConfig-3.0:
-      url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
+      url: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
       tag: latest
 
 enable-nolib-creation: no
