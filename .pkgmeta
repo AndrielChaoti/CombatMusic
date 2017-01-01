@@ -1,13 +1,13 @@
 ﻿package-as: CombatMusic
 
 ignore:
-   - libs
-   - CombatMusicDev.sublime-project
-   - CombatMusicDev.sublime-workspace
+   - .libs
 
 move-folders:
    CombatMusic/src: CombatMusic
 
+tools-used:
+   - findglobals
 
 externals:
    libs/LibStub:
