@@ -1,7 +1,7 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Vandesdelca32
+	Author: Donald "AndrielChaoti" Granger
 
 	File: init.lua
 	Purpose: Addon engine init
@@ -9,7 +9,7 @@
 	Version: @file-revision@
 
 	ALL RIGHTS RESERVED.
-	COPYRIGHT (c)2010-2014 VANDESDELCA32
+	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
 ]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2

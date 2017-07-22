@@ -1,7 +1,7 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Vandesdelca32
+	Author: Donald "AndrielChaoti" Granger
 
 	File: options.lua
 	Purpose: All of the options that come with the standard kit.
@@ -9,7 +9,7 @@
 	Version: @file-revision@
 
 	ALL RIGHTS RESERVED.
-	COPYRIGHT (c)2010-2014 VANDESDELCA32
+	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
 ]]
 
 -- GLOBALS: CombatMusicDB, CombatMusicBossList, InCombatLockdown, ReloadUI
@@ -34,7 +34,7 @@ local strCredits=[[I want to give a special thank you to everyone who's helped o
 §TCombatMusic's§r Authors:
 ------------------
 
-    §TVandesdelca32§r - Author / Project Manager
+    §TAndrielChaoti§r - Author / Project Manager
     yuningning520 - zhCN translation
 
 §6Special Thanks:§r
