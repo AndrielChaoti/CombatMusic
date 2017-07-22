@@ -1,7 +1,7 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Vandesdelca32
+	Author: Donald "AndrielChaoti" Granger
 
 	File: combatEngine.lua
 	Purpose: The Engine that makes the magic happen
@@ -9,7 +9,7 @@
 	Version: @file-revision@
 
 	ALL RIGHTS RESERVED.
-	COPYRIGHT (c)2010-2014 VANDESDELCA32
+	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
 ]]
 
 -- These functions are global API functions used by this module.
