@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 80100
 ## Title: Van32's |cFFAF96FFCombatMusic|r
 ## Notes: Plays custom music in combat.
 ## Author: Vandesdelca32
@@ -17,4 +17,3 @@ options.lua
 
 #modules
 combatEngine.lua
-petbattles.lua
