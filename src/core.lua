@@ -70,6 +70,12 @@ function E:GetVersion(short)
 	printFuncName("GetVersion", short)
 
 	local v, rev = self._major, self._revision
+
+	-- git alpha version check:
+	if v == rev then
+		v = "alpha_v" .. v
+	end
+
 	-- Check the build status:
 	if v:find("^r%d+") or v:find("^alpha") or v:find("^@.+@$") then
 		self._DebugMode = true
