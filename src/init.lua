@@ -32,7 +32,7 @@ local AddOn = LibStub("AceAddon-3.0"):NewAddon(AddOnName, "AceEvent-3.0", "AceTi
 --LibStub("LibVan32-1.0"):Embed(AddOn, canonicalTitle)
 
 AddOn._major = "@project-version@"
-AddOn._revision = "@project-revision@"
+AddOn._revision = "@project-abbreviated-hash@"
 
 
 
