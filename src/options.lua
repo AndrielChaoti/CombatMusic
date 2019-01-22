@@ -163,6 +163,58 @@ E.Options.args = {
 		order = 120,
 	},
 
+	-- About Screen --
+	------------------
+	About = {
+		name = L["About"],
+		type = "group",
+		order = 600,
+		args = {
+			DescText = {
+				name = L["Desc_About"],
+				type = "description",
+				width = "full",
+				order = 601
+			},
+			Author = {
+				name = L["Author"],
+				type = "input",
+				width = "full",
+				order = 602,
+				get = function(...)
+					return GetAddOnMetadata(AddOnName, "author")
+				end
+			},
+			website = {
+				name = L["Website"],
+				type = "input",
+				width = "full",
+				order = 604,
+				get = function(...)
+					return "https://wow.curseforge.com/projects/van32s-combatmusic"
+				end
+			},
+			github = {
+				name = L["GitHub"],
+				type = "input",
+				width = "full",
+				order = 605,
+				get = function(...)
+					return "https://github.com/AndrielChaoti/CombatMusic"
+				end
+			},
+			VerStr = {
+				name = L["Version"],
+				desc = L["Desc_Version"],
+				type = "input",
+				width = "full",
+				order = 603,
+				get = function(...)
+					return E:GetVersion()
+				end
+			}
+		}
+	},
 
 	-- Contributors & Credits --
 	----------------------------
