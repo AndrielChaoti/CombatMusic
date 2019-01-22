@@ -6,7 +6,7 @@
 	File: init.lua
 	Purpose: Addon engine init
 
-	Version: @file-revision@
+	Version: 8b83745d664d6f72d552fd53e4e3c732f7176ea8
 
 	ALL RIGHTS RESERVED.
 	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
@@ -144,7 +144,7 @@ end
 function AddOn:OnEnable()
 	-- Check the settings, and make sure they're all there.
 
-	local ver = self:GetVersion()
+	local ver = self:GetVersion(false, true)
 	if self:GetSetting("LoginMessage") then
 		self:Print(format(Locale["AddonLoaded"], canonicalTitle, ver))
 

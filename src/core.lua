@@ -65,42 +65,35 @@ end
 
 --- Get the addon's version string
 -- @arg short Set to true to return a shorter version string. (Ex. r411)
+-- @arg showRevision Set to true to show the revision number as part of the version
 -- @return A string reperesenting the addon's current version (Ex. "release_v4.6.3.411")
-function E:GetVersion(short)
-	printFuncName("GetVersion", short)
+function E:GetVersion(short, showRevision)
+	printFuncName("GetVersion", short, showRevision)
 
-	local v, rev = self._major, self._revision
+	local major, revision = self._major, self._revision
 
-	-- git alpha version check:
-	if v == rev then
-		v = "alpha_v" .. v
-	end
-
-	-- Check the build status:
-	if v:find("^r%d+") or v:find("^alpha") or v:find("^@.+@$") then
+	-- Check if this is an alpha build
+	-- (it will end with the short hash, start with alpha, or have a project @ marker!)
+	if major:find(revision.."$") or major:find("^alpha") or major:find("^@") then
 		self._DebugMode = true
+		--showRevision = false
 	end
 
-	if v:find("^@") then
-		v = "DEV_VERSION"
+	-- Replace meaningless strings with meaningful ones:
+	if major:find("^@") then
+		major = "DEV_VERSION"
 	end
 
-	if rev:find("^@") then
-		rev = "???"
+	if revision:find("^@") then
+		revision = ""
+		showRevision = false
 	end
 
-	if short then
-		-- Try to discern what release stage:
-		if strfind(v, "release") then
-			return "r" .. rev
-		elseif strfind(v, "beta") then
-			return "b" .. rev
-		else
-			return "a" .. rev
-		end
-	end
-	return v .. "." .. rev
+	local o = format("v%s", major)
+	if showRevision then o=format("v%s (%s)", major, revision) end
+	return o
 end
+
 
 --- Check and make sure the SavedVariables database exists
 -- and is up to date.

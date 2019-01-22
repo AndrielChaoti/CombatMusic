@@ -133,7 +133,7 @@ end
 
 E.Options.args = {
 	VerHeader = {
-		name = E:GetVersion(),
+		name = E:GetVersion(false, true),
 		type = "header",
 		order = 0,
 	},
