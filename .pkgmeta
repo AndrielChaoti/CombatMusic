@@ -14,7 +14,7 @@ externals:
       url: https://repos.wowace.com/wow/libstub/trunk
       tag: latest
    libs/!LibVan32:
-      url: https://repos.curseforge.com/wow/libvan32/trunk
+      url: https://github.com/AndrielChaoti/wow_lib-van32.git
       tag: latest
    libs/CallbackHandler-1.0:
       url: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
