@@ -8,8 +8,8 @@
 
 	Version: @file-revision@
 
-	ALL RIGHTS RESERVED.
-	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
+	This software is licenced under the MIT License.
+	Please see the LICENCE file for more details.
 ]]
 
 -- These functions are global API functions used by this module.
