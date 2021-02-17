@@ -6,10 +6,10 @@
 	File: init.lua
 	Purpose: Addon engine init
 
-	Version: 8b83745d664d6f72d552fd53e4e3c732f7176ea8
+	Version: @file-revision@
 
-	ALL RIGHTS RESERVED.
-	COPYRIGHT (c)2010-2017 Donald "AndrielChaoti" Granger
+	This software is licenced under the MIT License.
+	Please see the LICENCE file for more details.
 ]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
