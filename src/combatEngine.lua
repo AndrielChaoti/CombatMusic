@@ -381,6 +381,9 @@ function CE:ParseTargetInfo()
 
 	-- Play the music
 	if musicType then
+		-- User might not want the song to change if music is already playing...
+		if E:GetSetting("CombatEngine", "SkipSongChange") and self.isPlayingMusic then return end
+
 		return E:PlayMusicFile(musicType)
 	elseif not musicType and self.isPlayingMusic then
 		return true
@@ -704,6 +707,7 @@ local defaults = {
 	FadeMode = "ALL", -- Valid are "ALL", "BOSSONLY", "BOSSNEVER", "NONE"
 	FadeLog = true,
 	GarrisonsAreOutdoors = true,
+	SkipSongChange=false,
 }
 
 
@@ -813,6 +817,13 @@ local opt = {
 			type = "toggle",
 			width = "full",
 			order = 330,
+		},
+		SkipSongChange = {
+			name = L["SkipSongChange"],
+			desc = L["Desc_SkipSongChange"],
+			type = "toggle",
+			width = "full",
+			order = 340,
 		}
 	}
 }
