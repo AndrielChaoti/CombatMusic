@@ -2,8 +2,8 @@
 
 ignore:
    - .libs
-   - *.sublime-project
-   - *.sublime-build
+   - CombatMusic.sublime-project
+   - WoWAddon.sublime-build
 
 move-folders:
    CombatMusic/src: CombatMusic
