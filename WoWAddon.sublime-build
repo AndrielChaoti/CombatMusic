@@ -1,0 +1,4 @@
+{
+	"working_dir": "$folder\\..",
+	"shell_cmd": "copy_addon.bat $project_base_name $project_base_name -q"
+}

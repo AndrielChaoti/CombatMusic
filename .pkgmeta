@@ -2,6 +2,8 @@
 
 ignore:
    - .libs
+   - *.sublime-project
+   - *.sublime-build
 
 move-folders:
    CombatMusic/src: CombatMusic
