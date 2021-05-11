@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: Van32's |cFFAF96FFCombatMusic|r
 ## Notes: Plays custom music in combat.
 ## Author: Vandesdelca32
