@@ -1,15 +1,11 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Donald "AndrielChaoti" Granger
 
 	File: combatEngine.lua
 	Purpose: The Engine that makes the magic happen
 
 	Version: f47258e63967c37858aba8886be2e40aa301bd65
-
-	This software is licenced under the MIT License.
-	Please see the LICENCE file for more details.
 ]]
 
 -- These functions are global API functions used by this module.

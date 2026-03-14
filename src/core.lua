@@ -1,15 +1,11 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Donald "AndrielChaoti" Granger
 
 	File: core.lua
 	Purpose: Core functions to build on
 
 	Version: 51bbae5d52db0febddc4b8dfa0aba9e082a295ed
-
-	This software is licenced under the MIT License.
-	Please see the LICENCE file for more details.
 ]]
 
 --GLOBALS: CombatMusicDB, CombatMusicBossList, SetCVar, GetCVar

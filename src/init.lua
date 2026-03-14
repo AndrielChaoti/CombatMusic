@@ -1,15 +1,12 @@
 --[[
 	Project: CombatMusic
 	Friendly Name: CombatMusic
-	Author: Donald "AndrielChaoti" Granger
 
 	File: init.lua
 	Purpose: Addon engine init
 
 	Version: 51bbae5d52db0febddc4b8dfa0aba9e082a295ed
 
-	This software is licenced under the MIT License.
-	Please see the LICENCE file for more details.
 ]]
 
 -- GLOBALS: SlashCmdList, SLASH_COMBATMUSIC1, SLASH_COMBATMUSIC2
